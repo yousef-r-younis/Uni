@@ -1,0 +1,166 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="600" y="50" font-family="'Courier New', monospace" font-size="32" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+    ARM vs Thumb Instruction Set Architecture
+  </text>
+  
+  <!-- ARM Section -->
+  <g id="arm-section">
+    <!-- ARM Box -->
+    <rect x="50" y="120" width="500" height="600" fill="#e3f2fd" stroke="#0066cc" stroke-width="4" rx="10"/>
+    
+    <!-- ARM Title -->
+    <text x="300" y="170" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#0066cc" text-anchor="middle">
+      ARM (32-bit)
+    </text>
+    
+    <!-- 32-bit Instruction Representation -->
+    <rect x="100" y="200" width="400" height="80" fill="#0066cc" stroke="#003d7a" stroke-width="2" rx="5"/>
+    <text x="300" y="245" font-family="'Courier New', monospace" font-size="18" fill="white" text-anchor="middle" font-weight="bold">
+      32-bit Instruction Word
+    </text>
+    
+    <!-- Bit markers -->
+    <text x="100" y="295" font-family="'Courier New', monospace" font-size="14" fill="#333">31</text>
+    <text x="485" y="295" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="end">0</text>
+    
+    <!-- Example Instructions -->
+    <g id="arm-instructions">
+      <text x="300" y="340" font-family="'Courier New', monospace" font-size="20" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+        Example Instructions:
+      </text>
+      
+      <rect x="100" y="360" width="400" height="50" fill="white" stroke="#0066cc" stroke-width="2" rx="3"/>
+      <text x="110" y="392" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        ADD R0, R1, R2
+      </text>
+      
+      <rect x="100" y="420" width="400" height="50" fill="white" stroke="#0066cc" stroke-width="2" rx="3"/>
+      <text x="110" y="452" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        MOV R3, #100
+      </text>
+      
+      <rect x="100" y="480" width="400" height="50" fill="white" stroke="#0066cc" stroke-width="2" rx="3"/>
+      <text x="110" y="512" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        LDR R4, [R5, #8]
+      </text>
+    </g>
+    
+    <!-- ARM Characteristics -->
+    <g id="arm-features">
+      <text x="300" y="570" font-family="'Courier New', monospace" font-size="18" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+        Characteristics:
+      </text>
+      <text x="300" y="600" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        All instructions 32-bit
+      </text>
+      <text x="300" y="625" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        High performance
+      </text>
+      <text x="300" y="650" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        Larger code size
+      </text>
+      <text x="300" y="675" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        4 bytes per instruction
+      </text>
+    </g>
+  </g>
+  
+  <!-- Thumb Section -->
+  <g id="thumb-section">
+    <!-- Thumb Box -->
+    <rect x="650" y="120" width="500" height="600" fill="#fff3e0" stroke="#ff6f00" stroke-width="4" rx="10"/>
+    
+    <!-- Thumb Title -->
+    <text x="900" y="170" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#ff6f00" text-anchor="middle">
+      Thumb (16-bit)
+    </text>
+    
+    <!-- 16-bit Instruction Representation -->
+    <rect x="750" y="200" width="200" height="80" fill="#ff6f00" stroke="#cc5800" stroke-width="2" rx="5"/>
+    <text x="850" y="245" font-family="'Courier New', monospace" font-size="16" fill="white" text-anchor="middle" font-weight="bold">
+      16-bit Instruction
+    </text>
+    
+    <!-- Bit markers -->
+    <text x="750" y="295" font-family="'Courier New', monospace" font-size="14" fill="#333">15</text>
+    <text x="935" y="295" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="end">0</text>
+    
+    <!-- Space indicator -->
+    <text x="975" y="245" font-family="'Courier New', monospace" font-size="20" fill="#999" text-anchor="start">
+      [unused]
+    </text>
+    
+    <!-- Example Instructions -->
+    <g id="thumb-instructions">
+      <text x="900" y="340" font-family="'Courier New', monospace" font-size="20" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+        Example Instructions:
+      </text>
+      
+      <rect x="700" y="360" width="400" height="50" fill="white" stroke="#ff6f00" stroke-width="2" rx="3"/>
+      <text x="710" y="392" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        ADDS R0, R1, R2
+      </text>
+      
+      <rect x="700" y="420" width="400" height="50" fill="white" stroke="#ff6f00" stroke-width="2" rx="3"/>
+      <text x="710" y="452" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        MOVS R3, #100
+      </text>
+      
+      <rect x="700" y="480" width="400" height="50" fill="white" stroke="#ff6f00" stroke-width="2" rx="3"/>
+      <text x="710" y="512" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a">
+        LDR R4, [R5, #8]
+      </text>
+    </g>
+    
+    <!-- Thumb Characteristics -->
+    <g id="thumb-features">
+      <text x="900" y="570" font-family="'Courier New', monospace" font-size="18" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+        Characteristics:
+      </text>
+      <text x="900" y="600" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        All instructions 16-bit
+      </text>
+      <text x="900" y="625" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        Better code density
+      </text>
+      <text x="900" y="650" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        Smaller code size (-30%)
+      </text>
+      <text x="900" y="675" font-family="'Courier New', monospace" font-size="15" fill="#333" text-anchor="middle">
+        2 bytes per instruction
+      </text>
+    </g>
+  </g>
+  
+  <!-- Comparison Arrow -->
+  <g id="comparison-arrow">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+      </marker>
+      <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto">
+        <polygon points="10 0, 0 3, 10 6" fill="#666"/>
+      </marker>
+    </defs>
+    
+    <line x1="560" y1="420" x2="640" y2="420" stroke="#666" stroke-width="3" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="420" x2="560" y2="420" stroke="#666" stroke-width="3" marker-end="url(#arrowhead2)"/>
+    
+    <rect x="560" y="380" width="80" height="35" fill="#ffeb3b" stroke="#f57f17" stroke-width="2" rx="5"/>
+    <text x="600" y="403" font-family="'Courier New', monospace" font-size="16" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+      vs
+    </text>
+  </g>
+  
+  <!-- Bottom comparison bar -->
+  <g id="memory-comparison">
+    <rect x="50" y="740" width="1100" height="50" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="5"/>
+    <text x="600" y="770" font-family="'Courier New', monospace" font-size="18" fill="#1a1a1a" text-anchor="middle" font-weight="bold">
+      Memory Usage: ARM = 4KB  |  Thumb = 2.8KB (same code)  |  Savings: ~30%
+    </text>
+  </g>
+</svg>

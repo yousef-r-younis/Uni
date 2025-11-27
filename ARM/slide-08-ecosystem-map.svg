@@ -1,0 +1,258 @@
+<svg viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1400" height="1000" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="700" y="50" font-family="'Courier New', monospace" font-size="36" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+    ARM Ecosystem: Partners, Tools, and RTOS
+  </text>
+  
+  <!-- Central ARM Hub -->
+  <g id="central-hub">
+    <circle cx="700" cy="500" r="120" fill="#0066cc" stroke="#003d7a" stroke-width="5"/>
+    <text x="700" y="490" font-family="'Courier New', monospace" font-size="48" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      ARM
+    </text>
+    <text x="700" y="520" font-family="'Courier New', monospace" font-size="16" fill="#e3f2fd" text-anchor="middle">
+      CORTEX
+    </text>
+    <text x="700" y="540" font-family="'Courier New', monospace" font-size="16" fill="#e3f2fd" text-anchor="middle">
+      PROCESSORS
+    </text>
+  </g>
+  
+  <!-- Silicon Partners Section (Top) -->
+  <g id="silicon-partners">
+    <rect x="500" y="80" width="400" height="60" fill="#4caf50" rx="8"/>
+    <text x="700" y="115" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      SILICON PARTNERS
+    </text>
+    
+    <!-- Partner boxes -->
+    <rect x="50" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="140" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Apple
+    </text>
+    <text x="140" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      A-series, M-series
+    </text>
+    
+    <rect x="250" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="340" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Qualcomm
+    </text>
+    <text x="340" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      Snapdragon
+    </text>
+    
+    <rect x="450" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="540" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Samsung
+    </text>
+    <text x="540" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      Exynos
+    </text>
+    
+    <rect x="650" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="740" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      NVIDIA
+    </text>
+    <text x="740" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      Tegra, Grace
+    </text>
+    
+    <rect x="850" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="940" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      NXP
+    </text>
+    <text x="940" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      i.MX, Kinetis
+    </text>
+    
+    <rect x="1050" y="160" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="8"/>
+    <text x="1140" y="190" font-family="'Courier New', monospace" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      STMicro
+    </text>
+    <text x="1140" y="215" font-family="'Courier New', monospace" font-size="14" fill="#333" text-anchor="middle">
+      STM32
+    </text>
+    
+    <text x="700" y="270" font-family="'Courier New', monospace" font-size="14" fill="#666" text-anchor="middle">
+      + 500+ more silicon vendors worldwide
+    </text>
+  </g>
+  
+  <!-- Development Tools Section (Left) -->
+  <g id="dev-tools">
+    <rect x="50" y="320" width="280" height="60" fill="#ff6f00" rx="8"/>
+    <text x="190" y="355" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      DEVELOPMENT TOOLS
+    </text>
+    
+    <rect x="50" y="400" width="280" height="70" fill="#fff3e0" stroke="#ff6f00" stroke-width="3" rx="8"/>
+    <text x="190" y="430" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Keil MDK
+    </text>
+    <text x="190" y="450" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      ARM official IDE
+    </text>
+    
+    <rect x="50" y="480" width="280" height="70" fill="#fff3e0" stroke="#ff6f00" stroke-width="3" rx="8"/>
+    <text x="190" y="510" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      IAR EWARM
+    </text>
+    <text x="190" y="530" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Professional toolchain
+    </text>
+    
+    <rect x="50" y="560" width="280" height="70" fill="#fff3e0" stroke="#ff6f00" stroke-width="3" rx="8"/>
+    <text x="190" y="590" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      ARM GCC
+    </text>
+    <text x="190" y="610" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Open-source compiler
+    </text>
+    
+    <rect x="50" y="640" width="280" height="70" fill="#fff3e0" stroke="#ff6f00" stroke-width="3" rx="8"/>
+    <text x="190" y="670" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      SEGGER J-Link
+    </text>
+    <text x="190" y="690" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Debug probes
+    </text>
+  </g>
+  
+  <!-- RTOS Section (Right) -->
+  <g id="rtos-section">
+    <rect x="1070" y="320" width="280" height="60" fill="#9c27b0" rx="8"/>
+    <text x="1210" y="355" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      REAL-TIME OS
+    </text>
+    
+    <rect x="1070" y="400" width="280" height="70" fill="#f3e5f5" stroke="#9c27b0" stroke-width="3" rx="8"/>
+    <text x="1210" y="430" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      FreeRTOS
+    </text>
+    <text x="1210" y="450" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Most popular, open-source
+    </text>
+    
+    <rect x="1070" y="480" width="280" height="70" fill="#f3e5f5" stroke="#9c27b0" stroke-width="3" rx="8"/>
+    <text x="1210" y="510" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Zephyr RTOS
+    </text>
+    <text x="1210" y="530" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Linux Foundation project
+    </text>
+    
+    <rect x="1070" y="560" width="280" height="70" fill="#f3e5f5" stroke="#9c27b0" stroke-width="3" rx="8"/>
+    <text x="1210" y="590" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      ThreadX
+    </text>
+    <text x="1210" y="610" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      Microsoft Azure RTOS
+    </text>
+    
+    <rect x="1070" y="640" width="280" height="70" fill="#f3e5f5" stroke="#9c27b0" stroke-width="3" rx="8"/>
+    <text x="1210" y="670" font-family="'Courier New', monospace" font-size="16" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      RTX5
+    </text>
+    <text x="1210" y="690" font-family="'Courier New', monospace" font-size="13" fill="#333" text-anchor="middle">
+      ARM Keil RTOS
+    </text>
+  </g>
+  
+  <!-- Software Libraries Section (Bottom Left) -->
+  <g id="libraries">
+    <rect x="50" y="750" width="280" height="60" fill="#2196f3" rx="8"/>
+    <text x="190" y="785" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      SOFTWARE LIBRARIES
+    </text>
+    
+    <rect x="50" y="820" width="130" height="60" fill="#e3f2fd" stroke="#2196f3" stroke-width="3" rx="8"/>
+    <text x="115" y="850" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      CMSIS
+    </text>
+    <text x="115" y="867" font-family="'Courier New', monospace" font-size="11" fill="#333" text-anchor="middle">
+      Core APIs
+    </text>
+    
+    <rect x="200" y="820" width="130" height="60" fill="#e3f2fd" stroke="#2196f3" stroke-width="3" rx="8"/>
+    <text x="265" y="850" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      DSP Libs
+    </text>
+    <text x="265" y="867" font-family="'Courier New', monospace" font-size="11" fill="#333" text-anchor="middle">
+      Signal Proc.
+    </text>
+    
+    <rect x="50" y="890" width="280" height="60" fill="#e3f2fd" stroke="#2196f3" stroke-width="3" rx="8"/>
+    <text x="190" y="925" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      TensorFlow Lite Micro
+    </text>
+  </g>
+  
+  <!-- Standards and Safety Section (Bottom Right) -->
+  <g id="standards">
+    <rect x="1070" y="750" width="280" height="60" fill="#f44336" rx="8"/>
+    <text x="1210" y="785" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      SAFETY STANDARDS
+    </text>
+    
+    <rect x="1070" y="820" width="130" height="60" fill="#ffebee" stroke="#f44336" stroke-width="3" rx="8"/>
+    <text x="1135" y="845" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      ISO 26262
+    </text>
+    <text x="1135" y="863" font-family="'Courier New', monospace" font-size="11" fill="#333" text-anchor="middle">
+      Automotive
+    </text>
+    
+    <rect x="1220" y="820" width="130" height="60" fill="#ffebee" stroke="#f44336" stroke-width="3" rx="8"/>
+    <text x="1285" y="845" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      IEC 61508
+    </text>
+    <text x="1285" y="863" font-family="'Courier New', monospace" font-size="11" fill="#333" text-anchor="middle">
+      Industrial
+    </text>
+    
+    <rect x="1070" y="890" width="280" height="60" fill="#ffebee" stroke="#f44336" stroke-width="3" rx="8"/>
+    <text x="1210" y="925" font-family="'Courier New', monospace" font-size="14" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      IEC 62304 (Medical)
+    </text>
+  </g>
+  
+  <!-- IDEs and Debuggers Section (Bottom Center) -->
+  <g id="ides">
+    <rect x="400" y="750" width="600" height="60" fill="#00bcd4" rx="8"/>
+    <text x="700" y="785" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      IDEs AND DEBUGGERS
+    </text>
+    
+    <rect x="400" y="820" width="180" height="60" fill="#e0f7fa" stroke="#00bcd4" stroke-width="3" rx="8"/>
+    <text x="490" y="855" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      VS Code + Cortex
+    </text>
+    
+    <rect x="610" y="820" width="180" height="60" fill="#e0f7fa" stroke="#00bcd4" stroke-width="3" rx="8"/>
+    <text x="700" y="855" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Eclipse CDT
+    </text>
+    
+    <rect x="820" y="820" width="180" height="60" fill="#e0f7fa" stroke="#00bcd4" stroke-width="3" rx="8"/>
+    <text x="910" y="855" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      Ozone Debugger
+    </text>
+    
+    <rect x="400" y="890" width="600" height="60" fill="#e0f7fa" stroke="#00bcd4" stroke-width="3" rx="8"/>
+    <text x="700" y="925" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+      ARM Development Studio, STM32CubeIDE
+    </text>
+  </g>
+  
+  <!-- Connecting lines from center to sections -->
+  <line x1="700" y1="380" x2="700" y2="160" stroke="#4caf50" stroke-width="4" stroke-dasharray="5,5"/>
+  <line x1="580" y1="470" x2="330" y2="450" stroke="#ff6f00" stroke-width="4" stroke-dasharray="5,5"/>
+  <line x1="820" y1="470" x2="1070" y2="450" stroke="#9c27b0" stroke-width="4" stroke-dasharray="5,5"/>
+  <line x1="650" y1="600" x2="190" y2="750" stroke="#2196f3" stroke-width="4" stroke-dasharray="5,5"/>
+  <line x1="750" y1="600" x2="1210" y2="750" stroke="#f44336" stroke-width="4" stroke-dasharray="5,5"/>
+  <line x1="700" y1="620" x2="700" y2="750" stroke="#00bcd4" stroke-width="4" stroke-dasharray="5,5"/>
+</svg>
