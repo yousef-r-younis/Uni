@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petri Net - Resource Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            font-size: 1.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #ea580c;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .svg-container {
+            background: #f9fafb;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-reset {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .btn-reset:hover {
+            background: #dc2626;
+        }
+        
+        .instruction {
+            flex: 1;
+            background: #fef3c7;
+            border: 1px solid=#fbbf24;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            color: #b45309;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-box {
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid;
+        }
+        
+        .marking-box {
+            background: #fff7ed;
+            border-color: #fed7aa;
+        }
+        
+        .marking-title {
+            color: #c2410c;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .marking-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .marking-item {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        
+        .marking-active {
+            background: #fed7aa;
+            color: #c2410c;
+            font-weight: 500;
+        }
+        
+        .marking-inactive {
+            background: #f3f4f6;
+            color: #9ca3af;
+        }
+        
+        .history-box {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+        }
+        
+        .history-title {
+            color: #047857;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-list {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-family: monospace;
+        }
+        
+        .history-item {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .properties-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .properties-title {
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .properties-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        
+        .property-check {
+            color: #059669;
+            font-weight: 500;
+        }
+        
+        .transition-enabled {
+            cursor: pointer;
+        }
+        
+        .transition-disabled {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Petri Net — Resource Management</h1>
+        <h2>Concurrent Bidirectional Control Loop (Click to Fire)</h2>
+        
+        <div class="svg-container">
+            <svg id="petriNet" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrowP" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+                        <path d="M0,0 L0,8 L8,4 z" fill="#ea580c"/>
+                    </marker>
+                </defs>
+
+                <text x="400" y="25" text-anchor="middle" style="fill:#374151; font-size:14px; font-weight:600">
+                    Bidirectional Neuroprosthetic Control — Resource Arbitration
+                </text>
+
+                <!-- Arcs will be drawn by JavaScript -->
+                <g id="arcs"></g>
+                
+                <!-- Places will be drawn by JavaScript -->
+                <g id="places"></g>
+                
+                <!-- Transitions will be drawn by JavaScript -->
+                <g id="transitions"></g>
+
+                <g transform="translate(30, 440)">
+                    <text x="0" y="0" style="fill:#374151; font-size:14px; font-weight:600">Legend:</text>
+                    <circle cx="70" cy="-5" r="12" fill="white" stroke="#ea580c" stroke-width="2"/>
+                    <text x="90" y="0" style="fill:#6b7280; font-size:11px">Data</text>
+                    <circle cx="140" cy="-5" r="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="160" y="0" style="fill:#6b7280; font-size:11px">Resource</text>
+                    <rect x="215" y="-15" width="16" height="25" fill="#059669" stroke="#047857" stroke-width="2" rx="2"/>
+                    <text x="240" y="0" style="fill:#6b7280; font-size:11px">Enabled</text>
+                    <rect x="305" y="-15" width="16" height="25" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" rx="2"/>
+                    <text x="330" y="0" style="fill:#6b7280; font-size:11px">Disabled</text>
+                    <circle cx="405" cy="-5" r="6" fill="#f59e0b"/>
+                    <text x="420" y="0" style="fill:#6b7280; font-size:11px">Token</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="controls">
+            <button class="btn-reset" onclick="reset()">Reset</button>
+            <div class="instruction">Click green transitions to fire them and watch tokens flow!</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box marking-box">
+                <div class="marking-title">Current Marking</div>
+                <div class="marking-grid" id="markingDisplay"></div>
+            </div>
+            <div class="info-box history-box">
+                <div class="history-title">Firing History</div>
+                <div class="history-list" id="historyDisplay"></div>
+            </div>
+        </div>
+
+        <div class="properties-box">
+            <div class="properties-title">Properties (Formally Verified)</div>
+            <div class="properties-grid">
+                <div><span class="property-check">✓ Bounded:</span> Max 1 token per place</div>
+                <div><span class="property-check">✓ Live:</span> All transitions can fire infinitely</div>
+                <div><span class="property-check">✓ Deadlock-free:</span> Always progresses</div>
+                <div><span class="property-check">✓ Reversible:</span> Can return to initial state</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let tokens = {
+            P1: 1, P2: 0, P3: 0, P4: 0, P5: 0, P6: 0, P7: 0,
+            CPU: 1, BUS: 1, MOTOR: 1, STIM: 1
+        };
+        let firing = null;
+        let history = ['Initial marking'];
+
+        // Data
+        const places = [
+            { id: 'P1', name: 'EMG_Ready', x: 80, y: 100, type: 'data' },
+            { id: 'P2', name: 'Data_Acquired', x: 220, y: 100, type: 'data' },
+            { id: 'P3', name: 'Features_Ready', x: 360, y: 100, type: 'data' },
+            { id: 'P4', name: 'Gesture_Class', x: 500, y: 100, type: 'data' },
+            { id: 'P5', name: 'Motor_Cmd', x: 640, y: 100, type: 'data' },
+            { id: 'P6', name: 'Movement_Done', x: 640, y: 250, type: 'data' },
+            { id: 'P7', name: 'Feedback_Ready', x: 500, y: 250, type: 'data' },
+            { id: 'CPU', name: 'CPU_Free', x: 360, y: 320, type: 'resource' },
+            { id: 'BUS', name: 'Bus_Free', x: 150, y: 250, type: 'resource' },
+            { id: 'MOTOR', name: 'Motor_Idle', x: 720, y: 175, type: 'resource' },
+            { id: 'STIM', name: 'Stim_Idle', x: 360, y: 400, type: 'resource' },
+        ];
+
+        const transitions = [
+            { id: 'T1', name: 'Acquire', x: 150, y: 100, inputs: ['P1', 'BUS'], outputs: ['P2', 'BUS'] },
+            { id: 'T2', name: 'Extract', x: 290, y: 100, inputs: ['P2', 'CPU'], outputs: ['P3', 'CPU'] },
+            { id: 'T3', name: 'Classify', x: 430, y: 100, inputs: ['P3', 'CPU'], outputs: ['P4', 'CPU'] },
+            { id: 'T4', name: 'GenCmd', x: 570, y: 100, inputs: ['P4'], outputs: ['P5'] },
+            { id: 'T5', name: 'Execute', x: 640, y: 175, inputs: ['P5', 'MOTOR'], outputs: ['P6', 'MOTOR'] },
+            { id: 'T6', name: 'Sense', x: 570, y: 250, inputs: ['P6'], outputs: ['P7'] },
+            { id: 'T7', name: 'Stimulate', x: 430, y: 320, inputs: ['P7', 'CPU', 'STIM'], outputs: ['P1', 'CPU', 'STIM'] },
+        ];
+
+        function getPlace(id) {
+            return places.find(p => p.id === id);
+        }
+
+        function isEnabled(t) {
+            return t.inputs.every(p => tokens[p] >= 1);
+        }
+
+        function fire(t) {
+            if (!isEnabled(t) || firing) return;
+            
+            firing = t.id;
+            render();
+            
+            setTimeout(() => {
+                t.inputs.forEach(p => tokens[p]--);
+                t.outputs.forEach(p => tokens[p]++);
+                history.push(`Fired ${t.name}`);
+                if (history.length > 5) history.shift();
+                firing = null;
+                render();
+            }, 300);
+        }
+
+        function reset() {
+            tokens = { P1: 1, P2: 0, P3: 0, P4: 0, P5: 0, P6: 0, P7: 0, CPU: 1, BUS: 1, MOTOR: 1, STIM: 1 };
+            history = ['Reset'];
+            firing = null;
+            render();
+        }
+
+        function render() {
+            // Render arcs
+            const arcsG = document.getElementById('arcs');
+            arcsG.innerHTML = '';
+            transitions.forEach(t => {
+                t.inputs.forEach(pId => {
+                    const p = getPlace(pId);
+                    const dx = t.x - p.x, dy = t.y - p.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const nx = dx/dist, ny = dy/dist;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', p.x + nx * 22);
+                    line.setAttribute('y1', p.y + ny * 22);
+                    line.setAttribute('x2', t.x - nx * 15);
+                    line.setAttribute('y2', t.y - ny * 15);
+                    line.setAttribute('stroke', firing === t.id ? '#f59e0b' : '#ea580c');
+                    line.setAttribute('stroke-width', firing === t.id ? 3 : 2);
+                    line.setAttribute('marker-end', 'url(#arrowP)');
+                    arcsG.appendChild(line);
+                });
+                t.outputs.forEach(pId => {
+                    const p = getPlace(pId);
+                    const dx = p.x - t.x, dy = p.y - t.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const nx = dx/dist, ny = dy/dist;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', t.x + nx * 15);
+                    line.setAttribute('y1', t.y + ny * 15);
+                    line.setAttribute('x2', p.x - nx * 22);
+                    line.setAttribute('y2', p.y - ny * 22);
+                    line.setAttribute('stroke', firing === t.id ? '#f59e0b' : '#ea580c');
+                    line.setAttribute('stroke-width', firing === t.id ? 3 : 2);
+                    line.setAttribute('marker-end', 'url(#arrowP)');
+                    arcsG.appendChild(line);
+                });
+            });
+
+            // Render places
+            const placesG = document.getElementById('places');
+            placesG.innerHTML = '';
+            places.forEach(p => {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', p.x);
+                circle.setAttribute('cy', p.y);
+                circle.setAttribute('r', 20);
+                circle.setAttribute('fill', p.type === 'resource' ? '#dbeafe' : 'white');
+                circle.setAttribute('stroke', p.type === 'resource' ? '#2563eb' : '#ea580c');
+                circle.setAttribute('stroke-width', 2);
+                g.appendChild(circle);
+
+                if (tokens[p.id] > 0) {
+                    if (tokens[p.id] === 1) {
+                        const token = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        token.setAttribute('cx', p.x);
+                        token.setAttribute('cy', p.y);
+                        token.setAttribute('r', 8);
+                        token.setAttribute('fill', p.type === 'resource' ? '#2563eb' : '#f59e0b');
+                        g.appendChild(token);
+                    } else {
+                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', p.x);
+                        text.setAttribute('y', p.y + 5);
+                        text.setAttribute('text-anchor', 'middle');
+                        text.setAttribute('style', 'fill:#d97706; font-size:14px; font-weight:bold');
+                        text.textContent = tokens[p.id];
+                        g.appendChild(text);
+                    }
+                }
+
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', p.x);
+                label.setAttribute('y', p.y + (p.type === 'resource' ? 38 : -28));
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('style', `fill:${p.type === 'resource' ? '#1e40af' : '#c2410c'}; font-size:11px; font-weight:500`);
+                label.textContent = p.name;
+                g.appendChild(label);
+
+                const id = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                id.setAttribute('x', p.x);
+                id.setAttribute('y', p.y + (p.type === 'resource' ? 50 : -40));
+                id.setAttribute('text-anchor', 'middle');
+                id.setAttribute('style', 'fill:#9ca3af; font-size:11px');
+                id.textContent = `(${p.id})`;
+                g.appendChild(id);
+
+                placesG.appendChild(g);
+            });
+
+            // Render transitions
+            const transitionsG = document.getElementById('transitions');
+            transitionsG.innerHTML = '';
+            transitions.forEach(t => {
+                const enabled = isEnabled(t);
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('class', enabled ? 'transition-enabled' : 'transition-disabled');
+                if (enabled) {
+                    g.onclick = () => fire(t);
+                }
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', t.x - 12);
+                rect.setAttribute('y', t.y - 20);
+                rect.setAttribute('width', 24);
+                rect.setAttribute('height', 40);
+                rect.setAttribute('rx', 3);
+                rect.setAttribute('fill', firing === t.id ? '#f59e0b' : enabled ? '#059669' : '#d1d5db');
+                rect.setAttribute('stroke', enabled ? '#047857' : '#9ca3af');
+                rect.setAttribute('stroke-width', 2);
+                g.appendChild(rect);
+
+                const name = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                name.setAttribute('x', t.x);
+                name.setAttribute('y', t.y + 55);
+                name.setAttribute('text-anchor', 'middle');
+                name.setAttribute('style', `fill:${enabled ? '#047857' : '#9ca3af'}; font-size:11px; font-weight:500`);
+                name.textContent = t.name;
+                g.appendChild(name);
+
+                const tid = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                tid.setAttribute('x', t.x);
+                tid.setAttribute('y', t.y + 67);
+                tid.setAttribute('text-anchor', 'middle');
+                tid.setAttribute('style', 'fill:#9ca3af; font-size:11px');
+                tid.textContent = `(${t.id})`;
+                g.appendChild(tid);
+
+                transitionsG.appendChild(g);
+            });
+
+            // Update marking display
+            const markingDisplay = document.getElementById('markingDisplay');
+            markingDisplay.innerHTML = places.map(p => 
+                `<div class="marking-item ${tokens[p.id] > 0 ? 'marking-active' : 'marking-inactive'}">
+                    ${p.id}: ${tokens[p.id]}
+                </div>`
+            ).join('');
+
+            // Update history display
+            const historyDisplay = document.getElementById('historyDisplay');
+            historyDisplay.innerHTML = history.map(h => 
+                `<div class="history-item">${h}</div>`
+            ).join('');
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
