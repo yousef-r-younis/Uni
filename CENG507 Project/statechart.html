@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statechart - Prosthetic Control System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            font-size: 1.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .view-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-active {
+            background: #059669;
+            color: white;
+        }
+        
+        .btn-inactive {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .svg-container {
+            background: #f9fafb;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Harel Statechart — Prosthetic Limb Control System</h1>
+        
+        <div class="view-buttons">
+            <button class="btn btn-active" onclick="switchView('full')">Full System View</button>
+            <button class="btn btn-inactive" onclick="switchView('grip')">Grip States Detail</button>
+        </div>
+        
+        <div class="svg-container">
+            <!-- Full View -->
+            <div id="full-view" class="view active">
+                <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrowG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,1 L0,7 L7,4 z" fill="#059669"/>
+                        </marker>
+                        <marker id="arrowR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,1 L0,7 L7,4 z" fill="#dc2626"/>
+                        </marker>
+                    </defs>
+
+                    <text x="450" y="25" text-anchor="middle" style="fill:#1f2937; font-size:16px; font-weight:bold">
+                        PROSTHETIC_CONTROLLER (Root State)
+                    </text>
+
+                    <rect x="20" y="35" width="860" height="550" rx="15" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="5,5"/>
+
+                    <line x1="450" y1="50" x2="450" y2="570" stroke="#6366f1" stroke-width="2" stroke-dasharray="10,5"/>
+                    <text x="225" y="55" text-anchor="middle" style="fill:#4f46e5; font-size:14px; font-weight:600">SYSTEM_MODE</text>
+                    <text x="675" y="55" text-anchor="middle" style="fill:#4f46e5; font-size:14px; font-weight:600">GRIP_STATE</text>
+
+                    <!-- SYSTEM_MODE Region -->
+                    <circle cx="60" cy="100" r="8" fill="#1f2937" stroke="#059669" stroke-width="2"/>
+                    <line x1="68" y1="100" x2="95" y2="100" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+
+                    <rect x="100" y="75" width="140" height="90" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="170" y="95" text-anchor="middle" style="fill:#1e40af; font-size:14px; font-weight:600">INITIALIZATION</text>
+                    <rect x="110" y="105" width="55" height="25" rx="5" fill="white" stroke="#60a5fa" stroke-width="1"/>
+                    <text x="137" y="122" text-anchor="middle" style="fill:#2563eb; font-size:11px">Sensor</text>
+                    <rect x="110" y="133" width="55" height="25" rx="5" fill="white" stroke="#60a5fa" stroke-width="1"/>
+                    <text x="137" y="150" text-anchor="middle" style="fill:#2563eb; font-size:11px">Calibrate</text>
+                    <rect x="175" y="133" width="55" height="25" rx="5" fill="white" stroke="#60a5fa" stroke-width="1"/>
+                    <text x="202" y="150" text-anchor="middle" style="fill:#2563eb; font-size:11px">Ready</text>
+
+                    <rect x="50" y="190" width="380" height="200" rx="12" fill="#d1fae5" stroke="#059669" stroke-width="3"/>
+                    <text x="240" y="215" text-anchor="middle" style="fill:#047857; font-size:14px; font-weight:bold">OPERATIONAL</text>
+                    <circle cx="80" cy="210" r="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="80" y="214" text-anchor="middle" style="fill:#d97706; font-size:11px; font-weight:bold">H*</text>
+
+                    <rect x="70" y="235" width="160" height="140" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+                    <text x="150" y="255" text-anchor="middle" style="fill:#047857; font-size:12px; font-weight:600">MANUAL_CONTROL</text>
+                    <rect x="85" y="270" width="130" height="30" rx="5" fill="white" stroke="#34d399" stroke-width="1"/>
+                    <text x="150" y="290" text-anchor="middle" style="fill:#059669; font-size:11px">DIRECT_EMG</text>
+                    <rect x="85" y="310" width="130" height="30" rx="5" fill="white" stroke="#34d399" stroke-width="1"/>
+                    <text x="150" y="330" text-anchor="middle" style="fill:#059669; font-size:11px">BUTTON_OVERRIDE</text>
+                    <circle cx="85" cy="285" r="4" fill="#10b981"/>
+
+                    <rect x="250" y="235" width="165" height="140" rx="8" fill="#ecfeff" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="332" y="255" text-anchor="middle" style="fill:#0e7490; font-size:12px; font-weight:600">AUTOMATIC_CONTROL</text>
+                    <rect x="260" y="270" width="145" height="30" rx="5" fill="white" stroke="#22d3ee" stroke-width="1"/>
+                    <text x="332" y="290" text-anchor="middle" style="fill:#0891b2; font-size:11px">GESTURE_RECOG</text>
+                    <rect x="260" y="310" width="145" height="30" rx="5" fill="white" stroke="#22d3ee" stroke-width="1"/>
+                    <text x="332" y="330" text-anchor="middle" style="fill:#0891b2; font-size:11px">PATTERN_SWITCH</text>
+
+                    <rect x="100" y="420" width="180" height="70" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="190" y="445" text-anchor="middle" style="fill:#b45309; font-size:14px; font-weight:600">CALIBRATION_MODE</text>
+                    <rect x="110" y="455" width="70" height="25" rx="4" fill="white" stroke="#fbbf24" stroke-width="1"/>
+                    <text x="145" y="472" text-anchor="middle" style="fill:#d97706; font-size:11px">EMG_Base</text>
+                    <rect x="190" y="455" width="80" height="25" rx="4" fill="white" stroke="#fbbf24" stroke-width="1"/>
+                    <text x="230" y="472" text-anchor="middle" style="fill:#d97706; font-size:11px">Gesture_Train</text>
+
+                    <rect x="300" y="420" width="130" height="50" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+                    <text x="365" y="450" text-anchor="middle" style="fill:#991b1b; font-size:14px; font-weight:bold">EMERGENCY</text>
+                    
+                    <path d="M 240 165 L 240 188" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+                    <text x="250" y="178" style="fill:#059669; font-size:11px">[ready]</text>
+
+                    <path d="M 140 390 L 140 418" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowG)"/>
+                    <text x="80" y="408" style="fill:#f59e0b; font-size:11px">calibrate</text>
+
+                    <path d="M 280 440 C 320 400 350 360 350 340" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)" fill="none"/>
+                    <text x="330" y="400" style="fill:#059669; font-size:11px">done</text>
+
+                    <path d="M 380 520 L 380 470" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+                    <text x="385" y="500" style="fill:#dc2626; font-size:11px; font-weight:bold">EMERGENCY</text>
+
+                    <!-- GRIP_STATE Region -->
+                    <circle cx="490" cy="100" r="8" fill="#1f2937" stroke="#059669" stroke-width="2"/>
+                    <line x1="498" y1="100" x2="525" y2="100" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+
+                    <rect x="530" y="80" width="100" height="40" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+                    <text x="580" y="105" text-anchor="middle" style="fill:#6b21a8; font-size:14px; font-weight:600">OPEN_HAND</text>
+
+                    <rect x="470" y="140" width="180" height="150" rx="10" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+                    <text x="560" y="160" text-anchor="middle" style="fill:#9f1239; font-size:14px; font-weight:600">POWER_GRIPS</text>
+                    <circle cx="490" cy="160" r="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="490" y="164" text-anchor="middle" style="fill:#d97706; font-size:11px; font-weight:bold">H</text>
+                    
+                    <rect x="485" y="175" width="70" height="30" rx="5" fill="white" stroke="#f472b6" stroke-width="1"/>
+                    <text x="520" y="195" text-anchor="middle" style="fill:#db2777; font-size:11px">CYLINDRICAL</text>
+                    <circle cx="495" cy="190" r="4" fill="#db2777"/>
+                    
+                    <rect x="565" y="175" width="70" height="30" rx="5" fill="white" stroke="#f472b6" stroke-width="1"/>
+                    <text x="600" y="195" text-anchor="middle" style="fill:#db2777; font-size:11px">SPHERICAL</text>
+                    
+                    <rect x="485" y="215" width="70" height="30" rx="5" fill="white" stroke="#f472b6" stroke-width="1"/>
+                    <text x="520" y="235" text-anchor="middle" style="fill:#db2777; font-size:11px">HOOK</text>
+                    
+                    <rect x="565" y="215" width="70" height="30" rx="5" fill="white" stroke="#f472b6" stroke-width="1"/>
+                    <text x="600" y="235" text-anchor="middle" style="fill:#db2777; font-size:11px">LATERAL</text>
+
+                    <text x="480" y="275" style="fill:#db2777; font-size:11px; font-style:italic">entry/ motors_on()</text>
+
+                    <rect x="670" y="140" width="180" height="130" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                    <text x="760" y="160" text-anchor="middle" style="fill:#5b21b6; font-size:14px; font-weight:600">PRECISION_GRIPS</text>
+                    
+                    <rect x="685" y="175" width="65" height="28" rx="5" fill="white" stroke="#a78bfa" stroke-width="1"/>
+                    <text x="717" y="194" text-anchor="middle" style="fill:#7c3aed; font-size:11px">TRIPOD</text>
+                    <circle cx="695" cy="189" r="4" fill="#7c3aed"/>
+                    
+                    <rect x="760" y="175" width="75" height="28" rx="5" fill="white" stroke="#a78bfa" stroke-width="1"/>
+                    <text x="797" y="194" text-anchor="middle" style="fill:#7c3aed; font-size:11px">TIP_PINCH</text>
+                    
+                    <rect x="685" y="213" width="65" height="28" rx="5" fill="white" stroke="#a78bfa" stroke-width="1"/>
+                    <text x="717" y="232" text-anchor="middle" style="fill:#7c3aed; font-size:11px">KEY_GRIP</text>
+
+                    <rect x="550" y="310" width="160" height="80" rx="10" fill="#ccfbf1" stroke="#14b8a6" stroke-width="2"/>
+                    <text x="630" y="330" text-anchor="middle" style="fill:#0f766e; font-size:14px; font-weight:600">GESTURE_POSES</text>
+                    <rect x="565" y="345" width="60" height="25" rx="4" fill="white" stroke="#2dd4bf" stroke-width="1"/>
+                    <text x="595" y="362" text-anchor="middle" style="fill:#14b8a6; font-size:11px">POINTING</text>
+                    <rect x="635" y="345" width="60" height="25" rx="4" fill="white" stroke="#2dd4bf" stroke-width="1"/>
+                    <text x="665" y="362" text-anchor="middle" style="fill:#14b8a6; font-size:11px">THUMBS_UP</text>
+
+                    <path d="M 580 120 L 560 138" stroke="#db2777" stroke-width="2" marker-end="url(#arrowG)"/>
+                    <text x="545" y="128" style="fill:#db2777; font-size:11px">power</text>
+
+                    <path d="M 630 100 L 760 138" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowG)"/>
+                    <text x="700" y="115" style="fill:#7c3aed; font-size:11px">precision</text>
+
+                    <path d="M 580 120 L 630 308" stroke="#14b8a6" stroke-width="2" marker-end="url(#arrowG)"/>
+                    <text x="620" y="220" style="fill:#14b8a6; font-size:11px">gesture</text>
+
+                    <path d="M 470 200 C 450 180 450 120 528 100" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowG)" fill="none" stroke-dasharray="4,2"/>
+                    <text x="455" y="150" style="fill:#9333ea; font-size:11px">release</text>
+
+                    <g transform="translate(470, 420)">
+                        <text x="0" y="0" style="fill:#374151; font-size:14px; font-weight:600">Features:</text>
+                        
+                        <circle cx="70" cy="-3" r="8" fill="white" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="70" y="1" text-anchor="middle" style="fill:#d97706; font-size:11px; font-weight:bold">H</text>
+                        <text x="85" y="1" style="fill:#6b7280; font-size:11px">History</text>
+                        
+                        <circle cx="155" cy="-3" r="8" fill="white" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="155" y="1" text-anchor="middle" style="fill:#d97706; font-size:11px; font-weight:bold">H*</text>
+                        <text x="170" y="1" style="fill:#6b7280; font-size:11px">Deep History</text>
+                        
+                        <circle cx="280" cy="-3" r="4" fill="#059669"/>
+                        <text x="290" y="1" style="fill:#6b7280; font-size:11px">Default</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Grip View -->
+            <div id="grip-view" class="view">
+                <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                    <text x="400" y="30" text-anchor="middle" style="fill:#1f2937; font-size:18px; font-weight:bold">
+                        GRIP_STATE Hierarchy Detail
+                    </text>
+                    
+                    <rect x="20" y="50" width="760" height="430" rx="15" fill="none" stroke="#6366f1" stroke-width="3"/>
+                    <text x="400" y="75" text-anchor="middle" style="fill:#4f46e5; font-size:16px; font-weight:bold">GRIP_STATE</text>
+
+                    <rect x="340" y="95" width="120" height="50" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="3"/>
+                    <text x="400" y="125" text-anchor="middle" style="fill:#6b21a8; font-weight:600">OPEN_HAND</text>
+
+                    <rect x="40" y="180" width="230" height="280" rx="12" fill="#fce7f3" stroke="#db2777" stroke-width="3"/>
+                    <text x="155" y="205" text-anchor="middle" style="fill:#9f1239; font-size:16px; font-weight:bold">POWER_GRIPS</text>
+                    
+                    <rect x="55" y="225" width="210" height="60" rx="8" fill="white" stroke="#f472b6" stroke-width="2"/>
+                    <text x="160" y="250" text-anchor="middle" style="fill:#db2777; font-size:14px; font-weight:bold">CYLINDRICAL</text>
+                    <text x="160" y="270" text-anchor="middle" style="fill:#6b7280; font-size:11px">Bottles, handles</text>
+                    
+                    <rect x="55" y="295" width="210" height="60" rx="8" fill="white" stroke="#f472b6" stroke-width="2"/>
+                    <text x="160" y="320" text-anchor="middle" style="fill:#db2777; font-size:14px; font-weight:bold">SPHERICAL</text>
+                    <text x="160" y="340" text-anchor="middle" style="fill:#6b7280; font-size:11px">Balls, doorknobs</text>
+                    
+                    <rect x="55" y="365" width="210" height="60" rx="8" fill="white" stroke="#f472b6" stroke-width="2"/>
+                    <text x="160" y="390" text-anchor="middle" style="fill:#db2777; font-size:14px; font-weight:bold">HOOK</text>
+                    <text x="160" y="410" text-anchor="middle" style="fill:#6b7280; font-size:11px">Bags, straps</text>
+
+                    <rect x="290" y="180" width="230" height="280" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/>
+                    <text x="405" y="205" text-anchor="middle" style="fill:#5b21b6; font-size:16px; font-weight:bold">PRECISION_GRIPS</text>
+                    
+                    <rect x="305" y="225" width="210" height="60" rx="8" fill="white" stroke="#a78bfa" stroke-width="2"/>
+                    <text x="410" y="250" text-anchor="middle" style="fill:#7c3aed; font-size:14px; font-weight:bold">TRIPOD</text>
+                    <text x="410" y="270" text-anchor="middle" style="fill:#6b7280; font-size:11px">Writing, small objects</text>
+                    
+                    <rect x="305" y="295" width="210" height="60" rx="8" fill="white" stroke="#a78bfa" stroke-width="2"/>
+                    <text x="410" y="320" text-anchor="middle" style="fill:#7c3aed; font-size:14px; font-weight:bold">TIP_PINCH</text>
+                    <text x="410" y="340" text-anchor="middle" style="fill:#6b7280; font-size:11px">Coins, buttons</text>
+                    
+                    <rect x="305" y="365" width="210" height="60" rx="8" fill="white" stroke="#a78bfa" stroke-width="2"/>
+                    <text x="410" y="390" text-anchor="middle" style="fill:#7c3aed; font-size:14px; font-weight:bold">KEY_GRIP</text>
+                    <text x="410" y="410" text-anchor="middle" style="fill:#6b7280; font-size:11px">Keys, cards</text>
+
+                    <rect x="540" y="180" width="220" height="200" rx="12" fill="#ccfbf1" stroke="#14b8a6" stroke-width="3"/>
+                    <text x="650" y="205" text-anchor="middle" style="fill:#0f766e; font-size:16px; font-weight:bold">GESTURE_POSES</text>
+                    
+                    <rect x="555" y="225" width="190" height="60" rx="8" fill="white" stroke="#2dd4bf" stroke-width="2"/>
+                    <text x="650" y="250" text-anchor="middle" style="fill:#14b8a6; font-size:14px; font-weight:bold">POINTING</text>
+                    <text x="650" y="270" text-anchor="middle" style="fill:#6b7280; font-size:11px">Index extended</text>
+                    
+                    <rect x="555" y="295" width="190" height="60" rx="8" fill="white" stroke="#2dd4bf" stroke-width="2"/>
+                    <text x="650" y="320" text-anchor="middle" style="fill:#14b8a6; font-size:14px; font-weight:bold">THUMBS_UP</text>
+                    <text x="650" y="340" text-anchor="middle" style="fill:#6b7280; font-size:11px">Social gesture</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            // Hide all views
+            document.getElementById('full-view').classList.remove('active');
+            document.getElementById('grip-view').classList.remove('active');
+            
+            // Show selected view
+            document.getElementById(view + '-view').classList.add('active');
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('btn-active');
+                btn.classList.add('btn-inactive');
+            });
+            event.target.classList.remove('btn-inactive');
+            event.target.classList.add('btn-active');
+        }
+    </script>
+</body>
+</html>
