@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CENG507 Project Report - Bidirectional Neuroprosthetic Limb Controller</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 50px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 30px;
+        }
+        .course-code {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        h1 {
+            font-size: 32px;
+            color: #0066cc;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .metadata {
+            text-align: left;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .metadata p {
+            margin: 5px 0;
+        }
+        .author-group {
+            margin: 15px 0;
+        }
+        .author-group strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #0066cc;
+        }
+        h2 {
+            font-size: 24px;
+            color: #0066cc;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 18px;
+            color: #333;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        th {
+            background-color: #0066cc;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+        .moc-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #0066cc;
+            border-radius: 4px;
+        }
+        .moc-links {
+            background-color: #e8f4f8;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 6px;
+            border: 2px solid #0066cc;
+        }
+        .moc-links h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .moc-links a {
+            display: inline-block;
+            margin: 10px 15px 10px 0;
+            padding: 12px 25px;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .moc-links a:hover {
+            background-color: #0052a3;
+        }
+        .code-block {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+        .section-break {
+            text-align: center;
+            margin: 40px 0;
+            color: #999;
+            font-weight: 300;
+        }
+        strong {
+            color: #0066cc;
+            font-weight: 600;
+        }
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .reference {
+            margin: 10px 0;
+            padding-left: 30px;
+            text-indent: -30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="course-code">CENG507: Embedded System Design Project</div>
+            <h1>Bidirectional Neuroprosthetic Limb Controller with Sensory Feedback</h1>
+            <p class="subtitle">A Multi-Model of Computation Analysis</p>
+            
+            <div class="metadata">
+                <div class="author-group">
+                    <strong>Submitted by:</strong>
+                    <p>Yousef Younis (22230294)</p>
+                    <p>Moayad Salloum (22230296)</p>
+                </div>
+                <div class="author-group">
+                    <strong>Approved by:</strong>
+                    <p>Dr. Abdel-Mehsen Ahmad</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="moc-links">
+            <h3>Interactive Models of Computation Visualizations</h3>
+            <p>Explore the detailed MOC implementations and diagrams:</p>
+            <a href="sdf.html" target="_blank">📊 SDF (Synchronous Dataflow)</a>
+            <a href="petri.html" target="_blank">⚙️ Petri Nets</a>
+            <a href="statechart.html" target="_blank">📈 Statecharts</a>
+        </div>
+
+        <section>
+            <h2>Abstract</h2>
+This document presents the conceptual design of a Bidirectional Neuroprosthetic Limb Controller, an advanced embedded system that enables intuitive control of a prosthetic hand through electromyography (EMG) signals while simultaneously providing tactile sensory feedback to the user. The system exemplifies modern challenges in embedded system design: real-time signal processing, hierarchical control logic, concurrent operations, and bidirectional human-machine interfacing.
+            </p>
+            <p>
+                We analyze three <strong>Models of Computation (MoCs)</strong> and demonstrate how each addresses specific aspects of this complex system:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>MoC</th>
+                        <th>Application Domain</th>
+                        <th>Key Strength</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Synchronous Dataflow (SDF)</strong></td>
+                        <td>EMG Signal Processing Pipeline</td>
+                        <td>Deterministic scheduling, bounded memory</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statecharts</strong></td>
+                        <td>Prosthetic Control & Grip Modes</td>
+                        <td>Hierarchical state management</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Petri Nets</strong></td>
+                        <td>Concurrent Resource Management</td>
+                        <td>Deadlock-free concurrency</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+        <section>
+            <h2>Part I: Models of Computation Analysis</h2>
+
+            <h3>1. Synchronous Dataflow (SDF)</h3>
+
+            <h3>1.1 Historical Context and Principles</h3>
+            <p>
+                Synchronous Dataflow was introduced by Edward A. Lee and David G. Messerschmitt in 1987 as a restriction of Kahn Process Networks specifically tailored for digital signal processing applications. The fundamental principle is elegantly simple: each actor (processing node) consumes and produces a fixed, predetermined number of data tokens per invocation.
+            </p>
+
+            <h3>1.2 Core Principles</h3>
+            <div class="moc-section">
+                <p><strong>Token-Based Execution Model:</strong></p>
+                <ul>
+                    <li>Actors communicate through FIFO channels</li>
+                    <li>Each actor has fixed production/consumption rates declared statically</li>
+                    <li>Execution is data-driven: an actor fires when sufficient input tokens are available</li>
+                </ul>
+                
+                <p><strong>Static Schedulability:</strong> The defining characteristic of SDF is that the entire execution schedule can be computed at compile time. Given an SDF graph, we can determine:</p>
+                <ul>
+                    <li>The repetitions vector (how many times each actor must fire per graph iteration)</li>
+                    <li>A valid firing sequence that respects data dependencies</li>
+                    <li>Buffer sizes required for all channels</li>
+                </ul>
+
+                <p><strong>Balance Equations:</strong> For a consistent SDF graph, the following must hold for every channel:</p>
+                <div class="code-block">production_rate × source_firings = consumption_rate × sink_firings</div>
+            </div>
+
+            <h3>1.3 Advantages</h3>
+            <ol>
+                <li><strong>Deterministic Behavior:</strong> Complete predictability enables hard real-time guarantees</li>
+                <li><strong>Bounded Memory:</strong> Buffer requirements are known at compile time—critical for embedded systems with limited resources</li>
+                <li><strong>No Runtime Scheduling Overhead:</strong> Static schedules eliminate dynamic scheduling costs</li>
+                <li><strong>Natural Multi-Rate Support:</strong> Different sampling rates are handled elegantly through rate parameters</li>
+                <li><strong>Parallelization:</strong> Independent actors can execute concurrently on multi-core platforms</li>
+                <li><strong>Formal Verification:</strong> Mathematical properties enable automated verification of deadlock freedom and bounded execution</li>
+            </ol>
+
+            <h3>1.4 Disadvantages</h3>
+            <ol>
+                <li><strong>Limited Expressiveness:</strong> Cannot model data-dependent control flow</li>
+                <li><strong>Static Rates Only:</strong> Systems with dynamic, data-dependent token rates require extensions (CSDF, BDF)</li>
+                <li><strong>State Explosion in Scheduling:</strong> Complex graphs may yield exponentially large schedules</li>
+                <li><strong>No Direct Support for Hierarchy:</strong> Flat model requires careful manual organization</li>
+            </ol>
+
+            <h3>1.5 Real-World Applications</h3>
+            <ul>
+                <li>Digital Signal Processing: Audio/video codecs, telecommunications</li>
+                <li>Software-Defined Radio: Multi-rate filter banks, modulation chains</li>
+                <li>Medical Devices: ECG/EMG/EEG signal processing pipelines</li>
+                <li>Multimedia Systems: MPEG encoders/decoders, image processing</li>
+                <li>Ptolemy II Framework: Industry-standard tool using SDF semantics</li>
+            </ul>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>2. Statecharts (Hierarchical State Machines)</h3>
+
+            <h3>2.1 Historical Context and Principles</h3>
+            <p>
+                Statecharts were invented by David Harel in 1987 while consulting on the Israeli Lavi fighter jet avionics project. Faced with conventional state diagrams that grew to thousands of states, Harel recognized that behavioral complexity was not being managed—it was being expanded. His seminal paper "Statecharts: A Visual Formalism for Complex Systems" introduced hierarchical state nesting as the solution.
+            </p>
+
+            <h3>2.2 Core Principles</h3>
+            <div class="moc-section">
+                <p><strong>Hierarchical State Decomposition:</strong> States can contain substates, creating a tree structure. A system in a substate is implicitly also in all ancestor superstates. This enables "zooming" in and out of behavioral detail.</p>
+                
+                <p><strong>Orthogonal Regions (AND-decomposition):</strong> A state can be decomposed into concurrent regions that execute independently. This models parallelism within the state machine formalism.</p>
+
+                <p><strong>History Mechanism:</strong></p>
+                <ul>
+                    <li>Shallow History (H): Remembers the most recent direct substate</li>
+                    <li>Deep History (H*): Remembers the complete substate configuration</li>
+                </ul>
+
+                <p><strong>Actions and Activities:</strong></p>
+                <ul>
+                    <li>Entry Actions: Execute upon entering a state</li>
+                    <li>Exit Actions: Execute upon leaving a state</li>
+                    <li>Internal Transitions: Handle events without leaving the state</li>
+                    <li>Activities: Ongoing behaviors while in a state</li>
+                </ul>
+
+                <p><strong>Behavioral Inheritance:</strong> Substates inherit transitions from superstates—a transition defined at a superstate level applies to all substates unless explicitly overridden. This is analogous to inheritance in object-oriented programming.</p>
+            </div>
+
+            <h3>2.3 Advantages</h3>
+            <ol>
+                <li><strong>Exponential Reduction in States:</strong> n orthogonal components with m states each require only n×m states instead of m^n</li>
+                <li><strong>Eliminates Transition Explosion:</strong> Common behaviors factored to superstates</li>
+                <li><strong>Natural Abstraction:</strong> Hierarchies enable viewing systems at different levels of detail</li>
+                <li><strong>Formal Yet Readable:</strong> Combines mathematical precision with visual clarity</li>
+                <li><strong>Industry Standard:</strong> Adopted in UML, supported by major tools (MATLAB Stateflow, IBM Rhapsody)</li>
+                <li><strong>Code Generation:</strong> Direct synthesis to executable code</li>
+            </ol>
+
+            <h3>2.4 Disadvantages</h3>
+            <ol>
+                <li><strong>Semantic Variations:</strong> Different tools implement subtly different semantics</li>
+                <li><strong>Complexity in Deep Hierarchies:</strong> More than 3-4 levels become difficult to comprehend</li>
+                <li><strong>Priority Resolution:</strong> Conflicting transitions require careful priority schemes</li>
+                <li><strong>Learning Curve:</strong> Full semantics (history, orthogonal regions, inter-region communication) require significant study</li>
+                <li><strong>Testing Challenges:</strong> Deep hierarchies complicate test coverage analysis</li>
+            </ol>
+
+            <h3>2.5 Real-World Applications</h3>
+            <ul>
+                <li>Avionics Systems: Flight control modes, autopilot state management</li>
+                <li>Automotive: Vehicle state management, AUTOSAR compliant ECUs</li>
+                <li>Medical Devices: Infusion pump modes, ventilator control</li>
+                <li>Consumer Electronics: UI state management, device modes</li>
+                <li>Telecommunications: Protocol state machines, call control</li>
+                <li>Robotics: Motion control modes, task state management</li>
+            </ul>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>3. Petri Nets</h3>
+
+            <h3>3.1 Historical Context and Principles</h3>
+            <p>
+                Petri Nets were introduced by Carl Adam Petri in his 1962 doctoral dissertation "Kommunikation mit Automaten" (Communication with Automata). Unlike sequential models, Petri Nets were designed from inception to model concurrent, asynchronous, distributed systems with explicit representation of causality, conflict, and concurrency.
+            </p>
+
+            <h3>3.2 Core Principles</h3>
+            <div class="moc-section">
+                <p><strong>Structural Elements:</strong></p>
+                <ul>
+                    <li>Places (P): Depicted as circles, represent conditions or resources</li>
+                    <li>Transitions (T): Depicted as bars/rectangles, represent events or actions</li>
+                    <li>Arcs (F): Directed edges connecting places to transitions and vice versa</li>
+                    <li>Tokens: Black dots residing in places, represent the current state</li>
+                </ul>
+
+                <p><strong>Firing Rules:</strong> A transition is enabled when all input places contain at least the required number of tokens. An enabled transition may fire, atomically consuming tokens from input places and producing tokens in output places.</p>
+
+                <p><strong>Key Properties:</strong></p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Definition</th>
+                        <th>Significance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Reachability</td>
+                        <td>Can marking M' be reached from M₀?</td>
+                        <td>Safety verification</td>
+                    </tr>
+                    <tr>
+                        <td>Boundedness</td>
+                        <td>Is the token count in any place bounded?</td>
+                        <td>Memory finiteness</td>
+                    </tr>
+                    <tr>
+                        <td>Liveness</td>
+                        <td>Can every transition fire infinitely often?</td>
+                        <td>Deadlock freedom</td>
+                    </tr>
+                    <tr>
+                        <td>Reversibility</td>
+                        <td>Can the initial marking be reached from any reachable marking?</td>
+                        <td>System reset capability</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 20px;"><strong>Extensions:</strong></p>
+            <ul>
+                <li>Colored Petri Nets (CPN): Tokens carry data values (colors)</li>
+                <li>Timed Petri Nets: Transitions have associated delays</li>
+                <li>Hierarchical Petri Nets: Transitions can be refined into subnets</li>
+                <li>Stochastic Petri Nets: Probabilistic firing times for performance modeling</li>
+            </ul>
+
+            <h3>3.3 Advantages</h3>
+            <ol>
+                <li><strong>True Concurrency Model:</strong> Partial ordering captures genuine parallelism</li>
+                <li><strong>Explicit Resource Modeling:</strong> Places naturally represent resources, buffers, semaphores</li>
+                <li><strong>Formal Analysis:</strong> Rich theory for verification (reachability, boundedness, liveness)</li>
+                <li><strong>Visual and Mathematical:</strong> Graphical notation with precise semantics</li>
+                <li><strong>Deadlock Detection:</strong> Structural analysis can identify potential deadlocks</li>
+                <li><strong>Tool Support:</strong> CPN Tools, PIPE, Snoopy, GreatSPN</li>
+            </ol>
+
+            <h3>3.4 Disadvantages</h3>
+            <ol>
+                <li><strong>State Space Explosion:</strong> Concurrent systems yield exponentially large reachability graphs</li>
+                <li><strong>No Native Hierarchy:</strong> Basic Petri Nets are flat (extensions add hierarchy)</li>
+                <li><strong>Modeling Overhead:</strong> Simple sequential logic requires complex net structures</li>
+                <li><strong>Data Handling:</strong> Classical Petri Nets don't model data—requires Colored extensions</li>
+                <li><strong>Timing Complexity:</strong> Timed extensions significantly complicate analysis</li>
+            </ol>
+
+            <h3>3.5 Real-World Applications</h3>
+            <ul>
+                <li>Manufacturing Systems: Flexible manufacturing cells, assembly lines</li>
+                <li>Communication Protocols: Network protocol verification</li>
+                <li>Workflow Systems: Business process modeling (BPMN has Petri Net foundations)</li>
+                <li>Embedded Systems: Hardware/software co-design</li>
+                <li>Transportation: Railway signaling, traffic systems</li>
+                <li>Bioinformatics: Metabolic pathway modeling</li>
+            </ul>
+        </section>
+
+        <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+        <section>
+            <h2>Part II: System Concept - Bidirectional Neuroprosthetic Limb Controller</h2>
+
+            <h3>4. System Overview</h3>
+
+            <h3>4.1 Introduction and Motivation</h3>
+            <p>
+                Upper-limb amputation affects millions worldwide, creating profound impacts on quality of life. Modern myoelectric prostheses decode electrical signals from residual muscles (EMG) to control prosthetic movement. However, current commercial systems suffer from:
+            </p>
+            <ol>
+                <li>Limited Dexterity: Most support only 2-3 grip patterns</li>
+                <li>No Sensory Feedback: Users cannot "feel" what they grasp</li>
+                <li>Cognitive Burden: Unnatural control paradigms require constant attention</li>
+                <li>Poor Rejection of Noise: Environmental interference degrades performance</li>
+            </ol>
+            <p>
+                Our proposed Bidirectional Neuroprosthetic Limb Controller addresses these limitations through:
+            </p>
+            <ul>
+                <li><strong>High-Density EMG (HD-EMG):</strong> 64-channel electrode array for superior spatial resolution</li>
+                <li><strong>Deep Learning Classification:</strong> Real-time gesture recognition with >95% accuracy</li>
+                <li><strong>Sensory Feedback Loop:</strong> Electrical stimulation provides tactile sensation</li>
+                <li><strong>Adaptive Calibration:</strong> Continuous learning adapts to user and electrode drift</li>
+            </ul>
+
+            <h3>4.2 System Architecture</h3>
+            <p><em>[Detailed architecture diagram to be inserted here - see visual materials]</em></p>
+
+            <h3>4.3 Why This System Requires Multiple MoCs</h3>
+            <p>
+                This system cannot be adequately modeled by a single MoC because it exhibits fundamentally different computational patterns in its subsystems:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subsystem</th>
+                        <th>Computational Pattern</th>
+                        <th>Best MoC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EMG Signal Processing</td>
+                        <td>Periodic, multi-rate, deterministic</td>
+                        <td>SDF</td>
+                    </tr>
+                    <tr>
+                        <td>Grip Mode Selection</td>
+                        <td>Event-driven, hierarchical states</td>
+                        <td>Statechart</td>
+                    </tr>
+                    <tr>
+                        <td>Resource Arbitration</td>
+                        <td>Concurrent, shared resources</td>
+                        <td>Petri Net</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>5. MoC Application: Synchronous Dataflow for EMG Processing</h3>
+
+            <h3>5.1 Why SDF?</h3>
+            <p>EMG signal processing exemplifies classic DSP requirements:</p>
+            <ul>
+                <li>Fixed Sampling Rates: EMG acquisition at 2000 Hz</li>
+                <li>Multi-Rate Processing: Decimation, filtering at different rates</li>
+                <li>Deterministic Latency: Real-time control requires bounded delays</li>
+                <li>Bounded Buffers: Embedded memory constraints</li>
+            </ul>
+            <p>SDF's static scheduling guarantees these requirements are met at compile time.</p>
+
+            <h3>5.2 EMG Processing Pipeline Design</h3>
+            <p>The pipeline performs the following operations:</p>
+            <ol>
+                <li>Acquisition: 64 channels × 2000 Hz = 128,000 samples/second</li>
+                <li>Bandpass Filtering: 20-450 Hz to isolate EMG band</li>
+                <li>Notch Filtering: Remove 50/60 Hz power line interference</li>
+                <li>Spatial Filtering: Common average reference (CAR) across channels</li>
+                <li>Segmentation: 200ms windows with 50ms overlap</li>
+                <li>Feature Extraction: Time-domain features (MAV, RMS, WL, ZC)</li>
+                <li>Normalization: Zero-mean, unit-variance scaling</li>
+                <li>Classification: Neural network inference</li>
+            </ol>
+
+            <h3>5.3 SDF Graph Specification</h3>
+            <p><strong>Actors and Rates:</strong></p>
+            <div class="code-block">
+EMG_Acquire:     produces 64 tokens/firing (one per channel)
+Bandpass:         	consumes 64, produces 64
+Notch_Filter:    	consumes 64, produces 64
+Spatial_Filter:  	consumes 64, produces 64
+Decimator:       	consumes 64, produces 32 (2:1 decimation)
+Window_Buffer:   consumes 32, produces 400 (collects 400 samples)
+Feature_Extract: 	consumes 400, produces 4 (4 features)
+Normalizer:      	consumes 4, produces 4
+Classifier:      	consumes 4, produces 1 (gesture class)
+            </div>
+
+            <p><strong>Repetitions Vector Calculation:</strong></p>
+            <p>For graph balance: production × reps(source) = consumption × reps(sink)</p>
+            <p>Working backward from Classifier (1 firing):</p>
+            <ul>
+                <li>Normalizer: 1 firing</li>
+                <li>Feature_Extract: 1 firing</li>
+                <li>Window_Buffer: 400/32 = 12.5 → need 25 firings to produce 800 samples, consume 2 windows</li>
+                <li>... (full calculation in diagrams)</li>
+            </ul>
+
+            <h3>5.4 Key Properties Verified</h3>
+            <ul>
+                <li>✓ <strong>Consistency:</strong> Balance equations satisfied</li>
+                <li>✓ <strong>Deadlock-Free:</strong> Valid schedule exists</li>
+                <li>✓ <strong>Bounded Memory:</strong> Maximum buffer size = 800 samples</li>
+                <li>✓ <strong>Latency:</strong> End-to-end < 50ms</li>
+            </ul>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>6. MoC Application: Statecharts for Prosthetic Control</h3>
+
+            <h3>6.1 Why Statecharts?</h3>
+            <p>Prosthetic control involves:</p>
+            <ul>
+                <li>Multiple Operating Modes: Manual, automatic, calibration, emergency</li>
+                <li>Hierarchical Grip Patterns: Power grips contain sub-variants</li>
+                <li>Shared Behaviors: Mode-independent safety checks</li>
+                <li>History Requirements: Return to previous grip after mode change</li>
+            </ul>
+            <p>Statecharts' hierarchical nesting and orthogonal regions perfectly match these requirements.</p>
+
+            <h3>6.2 State Hierarchy Design</h3>
+            <p>The prosthetic controller employs two orthogonal regions to independently manage system operation modes and grip configurations:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
+                <div>
+                    <h4 style="color: #0066cc; margin-bottom: 15px;">Region 1: SYSTEM_MODE</h4>
+                    <p style="font-size: 12px; margin-bottom: 15px;"><em>System Operation Control</em></p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 11px; line-height: 1.6;">
+                        <div><strong>INITIALIZATION</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            SENSOR_CHECK → CALIBRATION → READY<br/>
+                            <em>(Sequential initialization)</em>
+                        </div>
+                        
+                        <div style="margin-top: 12px;"><strong>OPERATIONAL (H*)</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            <div><strong>MANUAL_CONTROL</strong></div>
+                            <div style="margin-left: 15px;">DIRECT_EMG | BUTTON_OVERRIDE</div>
+                            <div style="margin-top: 8px;"><strong>AUTOMATIC_CONTROL</strong></div>
+                            <div style="margin-left: 15px;">GESTURE_RECOGNITION | PATTERN_SWITCHING</div>
+                        </div>
+                        
+                        <div style="margin-top: 12px;"><strong>CALIBRATION_MODE</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            EMG_BASELINE | GESTURE_TRAINING | FEEDBACK_CALIBRATION
+                        </div>
+                        
+                        <div style="margin-top: 12px;"><strong>EMERGENCY_STOP</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            <em>(Disable motors, log event)</em>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: #0066cc; margin-bottom: 15px;">Region 2: GRIP_STATE</h4>
+                    <p style="font-size: 12px; margin-bottom: 15px;"><em>Hand Posture Configuration</em></p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 11px; line-height: 1.6;">
+                        <div><strong>OPEN_HAND</strong> (default)</div>
+                        <div style="margin-left: 20px; color: #666;"><em>Fully extended</em></div>
+                        
+                        <div style="margin-top: 12px;"><strong>POWER_GRIPS</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            CYLINDRICAL | SPHERICAL | HOOK
+                        </div>
+                        
+                        <div style="margin-top: 12px;"><strong>PRECISION_GRIPS</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            TRIPOD | LATERAL | TIP_PINCH
+                        </div>
+                        
+                        <div style="margin-top: 12px;"><strong>GESTURE_POSES</strong></div>
+                        <div style="margin-left: 20px; color: #666;">
+                            POINTING | THUMBS_UP
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p><strong>State Hierarchy Properties:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Implementation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Orthogonal Regions</td>
+                        <td>SYSTEM_MODE and GRIP_STATE evolve independently</td>
+                    </tr>
+                    <tr>
+                        <td>Deep History (H*)</td>
+                        <td>OPERATIONAL state remembers exact substate configuration on re-entry</td>
+                    </tr>
+                    <tr>
+                        <td>Default States</td>
+                        <td>OPERATIONAL.MANUAL_CONTROL and GRIP_STATE.OPEN_HAND</td>
+                    </tr>
+                    <tr>
+                        <td>Total States</td>
+                        <td>~20 states (vs. 96+ without hierarchy)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>6.3 Key Statechart Features Utilized</h3>
+            <ol>
+                <li><strong>Orthogonal Regions:</strong> SYSTEM_MODE and GRIP_STATE are independent orthogonal components. The prosthetic can be in CALIBRATION_MODE while maintaining any grip state, or in EMERGENCY_STOP while memory of previous grip is retained.</li>
+                
+                <li><strong>Deep History (H*):</strong> The OPERATIONAL superstate is marked with deep history. When re-entering OPERATIONAL (e.g., from CALIBRATION_MODE), the system returns to the exact previously active substate configuration, including nested substates (e.g., AUTOMATIC_CONTROL → GESTURE_RECOGNITION).</li>
+                
+                <li><strong>State Hierarchy Reduction:</strong> Without hierarchy, the system would require 4 system modes × 8 grips × 2 nested control modes = 64+ states. Hierarchy reduces this to ~20 named states with implicit combinations.</li>
+                
+                <li><strong>Superstate Abstraction:</strong> POWER_GRIPS and PRECISION_GRIPS are superstates grouping related grips. Transitions to the superstate automatically enter the default or previously active substate (via history).</li>
+                
+                <li><strong>Entry/Exit Actions:</strong>
+                    <ul>
+                        <li><strong>Entry to EMERGENCY_STOP:</strong> Disable all motors immediately, set feedback to "alert" pattern, log event timestamp</li>
+                        <li><strong>Exit from CALIBRATION:</strong> Save learned EMG baselines and gesture models to persistent storage</li>
+                        <li><strong>Entry to OPERATIONAL:</strong> Load configuration, verify sensor health</li>
+                        <li><strong>Entry to POWER_GRIPS:</strong> Set motor torque to maximum (~100%)</li>
+                        <li><strong>Entry to PRECISION_GRIPS:</strong> Set motor torque to low (~20%), enable fine control</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Guard Conditions:</strong>
+                    <ul>
+                        <li>Transition INITIALIZATION → OPERATIONAL: guarded by [calibration_complete ∧ sensors_ok]</li>
+                        <li>Transition to POWER_GRIPS: guarded by [force_sensor_ready ∧ object_detected ∧ grip_confidence > 0.8]</li>
+                        <li>Transition to EMERGENCY_STOP: guarded by [critical_error ∨ user_pressed_emergency_button]</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>7. MoC Application: Petri Nets for Resource Management</h3>
+
+            <h3>7.1 Why Petri Nets?</h3>
+            <p>The system has concurrent processes competing for shared resources:</p>
+            <ul>
+                <li>EMG Processor and Feedback Controller share the system bus</li>
+                <li>Classifier and Motor Controller compete for CPU cycles</li>
+                <li>Sensory Feedback and Motor Commands require synchronized timing</li>
+            </ul>
+            <p>Petri Nets excel at modeling such concurrent resource-sharing scenarios and can be formally analyzed for deadlock freedom.</p>
+
+            <h3>7.2 Resource Arbitration Model</h3>
+            <p><strong>Places (Resources and Conditions):</strong></p>
+            <ul>
+                <li>P1: EMG_Data_Ready</li>
+                <li>P2: Features_Available</li>
+                <li>P3: Classification_Complete</li>
+                <li>P4: Motor_Command_Ready</li>
+                <li>P5: Feedback_Data_Ready</li>
+                <li>P6: CPU_Available (shared resource, 1 token)</li>
+                <li>P7: Bus_Available (shared resource, 1 token)</li>
+                <li>P8: Motor_Idle</li>
+                <li>P9: Stimulator_Idle</li>
+            </ul>
+
+            <p><strong>Transitions (Events/Actions):</strong></p>
+            <ul>
+                <li>T1: Acquire_EMG (requires Bus, produces EMG_Data_Ready)</li>
+                <li>T2: Process_Features (requires CPU + EMG_Data_Ready)</li>
+                <li>T3: Classify_Gesture (requires CPU + Features_Available)</li>
+                <li>T4: Generate_Motor_Command (requires Classification_Complete)</li>
+                <li>T5: Execute_Movement (requires Motor_Command_Ready + Motor_Idle)</li>
+                <li>T6: Generate_Feedback (requires Feedback_Data_Ready + CPU)</li>
+                <li>T7: Apply_Stimulation (requires Feedback_Command + Stimulator_Idle)</li>
+            </ul>
+
+            <h3>7.3 Formal Properties Verified</h3>
+            <p>Using structural analysis:</p>
+            <ul>
+                <li><strong>Boundedness:</strong> All places have bound ≤ 2 (proven via place invariants)</li>
+                <li><strong>Liveness:</strong> All transitions can fire infinitely often (no dead transitions)</li>
+                <li><strong>Deadlock-Free:</strong> No reachable marking disables all transitions</li>
+                <li><strong>Mutual Exclusion:</strong> CPU_Available and Bus_Available enforce exclusive access</li>
+            </ul>
+
+            <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <h3>8. Justification: Why These MoCs Are Optimal</h3>
+
+            <h3>8.1 SDF for EMG Processing</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alternative</th>
+                        <th>Why SDF is Superior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FSM</td>
+                        <td>Cannot model dataflow; no rate concept</td>
+                    </tr>
+                    <tr>
+                        <td>Petri Net</td>
+                        <td>Overkill for deterministic, sequential pipeline</td>
+                    </tr>
+                    <tr>
+                        <td>Kahn Process Networks</td>
+                        <td>Unbounded buffers; harder to analyze</td>
+                    </tr>
+                    <tr>
+                        <td>CSP</td>
+                        <td>Better for communication, not signal processing</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>SDF provides compile-time guarantees on memory and timing—essential for medical-grade embedded systems.</p>
+
+            <h3>8.2 Statecharts for Control Logic</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alternative</th>
+                        <th>Why Statecharts are Superior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Flat FSM</td>
+                        <td>State explosion: 4 modes × 8 grips × 3 substates = 96 states</td>
+                    </tr>
+                    <tr>
+                        <td>Petri Net</td>
+                        <td>Poor at hierarchical abstraction; no history</td>
+                    </tr>
+                    <tr>
+                        <td>Dataflow</td>
+                        <td>Cannot model event-driven, reactive behavior</td>
+                    </tr>
+                    <tr>
+                        <td>Behavior Trees</td>
+                        <td>Less formal semantics; limited tool support</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Statecharts reduce 96+ states to ~20 with hierarchy, plus enable behavioral inheritance for consistent safety behavior.</p>
+
+            <h3>8.3 Petri Nets for Concurrency</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alternative</th>
+                        <th>Why Petri Nets are Superior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Statecharts</td>
+                        <td>Orthogonal regions model concurrency but not resource contention</td>
+                    </tr>
+                    <tr>
+                        <td>Dataflow</td>
+                        <td>No explicit resource modeling</td>
+                    </tr>
+                    <tr>
+                        <td>Process Algebra</td>
+                        <td>Less visual; harder for embedded engineers</td>
+                    </tr>
+                    <tr>
+                        <td>Semaphores</td>
+                        <td>Implementation-level; not a design formalism</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Petri Nets provide formal deadlock analysis—critical for safety-critical prosthetics.</p>
+        </section>
+
+        <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+        <section>
+            <h2>9. Conclusion</h2>
+            <p>
+                This design demonstrates that complex embedded systems require heterogeneous modeling approaches. No single MoC captures all aspects of the Bidirectional Neuroprosthetic Limb Controller:
+            </p>
+            <ul>
+                <li><strong>SDF</strong> ensures deterministic, real-time signal processing with bounded resources</li>
+                <li><strong>Statecharts</strong> manage hierarchical control complexity with clean abstraction</li>
+                <li><strong>Petri Nets</strong> guarantee deadlock-free concurrent resource sharing</li>
+            </ul>
+            <p>
+                The combination provides a rigorous foundation for implementation, with each MoC contributing formal verification capabilities to its domain.
+            </p>
+        </section>
+
+        <div class="section-break">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+        <section>
+            <h2>References</h2>
+            <ol class="reference">
+                <li>Lee, E. A., & Messerschmitt, D. G. (1987). Synchronous data flow. <em>Proceedings of the IEEE</em>, 75(9), 1235-1245.</li>
+                <li>Harel, D. (1987). Statecharts: A visual formalism for complex systems. <em>Science of Computer Programming</em>, 8(3), 231-274.</li>
+                <li>Murata, T. (1989). Petri nets: Properties, analysis and applications. <em>Proceedings of the IEEE</em>, 77(4), 541-580.</li>
+                <li>Bhattacharyya, S. S., Murthy, P. K., & Lee, E. A. (1996). <em>Software Synthesis from Dataflow Graphs</em>. Kluwer Academic Publishers.</li>
+                <li>Jensen, K., & Kristensen, L. M. (2009). <em>Coloured Petri Nets: Modelling and Validation of Concurrent Systems</em>. Springer.</li>
+                <li>Benatti, S., et al. (2025). EMG Acquisition and Processing for Hand Movement Decoding on Embedded Systems. <em>IEEE Transactions</em>.</li>
+                <li>Donati, E., & Valle, G. (2024). Neuromorphic hardware for somatosensory neuroprostheses. <em>Nature Communications</em>.</li>
+            </ol>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 CENG507 Project | Bidirectional Neuroprosthetic Limb Controller</p>
+            <p>Last Updated: December 2025</p>
+        </footer>
+    </div>
+</body>
+</html>
