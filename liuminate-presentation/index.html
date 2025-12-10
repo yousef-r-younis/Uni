@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIUminate - The University-Wide Student Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange: #FF6B35;
+            --yellow: #F7B32B;
+            --blue: #2A9D8F;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --dark-text: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-bg) 100%);
+            color: var(--dark-text);
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 60px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-bg) 100%);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            z-index: 10;
+            animation: slideInActive 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-bg) 100%);
+            box-shadow: inset 0 0 100px rgba(255, 107, 53, 0.1), 0 20px 60px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .slide.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            animation: fadeInOut 0.8s ease-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+            animation: slideOutPrev 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideInActive {
+            0% {
+                opacity: 0;
+                transform: translateX(100%) rotateY(45deg) scale(0.8);
+                filter: blur(10px);
+            }
+            50% {
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes slideOutPrev {
+            0% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0) scale(1);
+                filter: blur(0);
+            }
+            50% {
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-100%) rotateY(-45deg) scale(0.8);
+                filter: blur(10px);
+            }
+        }
+
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--orange);
+            border-radius: 4px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: var(--yellow);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: glow 2s ease-in-out infinite;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            font-weight: 800;
+        }
+
+        .slide.active h1 {
+            animation: glow 2s ease-in-out infinite, rotateIn3D 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both, luminosity 3s ease-in-out 1s infinite, textShadowGlow 3s ease-in-out 1s infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 107, 53, 0.3));
+        }
+
+        @keyframes textShadowGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.2)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+            }
+            50% {
+                filter: drop-shadow(0 0 50px rgba(255, 107, 53, 0.4)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 107, 53, 0.6)); }
+        }
+
+        @keyframes slideInText {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            70% {
+                transform: scale(1.1) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-80px) rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(80px) rotateY(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+            }
+        }
+
+        @keyframes shimmerGlow {
+            0% {
+                box-shadow: 0 0 20px rgba(255, 107, 53, 0.5), inset 0 0 20px rgba(255, 107, 53, 0.2);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 107, 53, 0.8), inset 0 0 30px rgba(255, 107, 53, 0.4);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(255, 107, 53, 0.5), inset 0 0 20px rgba(255, 107, 53, 0.2);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) translateX(0px) scale(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-300px) translateX(var(--tx, 0px)) scale(1);
+            }
+        }
+
+        @keyframes rotateIn3D {
+            0% {
+                opacity: 0;
+                transform: rotateX(90deg) rotateY(-90deg) translateZ(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateX(0) rotateY(0) translateZ(0);
+            }
+        }
+
+        @keyframes expandPulse {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 20px rgba(255, 107, 53, 0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+            }
+        }
+
+        @keyframes videoGlow {
+            0%, 100% {
+                box-shadow: 0 20px 70px rgba(0,0,0,0.3), 0 0 80px rgba(255, 107, 53, 0.25), inset 0 0 30px rgba(255, 107, 53, 0.05);
+            }
+            50% {
+                box-shadow: 0 20px 70px rgba(0,0,0,0.3), 0 0 120px rgba(255, 107, 53, 0.35), inset 0 0 50px rgba(255, 107, 53, 0.08);
+            }
+        }
+
+        @keyframes luminosity {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+                color: var(--orange);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(247, 179, 43, 0.8), 0 0 50px rgba(255, 107, 53, 0.5);
+                color: var(--yellow);
+            }
+        }
+
+        @keyframes glamourIn {
+            0% {
+                opacity: 0;
+                transform: translateY(60px) scaleY(0);
+                filter: blur(20px);
+            }
+            50% {
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scaleY(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes staggerSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px) rotateZ(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateZ(0);
+            }
+        }
+
+        @keyframes bounceInElastic {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotateZ(-180deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateZ(0);
+            }
+        }
+
+        @keyframes colorShift {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+            50% {
+                filter: hue-rotate(30deg);
+            }
+            100% {
+                filter: hue-rotate(0deg);
+            }
+        }
+
+        h2 {
+            color: var(--orange);
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .slide.active h2 {
+            animation: glamourIn 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s both, headingGlow 3s ease-in-out 1.2s infinite;
+            text-shadow: 0 4px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        @keyframes headingGlow {
+            0%, 100% {
+                text-shadow: 0 4px 20px rgba(255, 107, 53, 0.2);
+            }
+            50% {
+                text-shadow: 0 4px 40px rgba(255, 107, 53, 0.4), 0 8px 30px rgba(247, 179, 43, 0.2);
+            }
+        }
+
+        h3 {
+            color: var(--blue);
+            font-size: 2.3em;
+            margin: 10px 0;
+        }
+
+        p {
+            font-size: 1.35em;
+            line-height: 1.8;
+            text-align: center;
+            max-width: 900px;
+            color: var(--dark-text);
+            margin: 10px 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .slide.active p {
+            animation: staggerSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .slide.active p:nth-of-type(2) {
+            animation: staggerSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+        }
+
+        .slide.active p:nth-of-type(3) {
+            animation: staggerSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .slide.active .logo-container {
+            animation: expandPulse 0.8s ease-out 0.5s both;
+        }
+
+        .slide.active .logo-box {
+            animation: bounceInElastic 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55), shimmerGlow 2s ease-in-out 1s infinite;
+        }
+
+        .slide.active .logo-box:nth-child(2) {
+            animation-delay: 0.2s, 1s;
+        }
+
+        .logo-box {
+            width: 120px;
+            height: 120px;
+            background: var(--white);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--orange);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .logo-box img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--orange);
+        }
+
+        .logo-placeholder {
+            color: var(--orange);
+            font-size: 0.9em;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .highlight {
+            color: var(--orange);
+            font-weight: bold;
+        }
+
+        .school-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            gap: 20px;
+            margin: 30px 0;
+            max-width: 800px;
+        }
+
+        .school-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(42, 157, 143, 0.1));
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .school-card:nth-child(1) { animation-delay: 0.1s; transform: translateY(20px); }
+        .school-card:nth-child(2) { animation-delay: 0.2s; transform: translateY(20px); }
+        .school-card:nth-child(3) { animation-delay: 0.3s; transform: translateY(20px); }
+        .school-card:nth-child(4) { animation-delay: 0.4s; transform: translateY(20px); }
+
+        .school-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(247, 179, 43, 0.3);
+        }
+
+        .school-slide-content {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .school-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .school-header h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .speakers-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .speaker-card {
+            flex: 0 1 calc(50% - 15px);
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--orange);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .speaker-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            animation: cardRadiance 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cardRadiance {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(50%, 50%) scale(1.2); opacity: 0; }
+        }
+
+        .slide.active .speaker-card {
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), shimmerGlow 2.5s ease-in-out 0.8s infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 30px rgba(255, 107, 53, 0.15);
+        }
+
+        .slide.active .speaker-card:nth-child(2) {
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.15s both, shimmerGlow 2.5s ease-in-out 1s infinite;
+        }
+
+        .speaker-card:hover {
+            transform: translateY(-15px) scale(1.08);
+            box-shadow: 0 25px 50px rgba(255, 107, 53, 0.4), 0 0 30px rgba(247, 179, 43, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .speaker-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 15px;
+            background: var(--light-bg);
+            border: 4px solid var(--orange);
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 0 40px rgba(255, 107, 53, 0.15);
+            position: relative;
+        }
+
+        .speaker-image::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+            z-index: 1;
+        }
+
+        .speaker-image::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--orange), var(--yellow), var(--blue));
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .slide.active .speaker-image::after {
+            animation: imagePulseGlow 2.5s ease-in-out 0.8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+
+        @keyframes imagePulseGlow {
+            0%, 100% { opacity: 0.4; filter: blur(2px); }
+            50% { opacity: 0.7; filter: blur(8px); }
+        }
+
+        .slide.active .speaker-card:nth-child(1) .speaker-image {
+            animation: slideInLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both, shimmerGlow 2.5s ease-in-out 1s infinite;
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.25), 0 0 60px rgba(255, 107, 53, 0.15), inset 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .slide.active .speaker-card:nth-child(2) .speaker-image {
+            animation: slideInRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both, shimmerGlow 2.5s ease-in-out 1s infinite;
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.25), 0 0 60px rgba(255, 107, 53, 0.15), inset 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .speaker-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .topic-image {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            background: var(--light-bg);
+            border: 3px solid var(--yellow);
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12), 0 0 40px rgba(247, 179, 43, 0.15);
+            position: relative;
+        }
+
+        .topic-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(247, 179, 43, 0.15) 50%, transparent 100%);
+            animation: gradientShift 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .slide.active .topic-image {
+            animation: topicShimmer 2s ease-in-out infinite;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 60px rgba(247, 179, 43, 0.2), inset 0 0 20px rgba(247,179,43,0.05);
+        }
+
+        @keyframes topicShimmer {
+            0%, 100% { box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 60px rgba(247, 179, 43, 0.2), inset 0 0 20px rgba(247,179,43,0.05); }
+            50% { box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 80px rgba(247, 179, 43, 0.3), inset 0 0 30px rgba(247,179,43,0.1); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .topic-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .speaker-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .speaker-name {
+            font-size: 1.8em;
+            color: var(--orange);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .topic-title {
+            font-size: 1.25em;
+            color: var(--blue);
+            font-weight: 600;
+            line-height: 1.3;
+            margin: 8px 0;
+        }
+
+        .topic-hook {
+            font-size: 1.1em;
+            color: var(--dark-text);
+            font-style: italic;
+            line-height: 1.3;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            color: var(--white);
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.8em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3), 0 0 40px rgba(255, 107, 53, 0.1);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: buttonShine 3s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.2), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes buttonShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3), 0 0 40px rgba(255, 107, 53, 0.1); }
+            50% { transform: scale(1.08); box-shadow: 0 10px 40px rgba(255, 107, 53, 0.4), 0 0 70px rgba(255, 107, 53, 0.2); }
+        }
+
+        .slide.active .cta-button {
+            animation: pulse 2s ease-in-out infinite, bounceInElastic 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s both, buttonGlow 2.5s ease-in-out 1s infinite;
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.45), 0 0 80px rgba(255, 107, 53, 0.25), inset 0 0 20px rgba(255,255,255,0.15);
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.15); }
+        }
+
+        .cta-button:hover {
+            transform: scale(1.15);
+            box-shadow: 0 25px 70px rgba(255, 107, 53, 0.6), 0 0 100px rgba(255, 107, 53, 0.4);
+            filter: brightness(1.3);
+        }
+
+        .cta-button:active {
+            transform: scale(1.03);
+        }
+
+        .video-container {
+            width: 90%;
+            max-width: 800px;
+            height: 350px;
+            background: var(--white);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--orange);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2), 0 0 60px rgba(255, 107, 53, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 53, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .slide.active .video-container {
+            animation: expandPulse 0.8s ease-out 0.3s both, videoGlow 3s ease-in-out 0.5s infinite;
+            box-shadow: 0 20px 70px rgba(0,0,0,0.3), 0 0 80px rgba(255, 107, 53, 0.25), inset 0 0 30px rgba(255, 107, 53, 0.05);
+            box-shadow: 0 0 40px rgba(247, 179, 43, 0.6), 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(247, 179, 43, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .video-placeholder {
+            color: var(--orange);
+            font-size: 1.9em;
+            text-align: center;
+        }
+
+        .speaker-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+            max-width: 800px;
+        }
+
+        .speaker-item {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--orange);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: left;
+            font-size: 1.15em;
+        }
+
+        .prize-box {
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            padding: 30px;
+            border-radius: 15px;
+            margin: 15px auto;
+            max-width: 500px;
+            color: var(--white);
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.35), 0 0 70px rgba(255, 107, 53, 0.15);
+            animation: bounce 1s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.3);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .prize-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            animation: shine 2s infinite;
+            z-index: 2;
+        }
+
+        .prize-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .slide.active .prize-box {
+            animation: bounce 1s ease-in-out infinite, prizeGlow 2.5s ease-in-out 0.5s infinite;
+            box-shadow: 0 20px 70px rgba(255, 107, 53, 0.45), 0 0 100px rgba(255, 107, 53, 0.2);
+        }
+
+        @keyframes prizeGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        @keyframes shine {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); box-shadow: 0 15px 50px rgba(255, 107, 53, 0.35), 0 0 70px rgba(255, 107, 53, 0.15); }
+            50% { transform: translateY(-15px); box-shadow: 0 25px 70px rgba(255, 107, 53, 0.5), 0 0 100px rgba(255, 107, 53, 0.25); }
+        }
+
+        ul {
+            text-align: left;
+            font-size: 1.25em;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 60px rgba(255, 107, 53, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.15);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, var(--orange), #ff8c52);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            position: relative;
+            overflow: hidden;
+            font-weight: 700;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: buttonShine 3s infinite;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, var(--yellow), #ffc966);
+            color: var(--dark-text);
+            transform: scale(1.15);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4), 0 0 40px rgba(255, 107, 53, 0.2);
+            filter: brightness(1.2);
+        }
+
+        .control-btn:active {
+            transform: scale(1.05);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,249,250,0.98));
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.35em;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 60px rgba(255, 107, 53, 0.1);
+            border: 2px solid var(--orange);
+            font-weight: 700;
+            color: var(--orange);
+            backdrop-filter: blur(10px);
+            animation: counterFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes counterFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pharmacy-card {
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .voting-slide {
+            background: linear-gradient(135deg, var(--orange), var(--yellow)) !important;
+        }
+
+        .voting-content {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 700px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        
+        <!-- SLIDE 1: TITLE -->
+        <div class="slide active" data-slide="1">
+            <h1 style="font-size: 5em;">LIUminate</h1>
+            <h3 style="color: var(--orange); font-size: 2em;">The University-Wide Student Showcase</h3>
+            <div class="logo-container">
+                <div class="logo-box">
+                    <img src="images/logos/beehive-logo.jpg" alt="BEEhive Lab" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>BEEhive Lab Logo</div>'">
+                </div>
+                <div class="logo-box">
+                    <img src="images/logos/engineering-club-logo.jpg" alt="LIU Engineering Club" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Engineering Club Logo</div>'">
+                </div>
+            </div>
+            <p style="margin-top: 40px;">An Initiative of the School of Engineering</p>
+            <p>and the BEEHive Lab</p>
+        </div>
+
+        <!-- SLIDE 2: WELCOME -->
+        <div class="slide" data-slide="2">
+            <h2>Welcome!</h2>
+            <p style="font-size: 1.6em; margin: 40px 0;">My name is <span class="highlight">Yousef Younis</span></p>
+            <p style="font-size: 1.4em;">President of the LIU Engineering Club</p>
+            <p style="margin-top: 50px;">Today is special—what you're about to see isn't just presentations.<br><br>
+            It's what happens when we bring <span class="highlight">all our schools together</span><br>
+            to talk about the future.</p>
+        </div>
+
+        <!-- SLIDE 3: WHAT IS LIUMINATE -->
+        <div class="slide" data-slide="3">
+            <h2>What is LIUminate?</h2>
+            <p style="margin: 30px 0;">
+                An initiative by the <span class="highlight">Engineering Club</span> and <span class="highlight">BEEhive Lab</span>
+            </p>
+            <p style="margin: 30px 0;">
+                The BEEhive Lab breaks down walls between departments,<br>
+                bringing different minds together to solve big problems.
+            </p>
+            <p style="font-size: 1.5em; color: var(--orange); margin-top: 40px;">
+                Today: Students from all five schools<br>sharing their vision of tomorrow
+            </p>
+        </div>
+
+        <!-- SLIDE 4: THE CHALLENGE -->
+        <div class="slide" data-slide="4">
+            <h1 style="font-size: 3.5em;">The Challenge</h1>
+            <div style="background: linear-gradient(135deg, var(--orange), var(--yellow)); padding: 50px; border-radius: 20px; margin: 40px 0; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <h2 style="color: var(--white); font-size: 2.8em; margin: 0; background: none; -webkit-text-fill-color: white; animation: glamourIn 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s both !important;">Can You Explain<br>the Future in 5 Minutes?</h2>
+            </div>
+            <p style="font-size: 1.4em; margin-top: 30px;">
+                AI • Biotech • Sustainable Business<br>
+                Future Education • And Beyond
+            </p>
+        </div>
+
+        <!-- SLIDE 5: THE RESPONSE -->
+        <div class="slide" data-slide="5">
+            <h2>The Response Was Amazing</h2>
+            <p style="font-size: 1.5em; margin: 40px 0;">
+                Each school selected their <span class="highlight">top two speakers</span>
+            </p>
+            <p style="font-size: 1.8em; color: var(--orange); margin: 30px 0;">
+                Now we have <span class="highlight" style="font-size: 1.3em;">10 finalists</span><br>
+                ready to share their ideas with you
+            </p>
+        </div>
+
+        <!-- SLIDE 7: VIDEO INTRO -->
+        <div class="slide" data-slide="7">
+            <h2>But First...</h2>
+            <p style="font-size: 1.6em; margin: 40px 0;">
+                What does the <span class="highlight">LIU community</span> think?
+            </p>
+            <p style="font-size: 1.4em; margin: 30px 0;">
+                We went around campus asking students<br>
+                about these topics of the future
+            </p>
+            <div class="cta-button">Let's Watch</div>
+        </div>
+
+        <!-- SLIDE 8: VIDEO -->
+        <div class="slide" data-slide="8">
+            <div class="video-container">
+                <video controls style="width: 100%; height: 100%; border-radius: 20px;">
+                    <source src="media/campus-video.mp4" type="video/mp4">
+                    <div class="video-placeholder">
+                        [Campus Interview Video Goes Here]<br>
+                        <span style="font-size: 0.8em;">(30-60 seconds)</span>
+                    </div>
+                </video>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: HOW TODAY WORKS -->
+        <div class="slide" data-slide="9">
+            <h2>How Today Works</h2>
+            <ul>
+                <li>Each speaker gets <span class="highlight">5 minutes</span></li>
+                <li>Topics flow naturally, showing different sides of the future</li>
+                <li>10 amazing presentations across all schools</li>
+                <li>After all presentations: <span class="highlight">You vote!</span></li>
+            </ul>
+        </div>
+
+        <!-- SLIDE 10: VOTING INFO -->
+        <div class="slide" data-slide="10">
+            <h2>And There's More...</h2>
+            <div class="prize-box">
+                🏆 Prizes for Winners! 🏆
+            </div>
+            <p style="font-size: 1.4em; margin: 30px 0;">
+                Pay attention and think about who really<br>
+                <span class="highlight">illuminated the future</span> for you
+            </p>
+        </div>
+
+        <!-- SLIDE 11: LET'S BEGIN -->
+        <div class="slide" data-slide="11">
+            <h1 style="font-size: 4.5em;">Let's Get to Know Our Speakers</h1>
+            <div class="cta-button" style="font-size: 2.5em;">
+                Let's LIUminate! 💡
+            </div>
+        </div>
+
+        <!-- SCHOOL SLIDES WITH 2 SPEAKERS EACH -->
+        
+        <!-- SLIDE 12: ARTS & SCIENCE -->
+        <div class="slide" data-slide="12">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Arts & Science</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Julie Jabr -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/julie-jabr.jpg" alt="Julie Jabr" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Julie Jabr</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/julie-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Maya Halabi -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/maya-halabi.jpg" alt="Maya Halabi" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Maya Halabi</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/maya-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: BUSINESS -->
+        <div class="slide" data-slide="13">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Business</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Anastasia Aziz Perez -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/anastasia-perez.jpg" alt="Anastasia Aziz Perez" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Anastasia Aziz Perez</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/anastasia-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Fatima Akl -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/fatima-akl.jpg" alt="Fatima Akl" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Fatima Akl</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/fatima-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: EDUCATION -->
+        <div class="slide" data-slide="14">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Education</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Mustafa Abou Yassin -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/mustafa-yassin.jpg" alt="Mustafa Abou Yassin" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Mustafa Abou Yassin</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/mustafa-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Razan Dabaja -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/razan-dabaja.jpg" alt="Razan Dabaja" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Razan Dabaja</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/razan-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: ENGINEERING -->
+        <div class="slide" data-slide="15">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Engineering</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Asmaa Saada -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/asmaa-saada.jpg" alt="Asmaa Saada" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Asmaa Saada</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/asmaa-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Mohammad Al Sayed -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/mohammad-alsayed.jpg" alt="Mohammad Al Sayed" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Mohammad Al Sayed</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/mohammad-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 16: PHARMACY -->
+        <div class="slide" data-slide="16">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Pharmacy</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Mariam Abou Hamdan -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/mariam-hamdan.jpg" alt="Mariam Abou Hamdan" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Mariam Abou Hamdan</div>
+                            <div class="topic-title">[Pharmacy Topic 1]</div>
+                            <div class="topic-hook">[Topic hook to be added]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/mariam-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Rayan El Majzoub -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/rayan-majzoub.jpg" alt="Rayan El Majzoub" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Rayan El Majzoub</div>
+                            <div class="topic-title">[Pharmacy Topic 2]</div>
+                            <div class="topic-hook">[Topic hook to be added]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/rayan-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL SLIDE: THANK YOU -->
+        <div class="slide" data-slide="17">
+            <h1>Thank You!</h1>
+            <h2 style="color: var(--orange); margin: 40px 0;">Get ready to witness the future</h2>
+            <div class="logo-container">
+                <div class="logo-box">
+                    <img src="images/logos/beehive-logo.jpg" alt="BEEhive Lab" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>BEEhive Lab</div>'">
+                </div>
+                <div class="logo-box">
+                    <img src="images/logos/engineering-club-logo.jpg" alt="LIU Engineering Club" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Engineering Club</div>'">
+                </div>
+            </div>
+            <p style="font-size: 1.5em; margin-top: 40px; color: var(--orange);">#LIUminate</p>
+        </div>
+
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="controls">
+        <button class="control-btn" onclick="previousSlide()">← Previous</button>
+        <button class="control-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">19</span>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 17;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index + 1 === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index + 1 < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+            
+            document.getElementById('current-slide').textContent = currentSlide;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide--;
+            if (currentSlide < 1) currentSlide = 1;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        document.getElementById('total-slides').textContent = totalSlides;
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
