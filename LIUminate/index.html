@@ -12,9 +12,10 @@
         }
 
         :root {
-            --orange: #FF6B35;
-            --yellow: #F7B32B;
-            --blue: #2A9D8F;
+            --orange: #f7941d;
+            --yellow: #f7941d;
+            --blue: #0d4c93;
+            --blue-light: #1b5cb8;
             --light-bg: #f8f9fa;
             --white: #ffffff;
             --dark-text: #2d2d2d;
@@ -34,8 +35,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(13, 76, 147, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(247, 148, 29, 0.03) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -82,7 +83,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            background: radial-gradient(ellipse at 50% 0%, rgba(13, 76, 147, 0.08) 0%, transparent 70%);
             pointer-events: none;
             animation: fadeInOut 0.8s ease-out;
         }
@@ -147,7 +148,7 @@
         }
 
         h1 {
-            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            background: linear-gradient(135deg, var(--orange), #fbb81c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -385,7 +386,7 @@
         }
 
         h2 {
-            color: var(--orange);
+            color: var(--blue);
             font-size: 3em;
             margin-bottom: 20px;
             text-align: center;
@@ -409,7 +410,7 @@
         }
 
         h3 {
-            color: var(--blue);
+            color: var(--orange);
             font-size: 2.3em;
             margin: 10px 0;
         }
@@ -465,8 +466,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 5px solid var(--orange);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 80px rgba(255, 107, 53, 0.15);
+            border: 5px solid var(--blue);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 80px rgba(13, 76, 147, 0.15);
             transition: all 0.3s ease;
             animation: float 3s ease-in-out infinite;
             overflow: hidden;
@@ -477,7 +478,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 107, 53, 0.1), transparent);
+            background: radial-gradient(circle at 30% 30%, rgba(247, 148, 29, 0.1), transparent);
             pointer-events: none;
             z-index: 1;
         }
@@ -523,7 +524,7 @@
         }
 
         .school-card {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(42, 157, 143, 0.1));
+            background: linear-gradient(135deg, rgba(13, 76, 147, 0.08), rgba(13, 76, 147, 0.04));
             padding: 30px;
             border-radius: 15px;
             border: 2px solid var(--blue);
@@ -600,7 +601,7 @@
             left: -100%;
             width: 300%;
             height: 300%;
-            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(247, 148, 29, 0.1) 0%, transparent 70%);
             animation: cardRadiance 3s ease-in-out infinite;
             pointer-events: none;
         }
@@ -654,7 +655,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 15px;
-            background: linear-gradient(135deg, var(--orange), var(--yellow), var(--blue));
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
             opacity: 0;
             z-index: -1;
         }
@@ -707,7 +708,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(247, 179, 43, 0.15) 50%, transparent 100%);
+            background: linear-gradient(135deg, transparent 0%, rgba(247, 148, 29, 0.15) 50%, transparent 100%);
             animation: gradientShift 3s ease-in-out infinite;
             pointer-events: none;
         }
@@ -761,7 +762,7 @@
         }
 
         .cta-button {
-            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            background: linear-gradient(135deg, var(--orange), #fbb81c);
             color: var(--white);
             padding: 20px 40px;
             border-radius: 50px;
@@ -849,7 +850,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse at center, rgba(255, 107, 53, 0.05) 0%, transparent 70%);
+            background: radial-gradient(ellipse at center, rgba(13, 76, 147, 0.05) 0%, transparent 70%);
             pointer-events: none;
             z-index: 2;
         }
@@ -864,7 +865,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(247, 179, 43, 0.1), transparent);
+            background: radial-gradient(circle at 50% 50%, rgba(247, 148, 29, 0.1), transparent);
             pointer-events: none;
         }
 
@@ -886,14 +887,14 @@
             background: var(--white);
             padding: 15px;
             border-radius: 10px;
-            border-left: 4px solid var(--orange);
+            border-left: 4px solid var(--blue);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: left;
             font-size: 1.15em;
         }
 
         .prize-box {
-            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            background: linear-gradient(135deg, #fbb81c, var(--orange));
             padding: 30px;
             border-radius: 15px;
             margin: 15px auto;
@@ -926,7 +927,7 @@
             position: absolute;
             inset: 0;
             border-radius: 15px;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent);
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent);
             pointer-events: none;
             z-index: 1;
         }
@@ -985,7 +986,7 @@
         }
 
         .control-btn {
-            background: linear-gradient(135deg, var(--orange), #ff8c52);
+            background: linear-gradient(135deg, var(--orange), #fbb81c);
             color: var(--white);
             border: none;
             padding: 12px 20px;
@@ -1011,10 +1012,10 @@
         }
 
         .control-btn:hover {
-            background: linear-gradient(135deg, var(--yellow), #ffc966);
+            background: linear-gradient(135deg, #fbb81c, var(--orange));
             color: var(--dark-text);
             transform: scale(1.15);
-            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4), 0 0 40px rgba(255, 107, 53, 0.2);
+            box-shadow: 0 12px 35px rgba(247, 148, 29, 0.4), 0 0 40px rgba(247, 148, 29, 0.2);
             filter: brightness(1.2);
         }
 
@@ -1077,22 +1078,11 @@
                     <img src="images/logos/engineering-club-logo.jpg" alt="LIU Engineering Club" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Engineering Club Logo</div>'">
                 </div>
             </div>
-            <p style="margin-top: 40px;">An Initiative of the School of Engineering</p>
-            <p>and the BEEHive Lab</p>
+            <p style="margin-top: 30px;">An Initiative of the School of Engineering and the BEEhive Lab</p>
         </div>
 
-        <!-- SLIDE 2: WELCOME -->
+        <!-- SLIDE 2: WHAT IS LIUMINATE -->
         <div class="slide" data-slide="2">
-            <h2>Welcome!</h2>
-            <p style="font-size: 1.6em; margin: 40px 0;">My name is <span class="highlight">Yousef Younis</span></p>
-            <p style="font-size: 1.4em;">President of the LIU Engineering Club</p>
-            <p style="margin-top: 50px;">Today is special—what you're about to see isn't just presentations.<br><br>
-            It's what happens when we bring <span class="highlight">all our schools together</span><br>
-            to talk about the future.</p>
-        </div>
-
-        <!-- SLIDE 3: WHAT IS LIUMINATE -->
-        <div class="slide" data-slide="3">
             <h2>What is LIUminate?</h2>
             <p style="margin: 30px 0;">
                 An initiative by the <span class="highlight">Engineering Club</span> and <span class="highlight">BEEhive Lab</span>
@@ -1103,6 +1093,20 @@
             </p>
             <p style="font-size: 1.5em; color: var(--orange); margin-top: 40px;">
                 Today: Students from all five schools<br>sharing their vision of tomorrow
+            </p>
+        </div>
+
+        <!-- SLIDE 3: BEEHIVE LAB MISSION -->
+        <div class="slide" data-slide="3">
+            <h2>The BEEhive Lab Mission</h2>
+            <ul style="text-align: left; max-width: 900px;">
+                <li><span class="highlight">UNITE</span> engineering disciplines—breaking down departmental silos to solve complex problems</li>
+                <li><span class="highlight">SERVE</span> as a hub for cross-departmental research projects and major grant proposals</li>
+                <li><span class="highlight">ENHANCE</span> the School of Engineering's reputation as a leader in innovation and collaboration</li>
+                <li><span class="highlight">CREATE</span> a scalable model for future university-wide interdisciplinary initiatives</li>
+            </ul>
+            <p style="font-size: 1.3em; margin-top: 50px; color: var(--blue);">
+                Low overhead. High impact. <span style="color: var(--orange);">Collaborative innovation.</span>
             </p>
         </div>
 
@@ -1130,8 +1134,8 @@
             </p>
         </div>
 
-        <!-- SLIDE 7: VIDEO INTRO -->
-        <div class="slide" data-slide="7">
+        <!-- SLIDE 6: VIDEO INTRO -->
+        <div class="slide" data-slide="6">
             <h2>But First...</h2>
             <p style="font-size: 1.6em; margin: 40px 0;">
                 What does the <span class="highlight">LIU community</span> think?
@@ -1143,8 +1147,8 @@
             <div class="cta-button">Let's Watch</div>
         </div>
 
-        <!-- SLIDE 8: VIDEO -->
-        <div class="slide" data-slide="8">
+        <!-- SLIDE 7: VIDEO -->
+        <div class="slide" data-slide="7">
             <div class="video-container">
                 <video controls style="width: 100%; height: 100%; border-radius: 20px;">
                     <source src="media/campus-video.mp4" type="video/mp4">
@@ -1156,8 +1160,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 9: HOW TODAY WORKS -->
-        <div class="slide" data-slide="9">
+        <!-- SLIDE 8: HOW TODAY WORKS -->
+        <div class="slide" data-slide="8">
             <h2>How Today Works</h2>
             <ul>
                 <li>Each speaker gets <span class="highlight">5 minutes</span></li>
@@ -1167,20 +1171,27 @@
             </ul>
         </div>
 
-        <!-- SLIDE 10: VOTING INFO -->
-        <div class="slide" data-slide="10">
+        <!-- SLIDE 9: CROSS-SCHOOL COLLABORATION -->
+        <!-- SLIDE 9: VOTING & PRIZES -->
+        <div class="slide" data-slide="9">
             <h2>And There's More...</h2>
             <div class="prize-box">
-                🏆 Prizes for Winners! 🏆
+                🏆 Prizes for the Winner! 🏆
             </div>
             <p style="font-size: 1.4em; margin: 30px 0;">
                 Pay attention and think about who really<br>
                 <span class="highlight">illuminated the future</span> for you
             </p>
+            <p style="font-size: 1.2em; margin-top: 40px; color: var(--blue);">
+                After all presentations, <span style="color: var(--orange);">you'll vote</span> for your favorite speaker
+            </p>
+            <p style="font-size: 1.1em; margin-top: 20px;">
+                Prize Details: TBD
+            </p>
         </div>
 
-        <!-- SLIDE 11: LET'S BEGIN -->
-        <div class="slide" data-slide="11">
+        <!-- SLIDE 10: LET'S BEGIN -->
+        <div class="slide" data-slide="10">
             <h1 style="font-size: 4.5em;">Let's Get to Know Our Speakers</h1>
             <div class="cta-button" style="font-size: 2.5em;">
                 Let's LIUminate! 💡
@@ -1188,6 +1199,45 @@
         </div>
 
         <!-- SCHOOL SLIDES WITH 2 SPEAKERS EACH -->
+
+        <!-- SLIDE 11: ENGINEERING -->
+        <div class="slide" data-slide="11">
+            <div class="school-slide-content">
+                <div class="school-header">
+                    <h2>School of Engineering</h2>
+                </div>
+                <div class="speakers-row">
+                    <!-- Asmaa Saada -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/asmaa-saada.jpg" alt="Asmaa Saada" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Asmaa Saada</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/asmaa-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                    <!-- Mohammad Al Sayed -->
+                    <div class="speaker-card">
+                        <div class="speaker-image">
+                            <img src="images/speakers/mohammad-alsayed.jpg" alt="Mohammad Al Sayed" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Mohammad Al Sayed</div>
+                            <div class="topic-title">[Topic TBD]</div>
+                            <div class="topic-hook">[Topic hook]</div>
+                        </div>
+                        <div class="topic-image">
+                            <img src="images/topics/mohammad-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- SLIDE 12: ARTS & SCIENCE -->
         <div class="slide" data-slide="12">
@@ -1306,47 +1356,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 15: ENGINEERING -->
+        <!-- SLIDE 15: PHARMACY -->
         <div class="slide" data-slide="15">
-            <div class="school-slide-content">
-                <div class="school-header">
-                    <h2>School of Engineering</h2>
-                </div>
-                <div class="speakers-row">
-                    <!-- Asmaa Saada -->
-                    <div class="speaker-card">
-                        <div class="speaker-image">
-                            <img src="images/speakers/asmaa-saada.jpg" alt="Asmaa Saada" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
-                        </div>
-                        <div class="speaker-info">
-                            <div class="speaker-name">Asmaa Saada</div>
-                            <div class="topic-title">[Topic TBD]</div>
-                            <div class="topic-hook">[Topic hook]</div>
-                        </div>
-                        <div class="topic-image">
-                            <img src="images/topics/asmaa-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
-                        </div>
-                    </div>
-                    <!-- Mohammad Al Sayed -->
-                    <div class="speaker-card">
-                        <div class="speaker-image">
-                            <img src="images/speakers/mohammad-alsayed.jpg" alt="Mohammad Al Sayed" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--orange)\'>Photo Here</div>'">
-                        </div>
-                        <div class="speaker-info">
-                            <div class="speaker-name">Mohammad Al Sayed</div>
-                            <div class="topic-title">[Topic TBD]</div>
-                            <div class="topic-hook">[Topic hook]</div>
-                        </div>
-                        <div class="topic-image">
-                            <img src="images/topics/mohammad-topic.jpg" alt="Topic Visual" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue)\'>Topic Visual</div>'">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 16: PHARMACY -->
-        <div class="slide" data-slide="16">
             <div class="school-slide-content">
                 <div class="school-header">
                     <h2>School of Pharmacy</h2>
@@ -1384,10 +1395,10 @@
             </div>
         </div>
 
-        <!-- FINAL SLIDE: THANK YOU -->
-        <div class="slide" data-slide="17">
+        <!-- FINAL SLIDE: THANK YOU & SOCIAL MEDIA -->
+        <div class="slide" data-slide="16">
             <h1>Thank You!</h1>
-            <h2 style="color: var(--orange); margin: 40px 0;">Get ready to witness the future</h2>
+            <h2 style="color: var(--orange); margin: 20px 0;">Get ready to witness the future</h2>
             <div class="logo-container">
                 <div class="logo-box">
                     <img src="images/logos/beehive-logo.jpg" alt="BEEhive Lab" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>BEEhive Lab</div>'">
@@ -1396,7 +1407,9 @@
                     <img src="images/logos/engineering-club-logo.jpg" alt="LIU Engineering Club" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Engineering Club</div>'">
                 </div>
             </div>
-            <p style="font-size: 1.5em; margin-top: 40px; color: var(--orange);">#LIUminate</p>
+            <p><span style="font-size: 1.3em;  color: var(--orange); font-weight: bold;">#LIUminate</span><br>
+            <span style="font-size: 1.1em;  color: var(--blue);">Share your experience on social media </span><br>
+            <span style="font-size: 0.9em;">Follow us and tag your posts</span></p>
         </div>
 
     </div>
@@ -1409,12 +1422,12 @@
 
     <!-- Slide Counter -->
     <div class="slide-counter">
-        <span id="current-slide">1</span> / <span id="total-slides">19</span>
+        <span id="current-slide">1</span> / <span id="total-slides">16</span>
     </div>
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 17;
+        const totalSlides = 16;
 
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');
