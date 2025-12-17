@@ -580,9 +580,8 @@
                     <h3>Verified Properties</h3>
                     <p>✓ Deadlock-free<br>✓ Bounded buffers (800 samples max)<br>✓ Latency &lt;50ms guaranteed</p>
                 </div>
-                <div class="image-placeholder">
-                    <div>📸 IMAGE PLACEHOLDER</div>
-                    <div class="prompt">AI Image Prompt: "Synchronous dataflow graph diagram showing connected nodes (actors) with arrows and numbers indicating token rates, clean technical diagram, nodes as circles, arrows with rate annotations like '64', '32', '400', blue and white scheme"</div>
+                <div class="image-placeholder" style="overflow-y: auto; overflow-x: auto;">
+                    <iframe src="sdf.html" style="width: 100%; height: 100%; border: none; border-radius: 12px;"></iframe>
                 </div>
             </div>
         </div>
@@ -611,9 +610,8 @@
                     </div>
                     <p><strong>Key Features:</strong> Deep history, entry/exit actions, guard conditions</p>
                 </div>
-                <div class="image-placeholder">
-                    <div>📸 IMAGE PLACEHOLDER</div>
-                    <div class="prompt">AI Image Prompt: "Hierarchical statechart diagram showing nested states with rounded rectangles, two parallel regions separated by dashed line, arrows showing transitions, history indicator (H*), clean UML style, blue and white colors"</div>
+                <div class="image-placeholder" style="overflow-y: auto; overflow-x: auto;">
+                    <iframe src="statechart.html" style="width: 100%; height: 100%; border: none; border-radius: 12px;"></iframe>
                 </div>
             </div>
         </div>
@@ -641,9 +639,8 @@
                     </ul>
                     <p><strong>Formally Verified:</strong> ✓ Bounded ✓ Live ✓ Deadlock-free ✓ Mutual exclusion</p>
                 </div>
-                <div class="image-placeholder">
-                    <div>📸 IMAGE PLACEHOLDER</div>
-                    <div class="prompt">AI Image Prompt: "Petri net diagram with circles (places) and rectangles (transitions) connected by arrows, black tokens (dots) in some places, showing resource flow, clean technical diagram, places labeled CPU, Bus, Motor, blue color scheme"</div>
+                <div class="image-placeholder" style="overflow-y: auto; overflow-x: auto;">
+                    <iframe src="petri.html" style="width: 100%; height: 100%; border: none; border-radius: 12px;"></iframe>
                 </div>
             </div>
         </div>
@@ -1127,29 +1124,43 @@
         <div class="slide single-column">
             <div class="slide-content">
                 <div class="text-content" style="text-align: center;">
-                    <h1 style="font-size: 56px; margin-bottom: 40px;">Questions for You</h1>
+                    <h1 style="font-size: 56px; margin-bottom: 40px;">Quick Quiz</h1>
                     
-                    <div class="highlight-box" style="max-width: 900px; margin: 40px auto; text-align: left;">
-                        <h3 style="text-align: center; margin-bottom: 30px;">Engage with our key concepts:</h3>
-                        
-                        <div class="card" style="background: #f0f7ff; border: 2px solid #0066cc; margin-bottom: 20px;">
-                            <h4>1️⃣ Why might heterogeneous models of computation be necessary for your own embedded systems?</h4>
-                            <p style="font-size: 16px; margin-top: 10px;">Think about systems with periodic tasks, event-driven control, and resource sharing...</p>
+                    <div class="highlight-box" style="max-width: 900px; margin: 20px auto; text-align: left;">
+                        <h3 style="text-align: center; margin-bottom: 25px; color: #0066cc; font-weight: 600;">Question 1️⃣</h3>
+                        <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">What is the recognition accuracy of our neuroprosthetic system?</p>
+                        <div style="margin-left: 20px;">
+                            <p style="margin: 8px 0;"><strong>A)</strong> 87%</p>
+                            <p style="margin: 8px 0;"><strong>B)</strong> <span style="color: #00cc88; font-weight: 600;">96.3%</span></p>
+                            <p style="margin: 8px 0;"><strong>C)</strong> 92%</p>
+                            <p style="margin: 8px 0;"><strong>D)</strong> 80%</p>
                         </div>
-                        
-                        <div class="card" style="background: #f0f7ff; border: 2px solid #0066cc; margin-bottom: 20px;">
-                            <h4>2️⃣ What challenges might arise when integrating multiple MoCs?</h4>
-                            <p style="font-size: 16px; margin-top: 10px;">Consider interface design, semantic mismatches, and verification complexity...</p>
-                        </div>
-                        
-                        <div class="card" style="background: #f0f7ff; border: 2px solid #0066cc; margin-bottom: 20px;">
-                            <h4>3️⃣ How would you extend this approach to a real-time safety-critical system?</h4>
-                            <p style="font-size: 16px; margin-top: 10px;">What formal guarantees would be essential? How would you validate them?</p>
-                        </div>
+                    </div>
 
-                        <div class="success-box" style="text-align: center; margin-top: 30px;">
-                            <p style="font-size: 18px; margin: 0;"><strong>Let's discuss! 💡</strong></p>
+                    <div class="highlight-box" style="max-width: 900px; margin: 20px auto; text-align: left;">
+                        <h3 style="text-align: center; margin-bottom: 25px; color: #0066cc; font-weight: 600;">Question 2️⃣</h3>
+                        <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Which MoC is best for managing concurrent processes and preventing deadlocks?</p>
+                        <div style="margin-left: 20px;">
+                            <p style="margin: 8px 0;"><strong>A)</strong> Synchronous Dataflow (SDF)</p>
+                            <p style="margin: 8px 0;"><strong>B)</strong> Statecharts</p>
+                            <p style="margin: 8px 0;"><strong>C)</strong> <span style="color: #00cc88; font-weight: 600;">Petri Nets</span></p>
+                            <p style="margin: 8px 0;"><strong>D)</strong> All three equally</p>
                         </div>
+                    </div>
+
+                    <div class="highlight-box" style="max-width: 900px; margin: 20px auto; text-align: left;">
+                        <h3 style="text-align: center; margin-bottom: 25px; color: #0066cc; font-weight: 600;">Question 3️⃣ (Thinking)</h3>
+                        <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Why did we use SDF for signal processing AND Statecharts for control logic INSTEAD of using just one model?</p>
+                        <div style="margin-left: 20px;">
+                            <p style="margin: 8px 0;"><strong>A)</strong> To make the system more complicated</p>
+                            <p style="margin: 8px 0;"><strong>B)</strong> <span style="color: #00cc88; font-weight: 600;">Different problems need different abstractions - SDF guarantees periodic processing, Statecharts handle hierarchical event-driven logic</span></p>
+                            <p style="margin: 8px 0;"><strong>C)</strong> SDF and Statecharts are the same thing</p>
+                            <p style="margin: 8px 0;"><strong>D)</strong> Marketing purposes only</p>
+                        </div>
+                    </div>
+
+                    <div class="success-box" style="text-align: center; margin-top: 20px;">
+                        <p style="font-size: 16px; margin: 0;"><strong>Key Insight:</strong> Heterogeneous models solve different aspects of complex systems!</p>
                     </div>
                 </div>
             </div>
