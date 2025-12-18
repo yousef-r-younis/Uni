@@ -9,44 +9,74 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .print-button:hover {
+            background-color: #45a049;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
         td {
             border: 2px solid #333;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             vertical-align: middle;
             width: 20%;
         }
         .emoji {
-            font-size: 24px;
+            font-size: 20px;
             margin-bottom: 5px;
         }
         .title {
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
         .token {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            margin: 15px 0;
+            margin: 12px 0;
         }
         .instruction {
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .page-break {
+            page-break-after: always;
         }
         @media print {
+            .print-button {
+                display: none;
+            }
             @page {
                 margin: 0.5cm;
+            }
+            body {
+                margin: 0;
+            }
+            table {
+                margin-bottom: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <table id="votingTable"></table>
+    <button class="print-button" onclick="window.print()">🖨️ Print All Pages</button>
+    
+    <div id="votingPages"></div>
 
     <script>
         const tokens = [
@@ -90,23 +120,41 @@
             "WT5PGW", "846RYU", "XSA6WE", "RFPZBW"
         ];
 
-        const table = document.getElementById('votingTable');
+        const pagesDiv = document.getElementById('votingPages');
+        const tokensPerPage = 30; // 6 rows × 5 columns = 30 tokens per page
 
-        // Process tokens in groups of 5
-        for (let i = 0; i < tokens.length; i += 5) {
-            const row = table.insertRow();
-            const rowTokens = tokens.slice(i, i + 5);
+        // Process tokens in pages of 30
+        for (let pageStart = 0; pageStart < tokens.length; pageStart += tokensPerPage) {
+            const pageTokens = tokens.slice(pageStart, pageStart + tokensPerPage);
+            
+            // Create a page div
+            const pageDiv = document.createElement('div');
+            if (pageStart + tokensPerPage < tokens.length) {
+                pageDiv.className = 'page-break';
+            }
+            
+            // Create table for this page
+            const table = document.createElement('table');
+            
+            // Process tokens in groups of 5 for this page
+            for (let i = 0; i < pageTokens.length; i += 5) {
+                const row = table.insertRow();
+                const rowTokens = pageTokens.slice(i, i + 5);
 
-            rowTokens.forEach(token => {
-                const cell = row.insertCell();
-                cell.innerHTML = `
-                    <div class="emoji">🎫 LIUminate</div>
-                    <div class="title">Voting Token</div>
-                    <div class="token">${token}</div>
-                    <div class="instruction">Keep this paper!</div>
-                    <div class="instruction">You'll need it to vote</div>
-                `;
-            });
+                rowTokens.forEach(token => {
+                    const cell = row.insertCell();
+                    cell.innerHTML = `
+                        <div class="emoji">🎫 LIUminate</div>
+                        <div class="title">Voting Token</div>
+                        <div class="token">${token}</div>
+                        <div class="instruction">Keep this paper!</div>
+                        <div class="instruction">You'll need it to vote</div>
+                    `;
+                });
+            }
+            
+            pageDiv.appendChild(table);
+            pagesDiv.appendChild(pageDiv);
         }
     </script>
 </body>
