@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIUminate Voting Slips</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        td {
+            border: 2px solid #333;
+            padding: 20px;
+            text-align: center;
+            vertical-align: middle;
+            width: 20%;
+        }
+        .emoji {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .token {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .instruction {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        @media print {
+            @page {
+                margin: 0.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <table id="votingTable"></table>
+
+    <script>
+        const tokens = [
+            "98DGH6", "CCNNGV", "V67Q2D", "2DD3K5", "GVBU3D", "P57ML7", "GUG69Z", "YHDL3P", 
+            "PWPV2S", "HZ65WV", "EEYL2G", "LXWLHH", "NYVAVW", "UGUGMU", "ZGN2WP", "6E85KT", 
+            "TWR2VQ", "J4T3YK", "BPVLHL", "X5VMMS", "NH6AYA", "JFHYNX", "YS5KDM", "675RA9", 
+            "SZSR74", "RLGBD7", "YV9YZY", "VYU2F9", "5HAPDC", "4W4PRP", "WBFSMY", "335XLZ", 
+            "4SWBDS", "9XTA98", "6FDUA5", "2FD2Z3", "9WRCB8", "3YKUAG", "EY269H", "SWEQ7V", 
+            "QLP68S", "PPNBL6", "UMSLU8", "8QTJTR", "TY4QA4", "SJ692F", "KV5BAG", "F3J6KN", 
+            "YMCX24", "GD4T6N", "F7ASUP", "ZMA9WY", "KZH3KC", "U4H24A", "EE86XD", "R3E9AV", 
+            "LABFU8", "QW9MRU", "WP8H46", "ZCXQFD", "SUE3G5", "75E6JQ", "29V5RM", "4LEDNS", 
+            "EMKE5B", "DSBMVC", "G93YNW", "BEVAUZ", "T8UYTD", "RS7AMN", "HWTWR8", "YB7SFD", 
+            "WQPK23", "VZSG7B", "VS8PTT", "S9Y3T8", "YRZAHA", "FAQJEL", "QZWFKL", "QRGQFF", 
+            "B39JP7", "EYQW97", "AXUCZX", "ALEEC3", "869AE3", "NDC33Z", "AP8DD2", "W4QW6X", 
+            "Q7PKNX", "AXMHG9", "9DX4Y7", "TTSKD3", "WG4CYU", "PALBEU", "582U3K", "9BGJJD", 
+            "5ZQRFC", "JA7XS5", "UTVHX2", "JXAU7V", "7XK833", "V2YWZ5", "C8ZAD2", "G234WU", 
+            "5RZ3QX", "VJD8J6", "EBZAFT", "UDWRYE", "BT7CHY", "XMNC9U", "B2NKJV", "WA3N4F", 
+            "K53GA5", "S9EZD5", "C4WEDR", "HBVP3N", "HEP9RJ", "UAETVD", "TNF8Z6", "GZ7RUT", 
+            "F92H55", "L5LWZT", "2BR6WA", "DKSZ9C", "T6CGXF", "VGPRDK", "XUG3QJ", "V9NHJK", 
+            "SXXGY2", "K44U6L", "HBSSYH", "U3G7KP", "926554", "ZRABAQ", "3MDDFC", "FKQJ7X", 
+            "EL5V3G", "4ZS3UZ", "EF8NSF", "ZSX9Z5", "3QAPBU", "DQJME2", "3SLQXC", "PXTTQH", 
+            "EHMSVG", "L6QPER", "JFTYN5", "92LFSD", "YQEGXS", "AAB2EL", "76V3HQ", "DLTXDV", 
+            "75DTHJ", "4F4F8J", "UMDB77", "KU2FZF", "WHRTG6", "93ALVD", "VMVQUZ", "JWLHKX", 
+            "9L9DWU", "T5QHKZ", "PPTY7W", "25DJFQ", "P8P36J", "GBD858", "QVR9PR", "HYH9CQ", 
+            "2YVT6E", "C3ELKX", "9EJGGX", "37QFJ2", "2NY5ZX", "65825Z", "VCBXH3", "9TUW8F", 
+            "4BTYE4", "BHTSTE", "2WKW6S", "NVKG9B", "YSKK94", "2QEDEY", "DFWCLV", "5KFUFW", 
+            "TWJLN9", "MMJU8A", "27LJNR", "HBYREF", "DLEH2L", "9QS74S", "TNWDQ3", "WJ73J9", 
+            "92NAYP", "A3RYVC", "SDZFL7", "9DRV3L", "3AYLBN", "VJNGKD", "PGNXS5", "SJPM7Y", 
+            "GNYSKK", "YHEXWP", "FPUZRD", "3ATW4B", "HYMUHM", "BPSJZJ", "VQUCRR", "VGVEER", 
+            "A75UR4", "D2UCJK", "ZFFA7Q", "39FZJ2", "P3UWCC", "UDX35N", "J9N68F", "3GPKEU", 
+            "STXSMJ", "CATQNK", "QFMHXG", "GGKLPQ", "D88X8S", "JF7ZTW", "KZ4XTL", "2SBMPT", 
+            "UF92H3", "9UPY42", "MTU5QS", "RHC64H", "L4C3BH", "CSKEYG", "BS8599", "Y7Z4ZA", 
+            "MV6R2Q", "6YYSK9", "X7FZAC", "YFVNBH", "LMRFH2", "6W98JZ", "F4LPTH", "XB5GQC", 
+            "ZMANLQ", "WCAWKF", "5MQ4CN", "GFBWZT", "PW3CM3", "S57VS2", "2XLXWE", "TUARC9", 
+            "XDLWKZ", "5ST6WS", "66447T", "A2RWY7", "4YNL5U", "RK88ES", "9VGY7Z", "K3LRAH", 
+            "KX8C3U", "PJ2XF2", "W5HMXK", "DMRRD7", "N2THL7", "4HVGMR", "NJDYX9", "8DGW49", 
+            "9HTLLC", "D3VFBW", "52W75Y", "XM4QE2", "GWXXT9", "SWTTA6", "FXXJED", "398LNT", 
+            "Z2GR48", "TVSPZM", "AZG9EF", "KS5TG4", "437HM5", "PM2CCL", "Z8EMVN", "8PYRP9", 
+            "M2AYCJ", "SL9B6K", "4X25S2", "NXJCD2", "WM5M6A", "AK94D3", "MV4LD8", "M3TW2E", 
+            "KK45FS", "9Q8GHX", "R3KJEM", "LVSMWA", "YK37GD", "EB3RSY", "KUK9CJ", "KNKTFS", 
+            "WT5PGW", "846RYU", "XSA6WE", "RFPZBW"
+        ];
+
+        const table = document.getElementById('votingTable');
+
+        // Process tokens in groups of 5
+        for (let i = 0; i < tokens.length; i += 5) {
+            const row = table.insertRow();
+            const rowTokens = tokens.slice(i, i + 5);
+
+            rowTokens.forEach(token => {
+                const cell = row.insertCell();
+                cell.innerHTML = `
+                    <div class="emoji">🎫 LIUminate</div>
+                    <div class="title">Voting Token</div>
+                    <div class="token">${token}</div>
+                    <div class="instruction">Keep this paper!</div>
+                    <div class="instruction">You'll need it to vote</div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
