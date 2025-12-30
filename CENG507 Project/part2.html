@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +28,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             padding: 50px;
             text-align: center;
@@ -38,11 +38,13 @@
             font-size: 2.8em;
             margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
         }
 
         .header p {
             font-size: 1.3em;
             opacity: 0.95;
+            color: white;
         }
 
         .author-note {
@@ -75,13 +77,13 @@
         }
 
         .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: #2c3e50;
+            border-bottom-color: #2c3e50;
             background: white;
         }
 
         .tab:hover {
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(44, 62, 80, 0.1);
         }
 
         .content {
@@ -112,8 +114,8 @@
         }
 
         .step {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-left: 5px solid #667eea;
+            background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+            border-left: 5px solid #2c3e50;
             padding: 25px;
             margin: 25px 0;
             border-radius: 8px;
@@ -130,7 +132,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             width: 40px;
             height: 40px;
@@ -138,7 +140,7 @@
             font-weight: bold;
             margin-right: 15px;
             font-size: 1.2em;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 3px 10px rgba(44, 62, 80, 0.4);
         }
 
         .step h3 {
@@ -195,7 +197,7 @@
         }
 
         .download-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             border: none;
             padding: 18px 45px;
@@ -212,7 +214,7 @@
 
         .download-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.6);
         }
 
         .download-btn:active {
@@ -265,17 +267,17 @@
         }
 
         h2 {
-            color: #667eea;
+            color: #2c3e50;
             font-size: 2em;
             margin: 40px 0 20px 0;
             padding-bottom: 15px;
-            border-bottom: 4px solid #667eea;
+            border-bottom: 4px solid #2c3e50;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         h3 {
-            color: #764ba2;
+            color: #34495e;
             font-size: 1.5em;
             margin: 30px 0 15px 0;
         }
@@ -349,7 +351,7 @@
         }
 
         .file-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             padding: 18px 25px;
             display: flex;
@@ -558,6 +560,7 @@
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
 <body>
@@ -567,9 +570,10 @@
             <p>Complete Step-by-Step Tutorial for Part 2</p>
             <div class="author-note">
                 <p><strong>📖 Student Tutorial Guide</strong></p>
+                <p><strong>Student: Yousef Younis | ID: 22230294</strong></p>
                 <p>This comprehensive tutorial will guide you through porting FreeRTOS to RISC-V architecture and
                     running it on QEMU. Tested on Windows 11 with WSL2 Ubuntu 22.04.</p>
-                <p><em>Last Updated: December 2024</em></p>
+                <p><em>Last Updated: 30 December 2025</em></p>
             </div>
         </div>
 
@@ -1802,55 +1806,64 @@ _stack_top:</pre>
                         <h3>Makefile</h3>
                     </div>
                     <div class="file-content">
-                        <pre"># Toolchain
-                            PREFIX = riscv64-unknown-elf-
-                            CC = $(PREFIX)gcc
-                            AS = $(PREFIX)as
-                            LD = $(PREFIX)ld
-                            OBJCOPY = $(PREFIX)objcopy
-                            OBJDUMP = $(PREFIX)objdump
+                        <pre># Toolchain
+PREFIX = riscv64-unknown-elf-
+CC = $(PREFIX)gcc
+AS = $(PREFIX)as
+LD = $(PREFIX)ld
+OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
 
-                            # Directories
-                            FREERTOS_SRC = Source
-                            PORT_SRC = portable
+# Directories
+FREERTOS_SRC = Source
+PORT_SRC = portable
 
-                            # Flags
-                            CFLAGS = -march=rv64imac -mabi=lp64 -mcmodel=medany
-                            CFLAGS += -Wall -O2 -g
-                            CFLAGS += -I. -I$(FREERTOS_SRC)/include -I$(PORT_SRC)
-                            CFLAGS += -ffunction-sections -fdata-sections
+# Flags
+CFLAGS = -march=rv64imac -mabi=lp64 -mcmodel=medany
+CFLAGS += -Wall -O2 -g
+CFLAGS += -I. -I$(FREERTOS_SRC)/include -I$(PORT_SRC)
+CFLAGS += -ffunction-sections -fdata-sections
 
-                            LDFLAGS = -T riscv.ld -nostdlib -nostartfiles
-                            LDFLAGS += -Wl,--gc-sections
+LDFLAGS = -T riscv.ld -nostdlib -nostartfiles
+LDFLAGS += -Wl,--gc-sections
 
-                            # Source files
-                            C_SOURCES = main.c
-                            C_SOURCES += $(FREERTOS_SRC)/tasks.c
-                            C_SOURCES += $(FREERTOS_SRC)/queue.c
-                            C_SOURCES += $(FREERTOS_SRC)/list.c
-                            C_SOURCES += $(FREERTOS_SRC)/timers.c
-                            C_SOURCES += $(FREERTOS_SRC)/portable/MemMang/heap_4.c
-                            C_SOURCES += $(PORT_SRC)/port.c
+# Source files
+C_SOURCES = main.c
+C_SOURCES += $(FREERTOS_SRC)/tasks.c
+C_SOURCES += $(FREERTOS_SRC)/queue.c
+C_SOURCES += $(FREERTOS_SRC)/list.c
+C_SOURCES += $(FREERTOS_SRC)/timers.c
+C_SOURCES += $(FREERTOS_SRC)/portable/MemMang/heap_4.c
+C_SOURCES += $(PORT_SRC)/port.c
 
-                            ASM_SOURCES = start.S
-                            ASM_SOURCES += $(PORT_SRC)/portASM.S
+ASM_SOURCES = start.S
+ASM_SOURCES += $(PORT_SRC)/portASM.S
 
-                            # Objects
-                            OBJECTS = $(C_SOURCES:.c=.o) $(ASM_SOURCES:.S=.o)
+# Objects
+OBJECTS = $(C_SOURCES:.c=.o) $(ASM_SOURCES:.S=.o)
 
-                            # Target
-                            TARGET = freertos_riscv
+# Target
+TARGET = freertos_riscv
 
-                            all: $(TARGET).elf $(TARGET).bin
+all: $(TARGET).elf $(TARGET).bin
 
-                            $(TARGET).elf: $(OBJECTS)
-                            $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
-                            $(OBJDUMP) -d $@ > $(TARGET).asm
+$(TARGET).elf: $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(OBJDUMP) -d $@ > $(TARGET).asm
 
-                            $(TARGET).bin: $(TARGET).elf
-                            $(OBJCOPY) -O binary $< $@ %.o: %.c $(CC) $(CFLAGS) -c -o $@ $< %.o: %.S $(CC) $(CFLAGS) -c
-                                -o $@ $< clean: rm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin $(TARGET).asm .PHONY: all
-                                clean</pre>
+$(TARGET).bin: $(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.o: %.S
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin $(TARGET).asm
+
+.PHONY: all clean</pre>
                     </div>
                 </div>
 
@@ -1929,7 +1942,7 @@ qemu-system-riscv64 \
                         <h3>README.txt</h3>
                     </div>
                     <div class="file-content">
-                        <pre">================================================================================
+                        <pre>================================================================================
                             FreeRTOS on RISC-V - Complete Project
                             ================================================================================
 
@@ -2046,9 +2059,14 @@ qemu-system-riscv64 \
                             - QEMU: https://www.qemu.org/
 
                             ================================================================================
-                            Last Updated: December 2024
-                            ================================================================================
-                            <div id="deliverables" class="tab-content">
+                            Last Updated: 30 December 2025
+                            ================================================================================</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DELIVERABLES TAB -->
+            <div id="deliverables" class="tab-content">
                                 <h2>📦 Project Deliverables</h2>
 
                                 <div class="info-box success">
@@ -2261,6 +2279,13 @@ qemu-system-riscv64 \
                                     <p>This section contains links to download required software and documentation.</p>
                                 </div>
 
+                                <div style="margin: 20px 0; text-align: center;">
+                                    <button onclick="downloadSourceCode()" style="background: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; font-weight: bold;">
+                                        📦 Download All Source Code as ZIP
+                                    </button>
+                                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">Download all project files (main.c, Makefile, configuration, etc.) in one zip file</p>
+                                </div>
+
                                 <h3>1. FreeRTOS Kernel</h3>
                                 <div class="info-box">
                                     <h4>📦 FreeRTOS Source Code</h4>
@@ -2455,6 +2480,419 @@ qemu-system-riscv64 \
 
                         // Add active class to the clicked tab
                         event.target.classList.add('active');
+                    }
+
+                    function downloadSourceCode() {
+                        // Create a zip file with all source code
+                        const zip = new JSZip();
+                        
+                        // Create folder structure
+                        const srcFolder = zip.folder("freertos_riscv_port");
+                        
+                        // Add source files
+                        const files = {
+                            'FreeRTOSConfig.h': `#ifndef FREERTOS_CONFIG_H
+#define FREERTOS_CONFIG_H
+
+/* Hardware specific definitions */
+#define configCPU_CLOCK_HZ                      ( ( unsigned long ) 10000000 )
+#define configTICK_RATE_HZ                      ( ( TickType_t ) 1000 )
+
+/* Memory allocation */
+#define configTOTAL_HEAP_SIZE                   ( ( size_t ) ( 16 * 1024 ) )
+#define configMINIMAL_STACK_SIZE                ( ( unsigned short ) 128 )
+
+/* Task settings */
+#define configMAX_PRIORITIES                    ( 7 )
+#define configMAX_TASK_NAME_LEN                 ( 16 )
+#define configUSE_16_BIT_TICKS                  0
+
+/* Features */
+#define configUSE_PREEMPTION                    1
+#define configUSE_IDLE_HOOK                     0
+#define configUSE_TICK_HOOK                     0
+#define configUSE_MUTEXES                       1
+#define configUSE_RECURSIVE_MUTEXES             1
+#define configUSE_COUNTING_SEMAPHORES           1
+#define configUSE_TIMERS                        1
+#define configTIMER_TASK_PRIORITY               ( configMAX_PRIORITIES - 1 )
+#define configTIMER_QUEUE_LENGTH                10
+#define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
+
+/* Debug features */
+#define configCHECK_FOR_STACK_OVERFLOW          2
+#define configASSERT( x )                       if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+
+/* API includes */
+#define INCLUDE_vTaskPrioritySet                1
+#define INCLUDE_uxTaskPriorityGet               1
+#define INCLUDE_vTaskDelete                     1
+#define INCLUDE_vTaskSuspend                    1
+#define INCLUDE_xTaskDelayUntil                 1
+#define INCLUDE_vTaskDelay                      1
+
+#endif /* FREERTOS_CONFIG_H */`,
+                            'main.c': `#include <stdio.h>
+#include <string.h>
+#include "FreeRTOS.h"
+#include "task.h"
+
+/* Task priorities */
+#define TASK_PRIORITY_1    ( tskIDLE_PRIORITY + 1 )
+#define TASK_PRIORITY_2    ( tskIDLE_PRIORITY + 2 )
+
+/* Task handles */
+TaskHandle_t xTask1Handle = NULL;
+TaskHandle_t xTask2Handle = NULL;
+
+/* Test counters */
+volatile uint32_t task1_counter = 0;
+volatile uint32_t task2_counter = 0;
+
+/* Simple print function for QEMU */
+void print_uart(const char *s) {
+    while(*s) {
+        /* UART address for QEMU virt machine */
+        *((volatile char *)0x10000000) = *s++;
+    }
+}
+
+/* Task 1 - Prints periodic messages */
+void vTask1(void *pvParameters) {
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(1000);
+    
+    xLastWakeTime = xTaskGetTickCount();
+    
+    for(;;) {
+        task1_counter++;
+        print_uart("Task 1 is running\\r\\n");
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+/* Task 2 - Prints periodic messages */
+void vTask2(void *pvParameters) {
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(500);
+    
+    xLastWakeTime = xTaskGetTickCount();
+    
+    for(;;) {
+        task2_counter++;
+        print_uart("Task 2 is running\\r\\n");
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+/* Main function */
+int main(void) {
+    print_uart("\\r\\n--- FreeRTOS on RISC-V Starting ---\\r\\n");
+    
+    /* Create tasks */
+    xTaskCreate(vTask1, "Task1", configMINIMAL_STACK_SIZE, NULL, 
+                TASK_PRIORITY_1, &xTask1Handle);
+    xTaskCreate(vTask2, "Task2", configMINIMAL_STACK_SIZE, NULL, 
+                TASK_PRIORITY_2, &xTask2Handle);
+    
+    print_uart("Tasks created, starting scheduler...\\r\\n");
+    
+    /* Start the scheduler */
+    vTaskStartScheduler();
+    
+    /* Should never reach here */
+    print_uart("ERROR: Scheduler returned!\\r\\n");
+    for(;;);
+    
+    return 0;
+}
+
+/* Idle hook (optional) */
+void vApplicationIdleHook(void) {
+    /* Called when idle task runs */
+}
+
+/* Stack overflow hook */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    print_uart("STACK OVERFLOW: ");
+    print_uart(pcTaskName);
+    print_uart("\\r\\n");
+    for(;;);
+}`,
+                            'start.S': `.section .init
+.globl _start
+.type _start, @function
+
+_start:
+    /* Setup stack pointer */
+    la sp, _stack_top
+    
+    /* Clear BSS */
+    la a0, _bss_start
+    la a1, _bss_end
+    bgeu a0, a1, 2f
+1:
+    sw zero, (a0)
+    addi a0, a0, 4
+    bltu a0, a1, 1b
+2:
+    /* Jump to main */
+    call main
+    
+    /* Infinite loop if main returns */
+1:
+    j 1b
+
+.size _start, .-_start
+    
+.align 8
+_stack_bottom:
+    .space 4096
+_stack_top:`,
+                            'riscv.ld': `OUTPUT_ARCH("riscv")
+ENTRY(_start)
+
+MEMORY
+{
+    RAM (rwx) : ORIGIN = 0x80000000, LENGTH = 128M
+}
+
+SECTIONS
+{
+    .text : {
+        *(.init)
+        *(.text*)
+    } > RAM
+    
+    .rodata : {
+        *(.rodata*)
+    } > RAM
+    
+    .data : {
+        *(.data*)
+    } > RAM
+    
+    .bss : {
+        _bss_start = .;
+        *(.bss*)
+        *(COMMON)
+        _bss_end = .;
+    } > RAM
+    
+    . = ALIGN(8);
+    . = . + 0x10000; /* 64KB stack */
+    _stack_top = .;
+}`,
+                            'Makefile': `# Toolchain
+PREFIX = riscv64-unknown-elf-
+CC = $(PREFIX)gcc
+AS = $(PREFIX)as
+LD = $(PREFIX)ld
+OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
+
+# Directories
+FREERTOS_SRC = Source
+PORT_SRC = portable
+
+# Flags
+CFLAGS = -march=rv64imac -mabi=lp64 -mcmodel=medany
+CFLAGS += -Wall -O2 -g
+CFLAGS += -I. -I$(FREERTOS_SRC)/include -I$(PORT_SRC)
+CFLAGS += -ffunction-sections -fdata-sections
+
+LDFLAGS = -T riscv.ld -nostdlib -nostartfiles
+LDFLAGS += -Wl,--gc-sections
+
+# Source files
+C_SOURCES = main.c
+C_SOURCES += $(FREERTOS_SRC)/tasks.c
+C_SOURCES += $(FREERTOS_SRC)/queue.c
+C_SOURCES += $(FREERTOS_SRC)/list.c
+C_SOURCES += $(FREERTOS_SRC)/timers.c
+C_SOURCES += $(FREERTOS_SRC)/portable/MemMang/heap_4.c
+C_SOURCES += $(PORT_SRC)/port.c
+
+ASM_SOURCES = start.S
+ASM_SOURCES += $(PORT_SRC)/portASM.S
+
+# Objects
+OBJECTS = $(C_SOURCES:.c=.o) $(ASM_SOURCES:.S=.o)
+
+# Target
+TARGET = freertos_riscv
+
+all: $(TARGET).elf $(TARGET).bin
+
+$(TARGET).elf: $(OBJECTS)
+\t$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+\t$(OBJDUMP) -d $@ > $(TARGET).asm
+
+$(TARGET).bin: $(TARGET).elf
+\t$(OBJCOPY) -O binary $< $@
+
+%.o: %.c
+\t$(CC) $(CFLAGS) -c -o $@ $<
+
+%.o: %.S
+\t$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+\trm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin $(TARGET).asm
+
+.PHONY: all clean`,
+                            'run.sh': `#!/bin/bash
+
+echo "Starting FreeRTOS on RISC-V in QEMU..."
+echo "Press Ctrl+A then X to exit"
+echo ""
+
+qemu-system-riscv64 \\
+    -machine virt \\
+    -cpu rv64 \\
+    -smp 1 \\
+    -m 128M \\
+    -nographic \\
+    -bios none \\
+    -kernel freertos_riscv.elf`,
+                            'README.txt': `================================================================================
+FreeRTOS on RISC-V - Complete Project
+================================================================================
+
+PROJECT OVERVIEW:
+This is a complete FreeRTOS port to RISC-V architecture running on QEMU.
+Two tasks are implemented demonstrating task scheduling and real-time behavior.
+
+FILES INCLUDED:
+- FreeRTOSConfig.h : FreeRTOS kernel configuration
+- main.c : Application code with two tasks
+- start.S : RISC-V startup assembly code
+- riscv.ld : Linker script for memory layout
+- Makefile : Build automation script
+- run.sh : Script to launch QEMU simulator
+- README.txt : This file
+
+PREREQUISITES:
+- Ubuntu 22.04 or equivalent Linux environment (WSL2 on Windows)
+- RISC-V GNU Toolchain: riscv64-unknown-elf-gcc
+- QEMU: qemu-system-riscv64
+- Build tools: make, gcc
+
+INSTALLATION (Ubuntu/WSL):
+sudo apt update
+sudo apt install gcc-riscv64-unknown-elf qemu-system-riscv64 build-essential
+
+BUILDING THE PROJECT:
+1. Navigate to project directory:
+cd ~/ceng507_project/freertos_riscv_port
+
+2. Clean previous builds:
+make clean
+
+3. Compile:
+make
+
+Expected output: freertos_riscv.elf and freertos_riscv.bin created
+
+RUNNING ON QEMU:
+Option 1 - Using the run script:
+chmod +x run.sh
+./run.sh
+
+Option 2 - Direct QEMU command:
+qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M \\
+-nographic -bios none -kernel freertos_riscv.elf
+
+EXPECTED OUTPUT:
+You should see:
+--- FreeRTOS on RISC-V Starting ---
+Tasks created, starting scheduler...
+Task 1 is running
+Task 2 is running
+Task 2 is running
+Task 1 is running
+...
+
+EXIT QEMU:
+Press Ctrl+A, then press X
+
+PROJECT STRUCTURE:
+freertos_riscv_port/
+├── main.c (Your application)
+├── FreeRTOSConfig.h (Configuration)
+├── start.S (Startup code)
+├── riscv.ld (Linker script)
+├── Makefile (Build rules)
+├── run.sh (Run script)
+├── README.txt (This file)
+├── Source/ (FreeRTOS kernel)
+│ ├── tasks.c
+│ ├── queue.c
+│ ├── list.c
+│ ├── timers.c
+│ ├── portable/MemMang/heap_4.c
+│ └── include/
+└── portable/ (RISC-V specific)
+├── port.c
+├── portASM.S
+└── portmacro.h
+
+TASK DESCRIPTION:
+- Task 1: Executes every 1000ms, prints "Task 1 is running"
+- Task 2: Executes every 500ms, prints "Task 2 is running"
+
+Both tasks are independent and scheduled by FreeRTOS kernel.
+
+TROUBLESHOOTING:
+1. "riscv64-unknown-elf-gcc: not found"
+→ Install toolchain: sudo apt install gcc-riscv64-unknown-elf
+
+2. "qemu-system-riscv64: not found"
+→ Install QEMU: sudo apt install qemu-system-riscv64
+
+3. Compilation errors
+→ Check paths in Makefile
+→ Verify all source files are present
+→ Run "make clean" before rebuilding
+
+4. No output from QEMU
+→ Verify UART address (0x10000000) in main.c matches target
+→ Check kernel compilation succeeded (freertos_riscv.elf exists)
+
+MODIFICATIONS:
+To extend this project:
+1. Add more tasks in main.c
+2. Implement inter-task communication (queues, semaphores)
+3. Add more features by modifying FreeRTOSConfig.h
+4. Implement custom interrupt handlers
+
+REFERENCES:
+- FreeRTOS: https://www.freertos.org/
+- RISC-V: https://riscv.org/
+- QEMU: https://www.qemu.org/
+
+================================================================================
+Last Updated: 30 December 2025
+================================================================================`
+                        };
+                        
+                        // Add files to zip
+                        for (const [filename, content] of Object.entries(files)) {
+                            srcFolder.file(filename, content);
+                        }
+                        
+                        // Generate zip file
+                        zip.generateAsync({ type: "blob" }).then(function (blob) {
+                            // Create download link
+                            const url = window.URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = "freertos_riscv_source_code.zip";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(url);
+                        });
                     }
                 </script>
 </body>
