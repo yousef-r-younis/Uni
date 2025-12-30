@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<!-- Created by Yousef Younis -->
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CENG507 Complete Package</title>
+    <title>CENG507 FreeRTOS on RISC-V - Complete Tutorial</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +12,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -32,20 +30,35 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px;
+            padding: 50px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .author-note {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
         }
 
         .tabs {
             display: flex;
             background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
+            border-bottom: 3px solid #dee2e6;
             overflow-x: auto;
+            flex-wrap: wrap;
         }
 
         .tab {
@@ -53,11 +66,11 @@
             cursor: pointer;
             border: none;
             background: transparent;
-            font-size: 1.1em;
+            font-size: 1.05em;
             font-weight: 600;
             color: #666;
             transition: all 0.3s;
-            border-bottom: 3px solid transparent;
+            border-bottom: 4px solid transparent;
             white-space: nowrap;
         }
 
@@ -65,6 +78,10 @@
             color: #667eea;
             border-bottom-color: #667eea;
             background: white;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
         }
 
         .content {
@@ -85,135 +102,460 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
+                transform: translateY(10px);
             }
 
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
+        }
+
+        .step {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .step:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateX(5px);
+            transition: all 0.3s;
+        }
+
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2em;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        .step h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #4ec9b0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.95em;
+            line-height: 1.7;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '$ ';
+            color: #858585;
+        }
+
+        .code-block.multiline::before {
+            content: '';
+        }
+
+        .code-block.output {
+            color: #dcdcaa;
+            background: #1e1e1e;
+        }
+
+        .code-block.output::before {
+            content: '';
+        }
+
+        .command-explain {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+
+        .command-explain strong {
+            color: #1976d2;
         }
 
         .download-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 18px 45px;
             border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: 600;
+            font-size: 1.15em;
+            font-weight: 700;
             cursor: pointer;
             margin: 10px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+        }
+
+        .info-box h3,
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 12px;
+        }
+
+        .info-box.warning {
+            background: #fff8e1;
+            border-left-color: #ffa726;
+        }
+
+        .info-box.warning h3,
+        .info-box.warning h4 {
+            color: #f57c00;
+        }
+
+        .info-box.success {
+            background: #e8f5e9;
+            border-left-color: #66bb6a;
+        }
+
+        .info-box.success h3,
+        .info-box.success h4 {
+            color: #2e7d32;
+        }
+
+        .info-box.danger {
+            background: #ffebee;
+            border-left-color: #ef5350;
+        }
+
+        .info-box.danger h3,
+        .info-box.danger h4 {
+            color: #c62828;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 4px solid #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+
+        h4 {
+            color: #333;
+            font-size: 1.25em;
+            margin: 20px 0 12px 0;
+        }
+
+        ul,
+        ol {
+            margin: 20px 0 20px 40px;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+            color: #444;
+        }
+
+        p {
+            line-height: 1.8;
+            margin: 12px 0;
+            color: #555;
+        }
+
+        .kbd {
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        .center {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .tree {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+            white-space: pre;
+            border: 2px solid #dee2e6;
+            overflow-x: auto;
+            line-height: 1.6;
         }
 
         .file-card {
             background: white;
             border: 2px solid #e9ecef;
-            border-radius: 10px;
-            margin: 20px 0;
+            border-radius: 12px;
+            margin: 25px 0;
             overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
         }
 
         .file-header {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 18px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .file-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.3em;
+        }
+
         .file-content {
-            padding: 20px;
+            padding: 25px;
             background: #f8f9fa;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
         pre {
             margin: 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', Consolas, monospace;
             font-size: 0.9em;
-            line-height: 1.6;
+            line-height: 1.7;
             white-space: pre-wrap;
         }
 
         .small-btn {
             background: white;
             color: #667eea;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s;
         }
 
-        h2 {
-            color: #667eea;
-            font-size: 1.8em;
-            margin: 30px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
+        .small-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
         }
 
-        h3 {
-            color: #764ba2;
-            font-size: 1.4em;
-            margin: 25px 0 10px 0;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
+        .troubleshooting {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
             padding: 20px;
             margin: 20px 0;
+        }
+
+        .troubleshooting h4 {
+            color: #f57c00;
+            margin-bottom: 10px;
+        }
+
+        .tip {
+            background: #e1f5fe;
+            border-left: 4px solid #03a9f4;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .tip::before {
+            content: "💡 Tip: ";
+            font-weight: bold;
+            color: #0277bd;
+            font-style: normal;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box::before {
+            content: "⚠️ ";
+            font-size: 1.5em;
+        }
+
+        .expected-output {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
             border-radius: 5px;
         }
 
-        .info-box.success {
-            background: #d4edda;
-            border-left-color: #28a745;
+        .expected-output::before {
+            content: "✅ Expected Output:";
+            display: block;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 10px;
         }
 
-        .info-box.warning {
-            background: #fff3cd;
-            border-left-color: #ffc107;
-        }
-
-        ul {
-            margin: 15px 0 15px 30px;
-            line-height: 1.8;
-        }
-
-        .center {
-            text-align: center;
+        .timeline {
+            position: relative;
+            padding: 20px 0;
             margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #667eea;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 80px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 32px;
+            top: 0;
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: #667eea;
+            box-shadow: 0 0 0 4px white, 0 0 0 6px #667eea;
+        }
+
+        .timeline-item h4 {
+            color: #667eea;
+            margin-bottom: 8px;
         }
 
         .checklist {
             list-style: none;
+            margin: 20px 0;
         }
 
         .checklist li {
-            padding: 10px;
-            margin: 5px 0;
+            padding: 15px;
+            margin: 8px 0;
             background: #f8f9fa;
-            border-radius: 5px;
-            padding-left: 40px;
+            border-radius: 8px;
+            padding-left: 50px;
             position: relative;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .checklist li:hover {
+            background: #e9ecef;
+            border-left-color: #667eea;
         }
 
         .checklist li:before {
             content: "☐";
             position: absolute;
-            left: 10px;
-            font-size: 1.5em;
+            left: 15px;
+            font-size: 1.8em;
             color: #667eea;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .tabs,
+            .download-btn {
+                display: none;
+            }
+
+            .tab-content {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .step {
+                padding: 15px;
+            }
+
+            .code-block {
+                font-size: 0.85em;
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -222,296 +564,1899 @@
     <div class="container">
         <div class="header">
             <h1>📚 CENG507: FreeRTOS on RISC-V</h1>
-            <p>Complete Project Package - Everything You Need</p>
+            <p>Complete Step-by-Step Tutorial for Part 2</p>
+            <div class="author-note">
+                <p><strong>📖 Student Tutorial Guide</strong></p>
+                <p>This comprehensive tutorial will guide you through porting FreeRTOS to RISC-V architecture and
+                    running it on QEMU. Tested on Windows 11 with WSL2 Ubuntu 22.04.</p>
+                <p><em>Last Updated: December 2024</em></p>
+            </div>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('downloads')">⬇️ Downloads</button>
-            <button class="tab" onclick="switchTab('quickstart')">🚀 Quick Start</button>
-            <button class="tab" onclick="switchTab('code')">💻 Code Files</button>
+            <button class="tab active" onclick="switchTab('intro')">📋 Introduction</button>
+            <button class="tab" onclick="switchTab('guide')">🚀 Step-by-Step</button>
+            <button class="tab" onclick="switchTab('structure')">🗂️ File Structure</button>
+            <button class="tab" onclick="switchTab('code')">💻 Source Code</button>
             <button class="tab" onclick="switchTab('deliverables')">📦 Deliverables</button>
+            <button class="tab" onclick="switchTab('troubleshooting')">🔧 Troubleshooting</button>
+            <button class="tab" onclick="switchTab('downloads')">⬇️ Downloads</button>
         </div>
 
         <div class="content">
 
-            <div id="downloads" class="tab-content active">
-                <h2>📥 Download Everything</h2>
-
-                <div class="center">
-                    <button class="download-btn" onclick="downloadAll()">📦 Download Complete Package (ZIP)</button>
-                    <p style="margin-top: 15px; color: #666;">Includes all source code + tutorial + report template</p>
-                </div>
-
-                <h3>What's Included:</h3>
-                <ul>
-                    <li>✅ All 7 source files (FreeRTOSConfig.h, main.c, start.S, riscv.ld, Makefile, run.sh, README)
-                    </li>
-                    <li>✅ Complete tutorial (TXT format)</li>
-                    <li>✅ Report template (Word format)</li>
-                    <li>✅ Quick reference guide</li>
-                </ul>
-
-                <h3>Individual Downloads:</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <button class="download-btn" onclick="downloadTutorial()">📖 Tutorial</button>
-                    <button class="download-btn" onclick="downloadReport()">📄 Report Template</button>
-                    <button class="download-btn" onclick="downloadCode()">💻 Source Code</button>
-                </div>
-            </div>
-
-            <div id="quickstart" class="tab-content">
-                <h2>🚀 Quick Start Guide</h2>
-
-                <div class="info-box">
-                    <strong>⏱️ Estimated Time:</strong> 2-3 days for complete implementation
-                </div>
-
-                <h3>Step 1: Choose Environment</h3>
-                <p><strong>Option A: WSL2</strong> (if working)</p>
-                <pre
-                    style="background: #2d2d2d; color: #4ec9b0; padding: 15px; border-radius: 8px;">wsl --install -d Ubuntu-22.04</pre>
-
-                <p><strong>Option B: VirtualBox</strong> (if WSL fails - recommended!)</p>
-                <ul>
-                    <li>Download VirtualBox from virtualbox.org</li>
-                    <li>Download Ubuntu 22.04 ISO</li>
-                    <li>Create VM: 4GB RAM, 40GB disk</li>
-                </ul>
-
-                <h3>Step 2: Install Tools</h3>
-                <pre style="background: #2d2d2d; color: #4ec9b0; padding: 15px; border-radius: 8px;">sudo apt update
-sudo apt install -y build-essential git wget curl
-mkdir -p ~/riscv && cd ~/riscv
-wget https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.10.18/riscv64-elf-ubuntu-22.04-gcc-nightly-2023.10.18-nightly.tar.gz
-tar -xzf riscv64*.tar.gz
-echo 'export PATH=$PATH:~/riscv/riscv/bin' >> ~/.bashrc
-source ~/.bashrc
-sudo apt install -y qemu-system-riscv64</pre>
-
-                <h3>Step 3: Get FreeRTOS</h3>
-                <pre style="background: #2d2d2d; color: #4ec9b0; padding: 15px; border-radius: 8px;">mkdir ~/ceng507_project && cd ~/ceng507_project
-git clone https://github.com/FreeRTOS/FreeRTOS.git</pre>
-
-                <h3>Step 4: Setup Project</h3>
-                <pre style="background: #2d2d2d; color: #4ec9b0; padding: 15px; border-radius: 8px;">mkdir freertos_riscv_port && cd freertos_riscv_port
-cp -r ../FreeRTOS/FreeRTOS/Source .
-mkdir portable
-cp -r ../FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/* portable/</pre>
-
-                <h3>Step 5: Add Your Files</h3>
-                <p>Download the source code files and place them in the project directory</p>
-
-                <h3>Step 6: Compile & Run</h3>
-                <pre style="background: #2d2d2d; color: #4ec9b0; padding: 15px; border-radius: 8px;">make clean && make
-./run.sh</pre>
+            <!-- INTRODUCTION TAB -->
+            <div id="intro" class="tab-content active">
+                <h2>📖 Project Overview</h2>
 
                 <div class="info-box success">
-                    <strong>✅ Success!</strong> You should see tasks running. Press Ctrl+A then X to exit.
-                </div>
-            </div>
-
-            <div id="code" class="tab-content">
-                <h2>💻 Source Code Files</h2>
-
-                <div class="file-card">
-                    <div class="file-header">
-                        <h3>FreeRTOSConfig.h</h3>
-                        <button class="small-btn" onclick="download('FreeRTOSConfig.h', code.config)">Download</button>
-                    </div>
-                    <div class="file-content">
-                        <pre id="prev1"></pre>
-                    </div>
+                    <h3>🎯 What You'll Achieve</h3>
+                    <p>By the end of this tutorial, you will:</p>
+                    <ul>
+                        <li>✅ Understand Real-Time Operating System (RTOS) concepts</li>
+                        <li>✅ Successfully port FreeRTOS kernel to RISC-V architecture</li>
+                        <li>✅ Create a multi-tasking embedded application</li>
+                        <li>✅ Run and test your system on QEMU emulator</li>
+                        <li>✅ Complete all project deliverables for submission</li>
+                    </ul>
                 </div>
 
-                <div class="file-card">
-                    <div class="file-header">
-                        <h3>main.c</h3>
-                        <button class="small-btn" onclick="download('main.c', code.main)">Download</button>
+                <h3>📚 What is FreeRTOS?</h3>
+                <p>FreeRTOS is a real-time operating system kernel for embedded devices. It's:</p>
+                <ul>
+                    <li><strong>Free and Open Source</strong> - MIT licensed</li>
+                    <li><strong>Widely Used</strong> - Runs on 40+ architectures</li>
+                    <li><strong>Small Footprint</strong> - Minimal memory requirements</li>
+                    <li><strong>Real-Time</strong> - Deterministic task scheduling</li>
+                    <li><strong>Well Documented</strong> - Extensive API documentation</li>
+                </ul>
+
+                <h3>🖥️ What is RISC-V?</h3>
+                <p>RISC-V (pronounced "risk-five") is an open-source instruction set architecture (ISA):</p>
+                <ul>
+                    <li><strong>Open Standard</strong> - No licensing fees</li>
+                    <li><strong>Modular Design</strong> - Customizable extensions</li>
+                    <li><strong>Growing Ecosystem</strong> - Increasing industry adoption</li>
+                    <li><strong>Educational Friendly</strong> - Simple and clean architecture</li>
+                </ul>
+
+                <h3>⚙️ What is QEMU?</h3>
+                <p>QEMU is a hardware emulator that allows you to:</p>
+                <ul>
+                    <li><strong>Test Without Hardware</strong> - No physical RISC-V board needed</li>
+                    <li><strong>Fast Development</strong> - Quick compile-test cycles</li>
+                    <li><strong>Easy Debugging</strong> - Built-in debugging support</li>
+                    <li><strong>Safe Experimentation</strong> - Can't damage real hardware</li>
+                </ul>
+
+                <div class="timeline">
+                    <h3>📅 Project Timeline</h3>
+                    <div class="timeline-item">
+                        <h4>Phase 1: Environment Setup (Days 1-2)</h4>
+                        <p>Install WSL/VirtualBox, Ubuntu, development tools, RISC-V toolchain, and QEMU</p>
                     </div>
-                    <div class="file-content">
-                        <pre id="prev2"></pre>
+                    <div class="timeline-item">
+                        <h4>Phase 2: FreeRTOS Setup (Days 2-3)</h4>
+                        <p>Download FreeRTOS source, understand structure, copy necessary files</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Phase 3: Implementation (Days 3-5)</h4>
+                        <p>Create configuration files, write application code, set up build system</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Phase 4: Testing & Documentation (Days 5-7)</h4>
+                        <p>Compile, run on QEMU, validate functionality, take screenshots, write report</p>
                     </div>
                 </div>
 
-                <div class="file-card">
-                    <div class="file-header">
-                        <h3>Makefile</h3>
-                        <button class="small-btn" onclick="download('Makefile', code.makefile)">Download</button>
+                <h3>🛠️ Required Tools</h3>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+                    <div class="info-box">
+                        <h4>Operating System</h4>
+                        <p>Windows 11 with WSL2<br>or<br>VirtualBox with Ubuntu 22.04</p>
                     </div>
-                    <div class="file-content">
-                        <pre id="prev3"></pre>
+                    <div class="info-box">
+                        <h4>Development Tools</h4>
+                        <p>GCC, Make, Git, Wget, Python3</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>RISC-V Toolchain</h4>
+                        <p>riscv64-unknown-elf-gcc compiler and tools</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Emulator</h4>
+                        <p>QEMU RISC-V system emulator</p>
                     </div>
                 </div>
-
-                <div class="center">
-                    <button class="download-btn" onclick="downloadCode()">📦 Download All Source Files</button>
-                </div>
-            </div>
-
-            <div id="deliverables" class="tab-content">
-                <h2>📦 What to Submit</h2>
 
                 <div class="info-box warning">
-                    <strong>📅 Deadline:</strong> Last week of semester<br>
-                    <strong>📍 Submit to:</strong> Google Classroom
+                    <h3>⚠️ Before You Start</h3>
+                    <ul>
+                        <li><strong>Time Commitment:</strong> Plan for 15-20 hours total work</li>
+                        <li><strong>Network:</strong> You'll download ~2GB of tools and source code</li>
+                        <li><strong>Storage:</strong> Need at least 10GB free space</li>
+                        <li><strong>Patience:</strong> Some downloads may be slow, compilation takes time</li>
+                        <li><strong>Screenshots:</strong> Take them as you go, not at the end!</li>
+                    </ul>
                 </div>
 
-                <h3>1. Source Code Package (.zip)</h3>
-                <ul class="checklist">
-                    <li>FreeRTOSConfig.h</li>
-                    <li>main.c (well commented!)</li>
-                    <li>start.S</li>
-                    <li>riscv.ld</li>
-                    <li>Makefile</li>
-                    <li>run.sh</li>
-                    <li>README.txt</li>
-                    <li>All FreeRTOS Source/ files</li>
-                    <li>All portable/ files</li>
-                </ul>
+                <h3>📖 How to Use This Tutorial</h3>
+                <p>This tutorial is designed to be followed <strong>step-by-step</strong>:</p>
+                <ol>
+                    <li><strong>Read each step completely</strong> before executing commands</li>
+                    <li><strong>Copy commands exactly</strong> as shown (one command at a time)</li>
+                    <li><strong>Wait for each step to complete</strong> before moving to the next</li>
+                    <li><strong>Verify outputs match</strong> the expected results shown</li>
+                    <li><strong>Take screenshots</strong> of successful steps for your report</li>
+                    <li><strong>If stuck, check Troubleshooting tab</strong> before asking for help</li>
+                </ol>
 
-                <h3>2. Technical Report (PDF) - 10-15 pages</h3>
-                <ul class="checklist">
-                    <li>Cover page</li>
-                    <li>Introduction (objectives, tools)</li>
-                    <li>Methodology (setup, approach)</li>
-                    <li>Implementation (files modified, key changes)</li>
-                    <li>Screenshots: compilation success</li>
-                    <li>Screenshots: QEMU execution</li>
-                    <li>Screenshots: task output</li>
-                    <li>Validation test explanation</li>
-                    <li>Test results</li>
-                    <li>Challenges & solutions</li>
-                    <li>Conclusion</li>
-                    <li>References</li>
-                </ul>
-
-                <h3>3. Demonstration</h3>
-                <ul class="checklist">
-                    <li>Can compile from scratch</li>
-                    <li>Can run in QEMU</li>
-                    <li>Can explain porting process</li>
-                    <li>Can answer questions</li>
-                </ul>
-
-                <div class="center">
-                    <button class="download-btn" onclick="downloadReport()">📄 Download Report Template</button>
+                <div class="tip">
+                    Keep this HTML file open in your browser while working in the terminal. You can switch between them
+                    easily!
                 </div>
             </div>
 
-        </div>
-    </div>
+            <!-- STEP BY STEP GUIDE TAB -->
+            <div id="guide" class="tab-content">
+                <h2>🚀 Complete Step-by-Step Guide</h2>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script>
-        const code = {
-            config: `#ifndef FREERTOS_CONFIG_H\n#define FREERTOS_CONFIG_H\n#define configCPU_CLOCK_HZ                      ( ( unsigned long ) 10000000 )\n#define configTICK_RATE_HZ                      ( ( TickType_t ) 1000 )\n#define configTOTAL_HEAP_SIZE                   ( ( size_t ) ( 16 * 1024 ) )\n#define configMINIMAL_STACK_SIZE                ( ( unsigned short ) 128 )\n#define configMAX_PRIORITIES                    ( 7 )\n#define configMAX_TASK_NAME_LEN                 ( 16 )\n#define configUSE_16_BIT_TICKS                  0\n#define configUSE_PREEMPTION                    1\n#define configUSE_IDLE_HOOK                     0\n#define configUSE_TICK_HOOK                     0\n#define configUSE_MUTEXES                       1\n#define configUSE_RECURSIVE_MUTEXES             1\n#define configUSE_COUNTING_SEMAPHORES           1\n#define configUSE_TIMERS                        1\n#define configTIMER_TASK_PRIORITY               ( configMAX_PRIORITIES - 1 )\n#define configTIMER_QUEUE_LENGTH                10\n#define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE\n#define configCHECK_FOR_STACK_OVERFLOW          2\n#define configASSERT( x )                       if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }\n#define INCLUDE_vTaskPrioritySet                1\n#define INCLUDE_uxTaskPriorityGet               1\n#define INCLUDE_vTaskDelete                     1\n#define INCLUDE_vTaskSuspend                    1\n#define INCLUDE_xTaskDelayUntil                 1\n#define INCLUDE_vTaskDelay                      1\n#endif`,
-            main: `#include "FreeRTOS.h"\n#include "task.h"\n\n#define TASK_PRIORITY_1 (tskIDLE_PRIORITY + 1)\n#define TASK_PRIORITY_2 (tskIDLE_PRIORITY + 2)\n\nTaskHandle_t xTask1Handle = NULL, xTask2Handle = NULL;\nvolatile uint32_t task1_counter = 0, task2_counter = 0;\n\nvoid print_uart(const char *s) {\n    while(*s) *((volatile char *)0x10000000) = *s++;\n}\n\nvoid print_number(uint32_t num) {\n    char buffer[12]; int i = 0;\n    if (num == 0) { print_uart("0"); return; }\n    while (num > 0) { buffer[i++] = '0' + (num % 10); num /= 10; }\n    while (i > 0) { char c[2] = {buffer[--i], '\\\\0'}; print_uart(c); }\n}\n\nvoid vTask1(void *pvParameters) {\n    TickType_t xLastWakeTime = xTaskGetTickCount();\n    for(;;) {\n        task1_counter++;\n        print_uart("Task 1 running (count: ");\n        print_number(task1_counter);\n        print_uart(")\\\\r\\\\n");\n        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000));\n    }\n}\n\nvoid vTask2(void *pvParameters) {\n    TickType_t xLastWakeTime = xTaskGetTickCount();\n    for(;;) {\n        task2_counter++;\n        print_uart("Task 2 running (count: ");\n        print_number(task2_counter);\n        print_uart(")\\\\r\\\\n");\n        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(500));\n    }\n}\n\nint main(void) {\n    print_uart("\\\\r\\\\n=== FreeRTOS on RISC-V ===\\\\r\\\\n\\\\r\\\\n");\n    xTaskCreate(vTask1, "Task1", configMINIMAL_STACK_SIZE*2, NULL, TASK_PRIORITY_1, &xTask1Handle);\n    xTaskCreate(vTask2, "Task2", configMINIMAL_STACK_SIZE*2, NULL, TASK_PRIORITY_2, &xTask2Handle);\n    print_uart("Starting scheduler...\\\\r\\\\n\\\\r\\\\n");\n    vTaskStartScheduler();\n    for(;;);\n    return 0;\n}\n\nvoid vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {\n    print_uart("STACK OVERFLOW: "); print_uart(pcTaskName); print_uart("\\\\r\\\\n");\n    taskDISABLE_INTERRUPTS(); for(;;);\n}`,
-            startS: `.section .init\n.globl _start\n_start:\n    la sp, _stack_top\n    la a0, _bss_start\n    la a1, _bss_end\n    bgeu a0, a1, 2f\n1:  sw zero, (a0)\n    addi a0, a0, 4\n    bltu a0, a1, 1b\n2:  call main\n1:  j 1b`,
-            linker: `OUTPUT_ARCH("riscv")\nENTRY(_start)\nMEMORY { RAM (rwx) : ORIGIN = 0x80000000, LENGTH = 128M }\nSECTIONS {\n    .text : { *(.init) *(.text*) } > RAM\n    .rodata : { *(.rodata*) } > RAM\n    .data : { *(.data*) } > RAM\n    .bss : { _bss_start = .; *(.bss*) *(COMMON) _bss_end = .; } > RAM\n    . = ALIGN(8); . = . + 0x10000; _stack_top = .;\n}`,
-            makefile: `PREFIX = riscv64-unknown-elf-\nCC = \${PREFIX}gcc\nCFLAGS = -march=rv64imac -mabi=lp64 -mcmodel=medany -Wall -O2 -g\nCFLAGS += -I. -ISource/include -Iportable\nLDFLAGS = -T riscv.ld -nostdlib -nostartfiles\nC_SOURCES = main.c Source/tasks.c Source/queue.c Source/list.c Source/timers.c Source/portable/MemMang/heap_4.c portable/port.c\nASM_SOURCES = start.S portable/portASM.S\nOBJECTS = \${C_SOURCES:.c=.o} \${ASM_SOURCES:.S=.o}\nTARGET = freertos_riscv\nall: \${TARGET}.elf\n\${TARGET}.elf: \${OBJECTS}\n\t\${CC} \${CFLAGS} \${LDFLAGS} -o $@ $^\n%.o: %.c\n\t\${CC} \${CFLAGS} -c -o $@ $<\n%.o: %.S\n\t\${CC} \${CFLAGS} -c -o $@ $<\nclean:\n\trm -f \${OBJECTS} \${TARGET}.elf\n.PHONY: all clean`,
-            runsh: `#!/bin/bash\necho "Starting FreeRTOS..."\nqemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M -nographic -bios none -kernel freertos_riscv.elf`,
-            readme: `CENG507 FreeRTOS on RISC-V\nBuild: make clean && make\nRun: ./run.sh\nExit QEMU: Ctrl+A then X`
-        };
+                <div class="info-box success">
+                    <h3>✅ Prerequisites Check</h3>
+                    <p>Before starting, make sure you have:</p>
+                    <ul>
+                        <li>✅ Windows 10 or Windows 11 with administrator access</li>
+                        <li>✅ At least 15GB free disk space (10GB for WSL + 5GB for tools)</li>
+                        <li>✅ Stable internet connection</li>
+                        <li>✅ 3-4 hours of uninterrupted time for initial setup</li>
+                    </ul>
+                </div>
 
-        document.getElementById('prev1').textContent = code.config;
-        document.getElementById('prev2').textContent = code.main;
-        document.getElementById('prev3').textContent = code.makefile;
+                <!-- STEP 0 -->
+                <div class="step">
+                    <h3><span class="step-num">1</span>Install WSL 2 (Windows Subsystem for Linux)</h3>
+                    <p><strong>Action:</strong> Enable and install WSL 2 on your Windows machine</p>
 
-        function switchTab(name) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById(name).classList.add('active');
-        }
+                    <p><strong>Step 1a - Open PowerShell as Administrator:</strong></p>
+                    <ol>
+                        <li>Press <span class="kbd">Windows Key + X</span></li>
+                        <li>Select <strong>"Windows Terminal (Admin)"</strong> or <strong>"PowerShell (Admin)"</strong>
+                        </li>
+                        <li>Click <strong>"Yes"</strong> when prompted for admin permission</li>
+                    </ol>
 
-        function download(filename, content) {
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = filename;
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
-        }
+                    <p><strong>Step 1b - Enable WSL 2:</strong></p>
+                    <p>Copy and paste this command into PowerShell:</p>
+                    <div class="code-block">wsl --install --distribution Ubuntu-22.04</div>
 
-        function downloadCode() {
-            const zip = new JSZip();
-            zip.file('FreeRTOSConfig.h', code.config);
-            zip.file('main.c', code.main);
-            zip.file('start.S', code.startS);
-            zip.file('riscv.ld', code.linker);
-            zip.file('Makefile', code.makefile);
-            zip.file('run.sh', code.runsh);
-            zip.file('README.txt', code.readme);
-            zip.generateAsync({ type: 'blob' }).then(c => {
-                const url = URL.createObjectURL(c);
-                const a = document.createElement('a');
-                a.href = url; a.download = 'CENG507_Source_Code.zip';
-                document.body.appendChild(a); a.click();
-                document.body.removeChild(a); URL.revokeObjectURL(url);
-            });
-        }
+                    <div class="command-explain">
+                        <strong>What this does:</strong> Installs WSL 2 with Ubuntu 22.04 (the version we use in this
+                        tutorial)
+                    </div>
 
-        function downloadTutorial() {
-            const t = `CENG507 FREERTOS ON RISC-V TUTORIAL
+                    <p><strong>Step 1c - Wait for Installation:</strong></p>
+                    <ul>
+                        <li>The installation will download and install WSL components (~1-2 GB)</li>
+                        <li>This may take 5-15 minutes depending on your internet speed</li>
+                        <li>You may see system restart prompts - allow them to proceed</li>
+                    </ul>
 
-1. SETUP ENVIRONMENT
-Choose WSL2 or VirtualBox
+                    <div class="expected-output">
+                        When complete, you'll see a message like:
+                        <code>Installation successful!</code>
+                    </div>
 
-2. INSTALL TOOLS
-sudo apt update
-sudo apt install build-essential git wget curl
-Install RISC-V toolchain and QEMU
+                    <div class="tip">
+                        WSL 2 requires virtualization to be enabled in your BIOS. If installation fails, restart your
+                        computer and check BIOS settings for "Virtualization Technology" or "AMD-V".
+                    </div>
+                </div>
 
-3. GET FREERTOS
-git clone https://github.com/FreeRTOS/FreeRTOS.git
+                <!-- STEP 1.5 -->
+                <div class="step">
+                    <h3><span class="step-num">2</span>Setup Ubuntu User Account</h3>
+                    <p><strong>Action:</strong> Create your Ubuntu login credentials</p>
 
-4. SETUP PROJECT
-Copy FreeRTOS source files to your project
+                    <p><strong>Step 2a - Launch Ubuntu:</strong></p>
+                    <ol>
+                        <li>Press <span class="kbd">Windows Key</span> and search for <strong>"Ubuntu"</strong></li>
+                        <li>Click on <strong>"Ubuntu 22.04 on Windows"</strong></li>
+                        <li>Wait for the first-time setup (30-60 seconds)</li>
+                    </ol>
 
-5. CREATE FILES
-Download source files from this package
+                    <p><strong>Step 2b - Create User Account:</strong></p>
+                    <p>You will be prompted to enter:</p>
+                    <ul>
+                        <li><strong>UNIX username:</strong> Enter a username (e.g., student, yourname)</li>
+                        <li><strong>UNIX password:</strong> Enter a password (won't show as you type - press Enter)</li>
+                        <li><strong>Confirm password:</strong> Re-enter the password</li>
+                    </ul>
 
-6. COMPILE
-make clean && make
+                    <div class="code-block multiline">Installing, this may take a few minutes...
+                        Please create a default UNIX user account. The username does not need to match your Windows
+                        username.
+                        For more information visit: https://aka.ms/wslusers
+                        Enter new UNIX username: student
+                        New password:
+                        Retype new password:</div>
 
-7. RUN
-./run.sh
+                    <div class="command-explain">
+                        <strong>Important:</strong> Remember your password! You'll need it for running commands with
+                        <code>sudo</code>
+                    </div>
 
-For complete details, see the HTML page.`;
-            download('CENG507_Tutorial.txt', t);
-        }
+                    <div class="expected-output">
+                        <code>student@HOSTNAME:~$</code>
+                    </div>
 
-        function downloadReport() {
-            const r = `CENG507 TECHNICAL REPORT TEMPLATE\n\n[COVER PAGE]\nTitle: FreeRTOS Porting to RISC-V\nCourse: CENG507\nNames: [Your names]\nDate: [Date]\n\nTABLE OF CONTENTS\n1. Introduction\n2. Methodology\n3. Implementation\n4. Testing & Validation\n5. Challenges & Solutions\n6. Conclusion\n7. References\n\n1. INTRODUCTION (1-2 pages)\n- Project objectives\n- FreeRTOS overview\n- RISC-V overview\n- Tools used\n\n2. METHODOLOGY (2-3 pages)\n- Environment setup\n- FreeRTOS acquisition\n- Porting strategy\n- Configuration approach\n\n3. IMPLEMENTATION (3-4 pages)\n- Files obtained from FreeRTOS\n- Files you created/modified\n- Key code explanations\n- Configuration parameters\n\n4. TESTING & VALIDATION (2-3 pages)\n- Compilation (with screenshots)\n- QEMU execution (with screenshots)\n- Task output (with screenshots)\n- Results analysis\n\n5. CHALLENGES & SOLUTIONS (1-2 pages)\n- Problems encountered\n- How you solved them\n\n6. CONCLUSION (1 page)\n- Summary\n- Learning outcomes\n\n7. REFERENCES\n- FreeRTOS docs\n- RISC-V specs\n- Course materials`;
-            const html = '<html><head><meta charset="utf-8"></head><body><pre>' + r + '</pre></body></html>';
-            const blob = new Blob([html], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'CENG507_Report_Template.doc';
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
-        }
+                    <p><strong>Step 2c - Verify Installation:</strong></p>
+                    <div class="code-block">lsb_release -a</div>
 
-        function downloadAll() {
-            const zip = new JSZip();
-            const src = zip.folder('source_code');
-            src.file('FreeRTOSConfig.h', code.config);
-            src.file('main.c', code.main);
-            src.file('start.S', code.startS);
-            src.file('riscv.ld', code.linker);
-            src.file('Makefile', code.makefile);
-            src.file('run.sh', code.runsh);
-            zip.file('README.txt', code.readme);
-            zip.file('TUTORIAL.txt', 'See HTML page for complete tutorial');
-            zip.generateAsync({ type: 'blob' }).then(c => {
-                const url = URL.createObjectURL(c);
-                const a = document.createElement('a');
-                a.href = url; a.download = 'CENG507_Complete_Package.zip';
-                document.body.appendChild(a); a.click();
-                document.body.removeChild(a); URL.revokeObjectURL(url);
-            });
-        }
-    </script>
+                    <div class="expected-output">
+                        You should see:
+                        <code>Distributor ID:	Ubuntu
+Release:        22.04
+Codename:       jammy</code>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="step">
+                    <h3><span class="step-num">3</span>Update Ubuntu Packages</h3>
+                    <p><strong>Action:</strong> Update your Ubuntu system to latest versions</p>
+
+                    <p>In the Ubuntu terminal, run:</p>
+                    <div class="code-block">sudo apt-get update && sudo apt-get upgrade -y</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong>
+                        <ul>
+                            <li><code>sudo</code> - Run with administrator privileges (you'll be asked for your
+                                password)</li>
+                            <li><code>apt-get update</code> - Refresh package lists</li>
+                            <li><code>apt-get upgrade -y</code> - Install updates (automatically answer "yes" to
+                                prompts)</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>This may take 5-10 minutes.</strong> When complete, you'll return to the prompt.</p>
+
+                    <div class="tip">
+                        If prompted for your password, remember: nothing will appear as you type. Just type your
+                        password and press Enter.
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="step">
+                    <h3><span class="step-num">4</span>Navigate to Home Directory</h3>
+                    <p><strong>Action:</strong> Make sure you're in your home directory</p>
+                    <div class="code-block">cd ~</div>
+                    <div class="command-explain">
+                        <strong>What this does:</strong> <code>cd ~</code> changes directory to your home folder (e.g.,
+                        /home/student)
+                    </div>
+                    <p>Verify where you are:</p>
+                    <div class="code-block">pwd</div>
+                    <div class="expected-output">
+                        <code>/home/student</code> (or your actual username)
+                    </div>
+                </div>
+
+                <!-- STEP 5 -->
+                <div class="step">
+                    <h3><span class="step-num">5</span>Download FreeRTOS Source Code</h3>
+                    <p><strong>Action:</strong> Get the FreeRTOS repository from GitHub</p>
+
+                    <p><strong>Option A - Clone with Git (Recommended):</strong></p>
+                    <div class="code-block">git clone --depth 1 https://github.com/FreeRTOS/FreeRTOS.git</div>
+                    <div class="command-explain">
+                        <strong>What this does:</strong> Downloads only the latest version (shallow clone) to save time
+                        and space
+                    </div>
+
+                    <p><strong>Option B - Download ZIP (If git fails):</strong></p>
+                    <div class="code-block multiline">wget
+                        https://github.com/FreeRTOS/FreeRTOS/archive/refs/heads/main.zip
+                        unzip main.zip
+                        mv FreeRTOS-main FreeRTOS</div>
+
+                    <div class="warning-box">
+                        <strong>Network Issues?</strong> This download is ~500MB. If it fails due to slow/unstable
+                        connection:
+                        <ul>
+                            <li>Try Option B (wget) which can be resumed if interrupted</li>
+                            <li>Use a wired connection instead of WiFi</li>
+                            <li>Try during off-peak hours</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Wait for completion</strong> (5-10 minutes depending on your internet speed)</p>
+                </div>
+
+                <!-- STEP 6 -->
+                <div class="step">
+                    <h3><span class="step-num">6</span>Download FreeRTOS Kernel Source</h3>
+                    <p><strong>Why this step:</strong> FreeRTOS uses git submodules. The kernel source needs to be
+                        downloaded separately.</p>
+
+                    <p>Navigate to the FreeRTOS Source directory:</p>
+                    <div class="code-block">cd ~/FreeRTOS/FreeRTOS/Source</div>
+
+                    <p>Download the kernel:</p>
+                    <div class="code-block multiline">wget
+                        https://github.com/FreeRTOS/FreeRTOS-Kernel/archive/refs/heads/main.zip -O kernel.zip
+                        unzip kernel.zip
+                        mv FreeRTOS-Kernel-main/* .
+                        mv FreeRTOS-Kernel-main/.* . 2>/dev/null
+                        rmdir FreeRTOS-Kernel-main
+                        rm kernel.zip</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong>
+                        <ul>
+                            <li>Downloads FreeRTOS kernel source</li>
+                            <li>Extracts it to current directory</li>
+                            <li>Moves all files (including hidden ones) to proper location</li>
+                            <li>Cleans up temporary files</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- STEP 7 -->
+                <div class="step">
+                    <h3><span class="step-num">7</span>Verify FreeRTOS Structure</h3>
+                    <p><strong>Action:</strong> Check that all necessary files are in place</p>
+
+                    <p>List files in Source directory:</p>
+                    <div class="code-block">ls ~/FreeRTOS/FreeRTOS/Source/</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">tasks.c queue.c list.c timers.c event_groups.c stream_buffer.c
+                            croutine.c include/ portable/</div>
+                    </div>
+
+                    <p>Check for RISC-V port:</p>
+                    <div class="code-block">ls ~/FreeRTOS/FreeRTOS/Source/portable/GCC/ | grep -i risc</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">RISC-V</div>
+                    </div>
+
+                    <p>Verify RISC-V port files:</p>
+                    <div class="code-block">ls ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">port.c portASM.S portmacro.h chip_specific_extensions/ README.md
+                        </div>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>✅ Success Criteria:</strong> If you see all these files, FreeRTOS is properly set up!
+                    </div>
+                </div>
+
+                <!-- STEP 6 -->
+                <div class="step">
+                    <h3><span class="step-num">8</span>Create Project Directory</h3>
+                    <p><strong>Action:</strong> Set up your working directory for the project</p>
+
+                    <div class="code-block">mkdir -p ~/ceng507_project</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> <code>-p</code> flag creates parent directories if they don't
+                        exist (won't error if directory already exists)
+                    </div>
+
+                    <p>Navigate to project directory:</p>
+                    <div class="code-block">cd ~/ceng507_project</div>
+
+                    <p>Verify you're in the right place:</p>
+                    <div class="code-block">pwd</div>
+
+                    <div class="expected-output">
+                        <code>/home/yourusername/ceng507_project</code>
+                    </div>
+                </div>
+
+                <!-- STEP 7 -->
+                <div class="step">
+                    <h3><span class="step-num">9</span>Update Package Lists</h3>
+                    <p><strong>Action:</strong> Refresh Ubuntu's package database</p>
+
+                    <div class="code-block">sudo apt update</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> <code>sudo</code> runs command as administrator (you'll need to
+                        enter your Ubuntu password)
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>First time using sudo?</strong> When you type your password, you won't see anything on
+                        screen - no dots, no asterisks. This is normal! Just type your password and press Enter.
+                    </div>
+
+                    <p><strong>Wait for completion</strong> (30 seconds - 1 minute)</p>
+
+                    <div class="expected-output">
+                        You should see messages like "Hit:1", "Get:2", ending with "Reading package lists... Done"
+                    </div>
+                </div>
+
+                <!-- STEP 8 -->
+                <div class="step">
+                    <h3><span class="step-num">10</span>Install Build Tools</h3>
+                    <p><strong>Action:</strong> Install essential compilation tools</p>
+
+                    <div class="code-block">sudo apt install -y build-essential git wget curl python3</div>
+
+                    <div class="command-explain">
+                        <strong>What this installs:</strong>
+                        <ul>
+                            <li><code>build-essential</code> - GCC compiler, make, and development libraries</li>
+                            <li><code>git</code> - Version control system</li>
+                            <li><code>wget</code> - File downloader</li>
+                            <li><code>curl</code> - Another file transfer tool</li>
+                            <li><code>python3</code> - Python interpreter (used by some build scripts)</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Wait for installation</strong> (2-3 minutes)</p>
+
+                    <div class="tip">
+                        If tools are already installed, you'll see "already the newest version" - this is perfectly
+                        fine!
+                    </div>
+                </div>
+
+                <!-- STEP 9 -->
+                <div class="step">
+                    <h3><span class="step-num">11</span>Install Additional Dependencies</h3>
+                    <p><strong>Action:</strong> Install libraries needed for RISC-V toolchain</p>
+
+                    <div class="code-block multiline">sudo apt install -y autoconf automake autotools-dev libmpc-dev \
+                        libmpfr-dev libgmp-dev gawk bison flex texinfo gperf \
+                        libtool patchutils bc zlib1g-dev libexpat-dev ninja-build</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> Installs mathematical libraries, build tools, and parsing tools
+                        required for cross-compilation
+                    </div>
+
+                    <p><strong>Wait for installation</strong> (2-3 minutes)</p>
+                </div>
+
+                <!-- STEP 10 -->
+                <div class="step">
+                    <h3><span class="step-num">12</span>Install RISC-V Toolchain (Quick Method)</h3>
+                    <p><strong>Action:</strong> Install pre-built RISC-V compiler from Ubuntu repositories</p>
+
+                    <div class="info-box warning">
+                        <strong>⚡ Fast Alternative:</strong> Instead of downloading the large toolchain file (~200MB,
+                        takes hours on slow connections), we can install from Ubuntu's package repository (much faster!)
+                    </div>
+
+                    <div class="code-block">sudo apt install -y gcc-riscv64-unknown-elf</div>
+
+                    <p><strong>Wait for installation</strong> (1-2 minutes)</p>
+
+                    <p>Verify installation:</p>
+                    <div class="code-block">riscv64-unknown-elf-gcc --version</div>
+
+                    <div class="expected-output">
+                        You should see GCC version information (something like "gcc version 11.x.x" or higher)
+                    </div>
+
+                    <div class="troubleshooting">
+                        <h4>If gcc-riscv64-unknown-elf package not found:</h4>
+                        <p>Use the manual download method (slower but works everywhere):</p>
+                        <div class="code-block multiline">mkdir -p ~/riscv && cd ~/riscv
+                            wget
+                            https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.10.18/riscv64-elf-ubuntu-22.04-gcc-nightly-2023.10.18-nightly.tar.gz
+                            tar -xzf riscv64-elf-ubuntu-22.04-gcc-nightly-2023.10.18-nightly.tar.gz
+                            echo 'export PATH=$PATH:~/riscv/riscv/bin' >> ~/.bashrc
+                            source ~/.bashrc</div>
+                        <p><strong>Note:</strong> This download is ~200MB and takes 2-3 hours on slow connections. Be
+                            patient!</p>
+                    </div>
+                </div>
+
+                <!-- STEP 11 -->
+                <div class="step">
+                    <h3><span class="step-num">13</span>Install QEMU Emulator</h3>
+                    <p><strong>Action:</strong> Install QEMU RISC-V system emulator</p>
+
+                    <div class="code-block">sudo apt install -y qemu-system-misc qemu-system-riscv64</div>
+
+                    <div class="command-explain">
+                        <strong>What this installs:</strong>
+                        <ul>
+                            <li><code>qemu-system-misc</code> - QEMU emulators for various architectures</li>
+                            <li><code>qemu-system-riscv64</code> - RISC-V 64-bit emulator (what we need!)</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Wait for installation</strong> (1-2 minutes)</p>
+
+                    <p>Verify installation:</p>
+                    <div class="code-block">qemu-system-riscv64 --version</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">QEMU emulator version 6.2.0 (or higher)
+                            Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers</div>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>🎉 Congratulations!</strong> All development tools are now installed!
+                    </div>
+                </div>
+
+                <!-- STEP 12 -->
+                <div class="step">
+                    <h3><span class="step-num">14</span>Setup Project Structure</h3>
+                    <p><strong>Action:</strong> Create working directory and copy FreeRTOS files</p>
+
+                    <p>Navigate to project directory:</p>
+                    <div class="code-block">cd ~/ceng507_project</div>
+
+                    <p>Create port directory:</p>
+                    <div class="code-block multiline">mkdir freertos_riscv_port
+                        cd freertos_riscv_port</div>
+
+                    <p><strong>Copy FreeRTOS kernel source</strong> (this includes tasks.c, queue.c, etc.):</p>
+                    <div class="code-block">cp -r ~/FreeRTOS/FreeRTOS/Source .</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> The <code>.</code> at the end means "current directory". We're
+                        copying the entire Source folder to our project.
+                    </div>
+
+                    <p><strong>Copy RISC-V port files:</strong></p>
+                    <div class="code-block multiline">mkdir -p portable
+                        cp -r ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/* portable/</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> Creates a portable directory and copies RISC-V-specific port
+                        files (port.c, portASM.S, etc.)
+                    </div>
+                </div>
+
+                <!-- STEP 13 -->
+                <div class="step">
+                    <h3><span class="step-num">15</span>Verify Project Structure</h3>
+                    <p><strong>Action:</strong> Make sure all files are in the right place</p>
+
+                    <p>List contents of project directory:</p>
+                    <div class="code-block">ls -la</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">Source/
+                            portable/</div>
+                    </div>
+
+                    <p>Check Source directory contents:</p>
+                    <div class="code-block">ls Source/</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">tasks.c queue.c list.c timers.c include/ portable/ croutine.c
+                            event_groups.c stream_buffer.c</div>
+                    </div>
+
+                    <p>Check portable directory contents:</p>
+                    <div class="code-block">ls portable/</div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">port.c portASM.S portmacro.h chip_specific_extensions/ README.md
+                        </div>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>✅ Perfect!</strong> If you see all these files, your project structure is correct!
+                    </div>
+                </div>
+
+                <!-- STEP 14 -->
+                <div class="step">
+                    <h3><span class="step-num">16</span>Create Your Source Code Files</h3>
+                    <p><strong>Action:</strong> Create the 7 essential files in your project directory</p>
+
+                    <p>You need to create these files in <code>~/ceng507_project/freertos_riscv_port/</code>:</p>
+                    <div class="info-box">
+                        <ol>
+                            <li><strong>FreeRTOSConfig.h</strong> - Configuration file (see Source Code tab)</li>
+                            <li><strong>main.c</strong> - Application code (see Source Code tab)</li>
+                            <li><strong>start.S</strong> - Startup assembly (see Source Code tab)</li>
+                            <li><strong>riscv.ld</strong> - Linker script (see Source Code tab)</li>
+                            <li><strong>Makefile</strong> - Build system (see Source Code tab)</li>
+                            <li><strong>run.sh</strong> - QEMU runner script (see Source Code tab)</li>
+                            <li><strong>README.txt</strong> - Documentation (see Source Code tab)</li>
+                        </ol>
+                    </div>
+
+                    <p><strong>Copy complete code from the Source Code tab above and create each file:</strong></p>
+                    <div class="code-block">cd ~/ceng507_project/freertos_riscv_port</div>
+
+                    <div class="tip">
+                        Use your favorite text editor (nano, vim, gedit) to create each file. For example:
+                        <code>nano FreeRTOSConfig.h</code> - paste the code from the Source Code tab, then Ctrl+X to
+                        save
+                    </div>
+
+                    <p><strong>Verify all files are present:</strong></p>
+                    <div class="code-block">ls -la</div>
+
+                    <div class="expected-output">
+                        You should see all 7 files plus the Source/ and portable/ directories:
+                        <code>-rw-r--r-- FreeRTOSConfig.h
+-rw-r--r-- main.c
+-rw-r--r-- start.S
+-rw-r--r-- riscv.ld
+-rw-r--r-- Makefile
+-rw-r--r-- run.sh
+-rw-r--r-- README.txt
+drwxr-xr-x Source/
+drwxr-xr-x portable/</code>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Important:</strong> Make sure you have the Source/ and portable/ directories already
+                        created from previous steps. If not, run:
+                        <div class="code-block">cp -r ~/FreeRTOS/FreeRTOS/Source .
+                            mkdir -p portable
+                            cp -r ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/* portable/</div>
+                    </div>
+                </div>
+
+                <!-- STEP 15 -->
+                <div class="step">
+                    <h3><span class="step-num">17</span>Make Scripts Executable</h3>
+                    <p><strong>Action:</strong> Give execution permission to the run script</p>
+
+                    <div class="code-block">chmod +x run.sh</div>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> <code>chmod +x</code> adds execute permission to the file,
+                        allowing you to run it as a script
+                    </div>
+                </div>
+
+                <!-- STEP 16 -->
+                <div class="step">
+                    <h3><span class="step-num">18</span>Compile the Project</h3>
+                    <p><strong>Action:</strong> Build your FreeRTOS application</p>
+
+                    <p>First, clean any previous builds:</p>
+                    <div class="code-block">make clean</div>
+
+                    <p>Now compile:</p>
+                    <div class="code-block">make</div>
+
+                    <div class="command-explain">
+                        <strong>What happens:</strong> Make reads the Makefile and compiles all source files, then links
+                        them into an executable
+                    </div>
+
+                    <p><strong>Wait for compilation</strong> (30 seconds - 1 minute)</p>
+
+                    <div class="expected-output">
+                        You should see compilation messages like:
+                        <div class="code-block output">riscv64-unknown-elf-gcc ... -c -o main.o main.c
+                            riscv64-unknown-elf-gcc ... -c -o Source/tasks.o Source/tasks.c
+                            riscv64-unknown-elf-gcc ... -c -o Source/queue.o Source/queue.c
+                            ...
+                            riscv64-unknown-elf-gcc ... -o freertos_riscv.elf
+                            text data bss dec hex filename
+                            45678 1234 5678 52590 cd6e freertos_riscv.elf</div>
+                    </div>
+
+                    <p>Verify the executable was created:</p>
+                    <div class="code-block">ls -lh freertos_riscv.elf</div>
+
+                    <div class="expected-output">
+                        File size should be around 100-200 KB
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>🎉 Compilation Successful!</strong> Take a screenshot of this output for your report!
+                    </div>
+
+                    <div class="troubleshooting">
+                        <h4>Common Compilation Errors:</h4>
+                        <ul>
+                            <li><strong>"command not found"</strong> → Toolchain not in PATH, re-run Step 10</li>
+                            <li><strong>"No such file or directory"</strong> → Missing source files, check Step 13-14
+                            </li>
+                            <li><strong>"undefined reference"</strong> → Missing object files in Makefile</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- STEP 17 -->
+                <div class="step">
+                    <h3><span class="step-num">19</span>Run on QEMU</h3>
+                    <p><strong>Action:</strong> Execute your FreeRTOS application in the emulator</p>
+
+                    <div class="code-block">./run.sh</div>
+
+                    <div class="command-explain">
+                        <strong>What happens:</strong> QEMU starts, loads your program, and begins execution. You'll see
+                        output in the terminal.
+                    </div>
+
+                    <div class="expected-output">
+                        <div class="code-block output">=== FreeRTOS on RISC-V ===
+
+                            Starting scheduler...
+
+                            Task 2 running (count: 1)
+                            Task 1 running (count: 1)
+                            Task 2 running (count: 2)
+                            Task 2 running (count: 3)
+                            Task 1 running (count: 2)
+                            Task 2 running (count: 4)
+                            Task 2 running (count: 5)
+                            Task 1 running (count: 3)
+                            ...</div>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>✅ What you should see:</strong>
+                        <ul>
+                            <li>Task 2 runs approximately twice as often as Task 1</li>
+                            <li>Task 2 has 500ms period (runs every half second)</li>
+                            <li>Task 1 has 1000ms period (runs every second)</li>
+                            <li>Counters increment properly for each task</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>📸 SCREENSHOT TIME!</strong> This is running successfully! Take a screenshot NOW for
+                        your report!
+                    </div>
+                </div>
+
+                <!-- STEP 18 -->
+                <div class="step">
+                    <h3><span class="step-num">20</span>Exit QEMU</h3>
+                    <p><strong>Action:</strong> Properly close the emulator</p>
+
+                    <p>Press <span class="kbd">Ctrl</span> + <span class="kbd">A</span> (hold Ctrl, press A)</p>
+                    <p>Then press <span class="kbd">X</span></p>
+
+                    <div class="command-explain">
+                        <strong>What this does:</strong> This is QEMU's escape sequence to exit the emulator and return
+                        to your terminal
+                    </div>
+
+                    <div class="tip">
+                        If this doesn't work, you can also close the terminal window, but using Ctrl+A then X is
+                        cleaner.
+                    </div>
+                </div>
+
+                <!-- STEP 19 -->
+                <div class="step">
+                    <h3><span class="step-num">21</span>Document Your Work</h3>
+                    <p><strong>Action:</strong> Prepare materials for your submission</p>
+
+                    <h4>Screenshots you should have:</h4>
+                    <ol>
+                        <li>✅ Successful compilation output (Step 16)</li>
+                        <li>✅ QEMU running with task output (Step 17)</li>
+                        <li>✅ Task counters incrementing</li>
+                        <li>✅ Directory structure (<code>ls</code> commands)</li>
+                        <li>✅ Toolchain versions verification</li>
+                    </ol>
+
+                    <h4>Files to keep:</h4>
+                    <div class="code-block multiline">cd ~/ceng507_project/freertos_riscv_port
+                        ls -la # You should have all these files</div>
+
+                    <div class="tip">
+                        Create a backup of your entire project:
+                        <div class="code-block multiline">cd ~/ceng507_project
+                            tar -czf freertos_backup.tar.gz freertos_riscv_port/
+                            cp freertos_backup.tar.gz /mnt/c/Users/youni/Downloads/</div>
+                        This copies a compressed backup to your Windows Downloads folder!
+                    </div>
+                </div>
+
+                <!-- FINAL STEP -->
+                <div class="step">
+                    <h3><span class="step-num">20</span>Next Steps</h3>
+                    <p><strong>You've completed the implementation!</strong> Now you need to:</p>
+
+                    <ol>
+                        <li><strong>Write Technical Report</strong>
+                            <ul>
+                                <li>Use the report template from Downloads tab</li>
+                                <li>Include all screenshots</li>
+                                <li>Explain your implementation</li>
+                                <li>Document challenges and solutions</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Prepare Source Code Package</strong>
+                            <ul>
+                                <li>ZIP all your project files</li>
+                                <li>Include README with build instructions</li>
+                                <li>Make sure code is well-commented</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Prepare Demonstration</strong>
+                            <ul>
+                                <li>Practice compiling from clean state</li>
+                                <li>Be ready to explain your code</li>
+                                <li>Understand FreeRTOS concepts</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="info-box success">
+                        <h3>🎊 Congratulations!</h3>
+                        <p>You've successfully ported FreeRTOS to RISC-V and run it on QEMU!</p>
+                        <p>Check the <strong>Deliverables tab</strong> for submission requirements.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FILE STRUCTURE TAB -->
+            <div id="structure" class="tab-content">
+                <h2>🗂️ Complete File Structure Reference</h2>
+
+                <div class="info-box">
+                    <h3>Understanding the Directory Layout</h3>
+                    <p>This section explains where every file comes from and where it goes in your project.</p>
+                </div>
+
+                <h3>Downloaded FreeRTOS Structure:</h3>
+                <div class="tree">~/FreeRTOS/ (Root of downloaded FreeRTOS)
+                    ├── FreeRTOS/ (Main FreeRTOS directory)
+                    │ ├── Source/ ← **KERNEL SOURCE IS HERE**
+                    │ │ ├── tasks.c (Task management - NEED THIS)
+                    │ │ ├── queue.c (Queue operations - NEED THIS)
+                    │ │ ├── list.c (List data structure - NEED THIS)
+                    │ │ ├── timers.c (Software timers - NEED THIS)
+                    │ │ ├── event_groups.c (Event synchronization)
+                    │ │ ├── stream_buffer.c (Stream buffers)
+                    │ │ ├── croutine.c (Co-routines)
+                    │ │ ├── include/ (Header files - NEED THIS)
+                    │ │ │ ├── FreeRTOS.h
+                    │ │ │ ├── task.h
+                    │ │ │ ├── queue.h
+                    │ │ │ ├── semphr.h
+                    │ │ │ └── ...
+                    │ │ └── portable/ ← **PORT FILES ARE HERE**
+                    │ │ ├── GCC/ (GCC compiler ports)
+                    │ │ │ ├── RISC-V/ ← **THIS IS WHAT WE NEED!**
+                    │ │ │ │ ├── port.c (Context switching - NEED THIS)
+                    │ │ │ │ ├── portASM.S (Assembly code - NEED THIS)
+                    │ │ │ │ ├── portmacro.h (Port macros - NEED THIS)
+                    │ │ │ │ └── chip_specific_extensions/
+                    │ │ │ ├── ARM_CM3/ (Other architectures)
+                    │ │ │ ├── AVR/
+                    │ │ │ └── ...
+                    │ │ └── MemMang/ (Memory management)
+                    │ │ ├── heap_1.c
+                    │ │ ├── heap_2.c
+                    │ │ ├── heap_3.c
+                    │ │ ├── heap_4.c ← **WE USE THIS ONE**
+                    │ │ └── heap_5.c
+                    │ └── Demo/ (Example projects - not needed)
+                    ├── FreeRTOS-Plus/ (Additional libraries - not needed)
+                    └── README.md</div>
+
+                <h3>Your Project Structure:</h3>
+                <div class="tree">~/ceng507_project/ (Your project root)
+                    ├── FreeRTOS/ (Reference copy - don't modify)
+                    └── freertos_riscv_port/ ← **YOUR WORKING DIRECTORY**
+                    ├── FreeRTOSConfig.h ← YOU CREATE THIS
+                    ├── main.c ← YOU CREATE THIS
+                    ├── start.S ← YOU CREATE THIS
+                    ├── riscv.ld ← YOU CREATE THIS
+                    ├── Makefile ← YOU CREATE THIS
+                    ├── run.sh ← YOU CREATE THIS
+                    ├── README.txt ← YOU CREATE THIS
+                    ├── Source/ ← COPIED FROM ~/FreeRTOS/FreeRTOS/Source/
+                    │ ├── tasks.c
+                    │ ├── queue.c
+                    │ ├── list.c
+                    │ ├── timers.c
+                    │ ├── event_groups.c
+                    │ ├── stream_buffer.c
+                    │ ├── croutine.c
+                    │ ├── include/
+                    │ │ ├── FreeRTOS.h
+                    │ │ ├── task.h
+                    │ │ └── ...
+                    │ └── portable/
+                    │ └── MemMang/
+                    │ └── heap_4.c
+                    └── portable/ ← COPIED FROM ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/
+                    ├── port.c
+                    ├── portASM.S
+                    ├── portmacro.h
+                    └── chip_specific_extensions/</div>
+
+                <h3>File Descriptions:</h3>
+
+                <h4>Files YOU Create:</h4>
+                <div style="margin: 20px 0;">
+                    <div class="file-card">
+                        <div class="file-header" style="background: #4caf50;">
+                            <h3>FreeRTOSConfig.h</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Configuration file for FreeRTOS</p>
+                            <p><strong>Contains:</strong> CPU frequency, tick rate, heap size, feature enables</p>
+                            <p><strong>Why needed:</strong> Customizes FreeRTOS for your specific hardware/requirements
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #4caf50;">
+                            <h3>main.c</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Your application code</p>
+                            <p><strong>Contains:</strong> Task definitions, main function, task creation, scheduler
+                                start</p>
+                            <p><strong>Why needed:</strong> This is YOUR program that runs on FreeRTOS</p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #4caf50;">
+                            <h3>start.S</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Startup assembly code</p>
+                            <p><strong>Contains:</strong> Stack setup, BSS clearing, jump to main</p>
+                            <p><strong>Why needed:</strong> Initializes CPU before C code runs</p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #4caf50;">
+                            <h3>riscv.ld</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Linker script</p>
+                            <p><strong>Contains:</strong> Memory layout, section placement</p>
+                            <p><strong>Why needed:</strong> Tells linker where to put code/data in memory</p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #4caf50;">
+                            <h3>Makefile</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Build automation</p>
+                            <p><strong>Contains:</strong> Compilation rules, source file lists, flags</p>
+                            <p><strong>Why needed:</strong> Automates the build process</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Files from FreeRTOS:</h4>
+                <div style="margin: 20px 0;">
+                    <div class="file-card">
+                        <div class="file-header" style="background: #2196f3;">
+                            <h3>tasks.c, queue.c, list.c, timers.c</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> FreeRTOS kernel implementation</p>
+                            <p><strong>From:</strong> ~/FreeRTOS/FreeRTOS/Source/</p>
+                            <p><strong>Do NOT modify these files!</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #2196f3;">
+                            <h3>port.c, portASM.S, portmacro.h</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> RISC-V specific port</p>
+                            <p><strong>From:</strong> ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/</p>
+                            <p><strong>Do NOT modify these files!</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <div class="file-header" style="background: #2196f3;">
+                            <h3>heap_4.c</h3>
+                        </div>
+                        <div class="file-content">
+                            <p><strong>Purpose:</strong> Memory allocation implementation</p>
+                            <p><strong>From:</strong> ~/FreeRTOS/FreeRTOS/Source/portable/MemMang/</p>
+                            <p><strong>Why heap_4:</strong> Best balance of features and efficiency</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Copy Commands Reference:</h3>
+                <div class="code-block multiline"># Go to your project directory
+                    cd ~/ceng507_project/freertos_riscv_port
+
+                    # Copy entire Source directory (kernel files)
+                    cp -r ~/FreeRTOS/FreeRTOS/Source .
+
+                    # Create portable directory
+                    mkdir -p portable
+
+                    # Copy RISC-V port files
+                    cp -r ~/FreeRTOS/FreeRTOS/Source/portable/GCC/RISC-V/* portable/</div>
+
+                <div class="warning-box">
+                    <strong>Common Mistake:</strong> Make sure you're copying from
+                    <code>~/FreeRTOS/FreeRTOS/Source/</code> (note the double "FreeRTOS")!
+                </div>
+            </div>
+
+            <!-- SOURCE CODE TAB -->
+            <div id="code" class="tab-content">
+                <h2>💻 Source Code Examples</h2>
+
+                <div class="info-box success">
+                    <h3>📁 Essential Source Files</h3>
+                    <p>Below are examples of the key files you need to create for your FreeRTOS port.</p>
+                </div>
+
+                <h3>1. FreeRTOSConfig.h</h3>
+                <p>This file configures FreeRTOS kernel settings for your specific hardware.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>FreeRTOSConfig.h</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre>#ifndef FREERTOS_CONFIG_H
+#define FREERTOS_CONFIG_H
+
+/* Hardware specific definitions */
+#define configCPU_CLOCK_HZ                      ( ( unsigned long ) 10000000 )
+#define configTICK_RATE_HZ                      ( ( TickType_t ) 1000 )
+
+/* Memory allocation */
+#define configTOTAL_HEAP_SIZE                   ( ( size_t ) ( 16 * 1024 ) )
+#define configMINIMAL_STACK_SIZE                ( ( unsigned short ) 128 )
+
+/* Task settings */
+#define configMAX_PRIORITIES                    ( 7 )
+#define configMAX_TASK_NAME_LEN                 ( 16 )
+#define configUSE_16_BIT_TICKS                  0
+
+/* Features */
+#define configUSE_PREEMPTION                    1
+#define configUSE_IDLE_HOOK                     0
+#define configUSE_TICK_HOOK                     0
+#define configUSE_MUTEXES                       1
+#define configUSE_RECURSIVE_MUTEXES             1
+#define configUSE_COUNTING_SEMAPHORES           1
+#define configUSE_TIMERS                        1
+#define configTIMER_TASK_PRIORITY               ( configMAX_PRIORITIES - 1 )
+#define configTIMER_QUEUE_LENGTH                10
+#define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
+
+/* Debug features */
+#define configCHECK_FOR_STACK_OVERFLOW          2
+#define configASSERT( x )                       if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+
+/* API includes */
+#define INCLUDE_vTaskPrioritySet                1
+#define INCLUDE_uxTaskPriorityGet               1
+#define INCLUDE_vTaskDelete                     1
+#define INCLUDE_vTaskSuspend                    1
+#define INCLUDE_xTaskDelayUntil                 1
+#define INCLUDE_vTaskDelay                      1
+
+#endif /* FREERTOS_CONFIG_H */</pre>
+                    </div>
+                </div>
+
+                <h3>2. main.c - Application Code</h3>
+                <p>Your application that creates and runs FreeRTOS tasks with UART output.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>main.c</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include "FreeRTOS.h"
+#include "task.h"
+
+/* Task priorities */
+#define TASK_PRIORITY_1    ( tskIDLE_PRIORITY + 1 )
+#define TASK_PRIORITY_2    ( tskIDLE_PRIORITY + 2 )
+
+/* Task handles */
+TaskHandle_t xTask1Handle = NULL;
+TaskHandle_t xTask2Handle = NULL;
+
+/* Test counters */
+volatile uint32_t task1_counter = 0;
+volatile uint32_t task2_counter = 0;
+
+/* Simple print function for QEMU */
+void print_uart(const char *s) {
+    while(*s) {
+        /* UART address for QEMU virt machine */
+        *((volatile char *)0x10000000) = *s++;
+    }
+}
+
+/* Task 1 - Prints periodic messages */
+void vTask1(void *pvParameters) {
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(1000);
+    
+    xLastWakeTime = xTaskGetTickCount();
+    
+    for(;;) {
+        task1_counter++;
+        print_uart("Task 1 is running\r\n");
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+/* Task 2 - Prints periodic messages */
+void vTask2(void *pvParameters) {
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(500);
+    
+    xLastWakeTime = xTaskGetTickCount();
+    
+    for(;;) {
+        task2_counter++;
+        print_uart("Task 2 is running\r\n");
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+/* Main function */
+int main(void) {
+    print_uart("\r\n--- FreeRTOS on RISC-V Starting ---\r\n");
+    
+    /* Create tasks */
+    xTaskCreate(vTask1, "Task1", configMINIMAL_STACK_SIZE, NULL, 
+                TASK_PRIORITY_1, &xTask1Handle);
+    xTaskCreate(vTask2, "Task2", configMINIMAL_STACK_SIZE, NULL, 
+                TASK_PRIORITY_2, &xTask2Handle);
+    
+    print_uart("Tasks created, starting scheduler...\r\n");
+    
+    /* Start the scheduler */
+    vTaskStartScheduler();
+    
+    /* Should never reach here */
+    print_uart("ERROR: Scheduler returned!\r\n");
+    for(;;);
+    
+    return 0;
+}
+
+/* Idle hook (optional) */
+void vApplicationIdleHook(void) {
+    /* Called when idle task runs */
+}
+
+/* Stack overflow hook */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    print_uart("STACK OVERFLOW: ");
+    print_uart(pcTaskName);
+    print_uart("\r\n");
+    for(;;);
+}</pre>
+                    </div>
+                </div>
+
+                <h3>3. start.S - Startup Assembly</h3>
+                <p>Low-level initialization code for RISC-V processor.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>start.S</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre>.section .init
+.globl _start
+.type _start, @function
+
+_start:
+    /* Setup stack pointer */
+    la sp, _stack_top
+    
+    /* Clear BSS */
+    la a0, _bss_start
+    la a1, _bss_end
+    bgeu a0, a1, 2f
+1:
+    sw zero, (a0)
+    addi a0, a0, 4
+    bltu a0, a1, 1b
+2:
+    /* Jump to main */
+    call main
+    
+    /* Infinite loop if main returns */
+1:
+    j 1b
+
+.size _start, .-_start
+    
+.align 8
+_stack_bottom:
+    .space 4096
+_stack_top:</pre>
+                    </div>
+                </div>
+
+                <h3>4. Makefile</h3>
+                <p>Build script that compiles your project with proper compilation flags.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>Makefile</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre"># Toolchain
+                            PREFIX = riscv64-unknown-elf-
+                            CC = $(PREFIX)gcc
+                            AS = $(PREFIX)as
+                            LD = $(PREFIX)ld
+                            OBJCOPY = $(PREFIX)objcopy
+                            OBJDUMP = $(PREFIX)objdump
+
+                            # Directories
+                            FREERTOS_SRC = Source
+                            PORT_SRC = portable
+
+                            # Flags
+                            CFLAGS = -march=rv64imac -mabi=lp64 -mcmodel=medany
+                            CFLAGS += -Wall -O2 -g
+                            CFLAGS += -I. -I$(FREERTOS_SRC)/include -I$(PORT_SRC)
+                            CFLAGS += -ffunction-sections -fdata-sections
+
+                            LDFLAGS = -T riscv.ld -nostdlib -nostartfiles
+                            LDFLAGS += -Wl,--gc-sections
+
+                            # Source files
+                            C_SOURCES = main.c
+                            C_SOURCES += $(FREERTOS_SRC)/tasks.c
+                            C_SOURCES += $(FREERTOS_SRC)/queue.c
+                            C_SOURCES += $(FREERTOS_SRC)/list.c
+                            C_SOURCES += $(FREERTOS_SRC)/timers.c
+                            C_SOURCES += $(FREERTOS_SRC)/portable/MemMang/heap_4.c
+                            C_SOURCES += $(PORT_SRC)/port.c
+
+                            ASM_SOURCES = start.S
+                            ASM_SOURCES += $(PORT_SRC)/portASM.S
+
+                            # Objects
+                            OBJECTS = $(C_SOURCES:.c=.o) $(ASM_SOURCES:.S=.o)
+
+                            # Target
+                            TARGET = freertos_riscv
+
+                            all: $(TARGET).elf $(TARGET).bin
+
+                            $(TARGET).elf: $(OBJECTS)
+                            $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+                            $(OBJDUMP) -d $@ > $(TARGET).asm
+
+                            $(TARGET).bin: $(TARGET).elf
+                            $(OBJCOPY) -O binary $< $@ %.o: %.c $(CC) $(CFLAGS) -c -o $@ $< %.o: %.S $(CC) $(CFLAGS) -c
+                                -o $@ $< clean: rm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin $(TARGET).asm .PHONY: all
+                                clean</pre>
+                    </div>
+                </div>
+
+                <h3>5. riscv.ld - Linker Script</h3>
+                <p>Defines memory layout and section placement for RISC-V.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>riscv.ld</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre>OUTPUT_ARCH("riscv")
+ENTRY(_start)
+
+MEMORY
+{
+    RAM (rwx) : ORIGIN = 0x80000000, LENGTH = 128M
+}
+
+SECTIONS
+{
+    .text : {
+        *(.init)
+        *(.text*)
+    } > RAM
+    
+    .rodata : {
+        *(.rodata*)
+    } > RAM
+    
+    .data : {
+        *(.data*)
+    } > RAM
+    
+    .bss : {
+        _bss_start = .;
+        *(.bss*)
+        *(COMMON)
+        _bss_end = .;
+    } > RAM
+    
+    . = ALIGN(8);
+    . = . + 0x10000; /* 64KB stack */
+    _stack_top = .;
+}</pre>
+                    </div>
+                </div>
+
+                <h3>6. run.sh - QEMU Execution Script</h3>
+                <p>Script to easily run your compiled firmware on QEMU.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>run.sh</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre>#!/bin/bash
+
+echo "Starting FreeRTOS on RISC-V in QEMU..."
+echo "Press Ctrl+A then X to exit"
+echo ""
+
+qemu-system-riscv64 \
+    -machine virt \
+    -cpu rv64 \
+    -smp 1 \
+    -m 128M \
+    -nographic \
+    -bios none \
+    -kernel freertos_riscv.elf</pre>
+                    </div>
+                </div>
+
+                <h3>7. README.txt - Project Documentation</h3>
+                <p>Instructions for building and running your project.</p>
+                <div class="file-card">
+                    <div class="file-header" style="background: #4caf50;">
+                        <h3>README.txt</h3>
+                    </div>
+                    <div class="file-content">
+                        <pre">================================================================================
+                            FreeRTOS on RISC-V - Complete Project
+                            ================================================================================
+
+                            PROJECT OVERVIEW:
+                            This is a complete FreeRTOS port to RISC-V architecture running on QEMU.
+                            Two tasks are implemented demonstrating task scheduling and real-time behavior.
+
+                            FILES INCLUDED:
+                            - FreeRTOSConfig.h : FreeRTOS kernel configuration
+                            - main.c : Application code with two tasks
+                            - start.S : RISC-V startup assembly code
+                            - riscv.ld : Linker script for memory layout
+                            - Makefile : Build automation script
+                            - run.sh : Script to launch QEMU simulator
+                            - README.txt : This file
+
+                            PREREQUISITES:
+                            - Ubuntu 22.04 or equivalent Linux environment (WSL2 on Windows)
+                            - RISC-V GNU Toolchain: riscv64-unknown-elf-gcc
+                            - QEMU: qemu-system-riscv64
+                            - Build tools: make, gcc
+
+                            INSTALLATION (Ubuntu/WSL):
+                            sudo apt update
+                            sudo apt install gcc-riscv64-unknown-elf qemu-system-riscv64 build-essential
+
+                            BUILDING THE PROJECT:
+                            1. Navigate to project directory:
+                            cd ~/ceng507_project/freertos_riscv_port
+
+                            2. Clean previous builds:
+                            make clean
+
+                            3. Compile:
+                            make
+
+                            Expected output: freertos_riscv.elf and freertos_riscv.bin created
+
+                            RUNNING ON QEMU:
+                            Option 1 - Using the run script:
+                            chmod +x run.sh
+                            ./run.sh
+
+                            Option 2 - Direct QEMU command:
+                            qemu-system-riscv64 -machine virt -cpu rv64 -smp 1 -m 128M \
+                            -nographic -bios none -kernel freertos_riscv.elf
+
+                            EXPECTED OUTPUT:
+                            You should see:
+                            --- FreeRTOS on RISC-V Starting ---
+                            Tasks created, starting scheduler...
+                            Task 1 is running
+                            Task 2 is running
+                            Task 2 is running
+                            Task 1 is running
+                            ...
+
+                            EXIT QEMU:
+                            Press Ctrl+A, then press X
+
+                            PROJECT STRUCTURE:
+                            freertos_riscv_port/
+                            ├── main.c (Your application)
+                            ├── FreeRTOSConfig.h (Configuration)
+                            ├── start.S (Startup code)
+                            ├── riscv.ld (Linker script)
+                            ├── Makefile (Build rules)
+                            ├── run.sh (Run script)
+                            ├── README.txt (This file)
+                            ├── Source/ (FreeRTOS kernel)
+                            │ ├── tasks.c
+                            │ ├── queue.c
+                            │ ├── list.c
+                            │ ├── timers.c
+                            │ ├── portable/MemMang/heap_4.c
+                            │ └── include/
+                            └── portable/ (RISC-V specific)
+                            ├── port.c
+                            ├── portASM.S
+                            └── portmacro.h
+
+                            TASK DESCRIPTION:
+                            - Task 1: Executes every 1000ms, prints "Task 1 is running"
+                            - Task 2: Executes every 500ms, prints "Task 2 is running"
+
+                            Both tasks are independent and scheduled by FreeRTOS kernel.
+
+                            TROUBLESHOOTING:
+                            1. "riscv64-unknown-elf-gcc: not found"
+                            → Install toolchain: sudo apt install gcc-riscv64-unknown-elf
+
+                            2. "qemu-system-riscv64: not found"
+                            → Install QEMU: sudo apt install qemu-system-riscv64
+
+                            3. Compilation errors
+                            → Check paths in Makefile
+                            → Verify all source files are present
+                            → Run "make clean" before rebuilding
+
+                            4. No output from QEMU
+                            → Verify UART address (0x10000000) in main.c matches target
+                            → Check kernel compilation succeeded (freertos_riscv.elf exists)
+
+                            MODIFICATIONS:
+                            To extend this project:
+                            1. Add more tasks in main.c
+                            2. Implement inter-task communication (queues, semaphores)
+                            3. Add more features by modifying FreeRTOSConfig.h
+                            4. Implement custom interrupt handlers
+
+                            REFERENCES:
+                            - FreeRTOS: https://www.freertos.org/
+                            - RISC-V: https://riscv.org/
+                            - QEMU: https://www.qemu.org/
+
+                            ================================================================================
+                            Last Updated: December 2024
+                            ================================================================================
+                            <div id="deliverables" class="tab-content">
+                                <h2>📦 Project Deliverables</h2>
+
+                                <div class="info-box success">
+                                    <h3>✅ What You Must Submit</h3>
+                                    <p>Your project submission should include all the items listed below.</p>
+                                </div>
+
+                                <h3>Required Deliverables:</h3>
+                                <ul class="checklist">
+                                    <li><strong>Source Code:</strong> Complete project directory with all .c, .h, .S,
+                                        and Makefile files</li>
+                                    <li><strong>Compiled Binary:</strong> firmware.elf and firmware.bin files</li>
+                                    <li><strong>Executable Script:</strong> run.sh script that demonstrates how to run
+                                        on QEMU</li>
+                                    <li><strong>Screenshot:</strong> Evidence of successful QEMU execution (terminal
+                                        output showing tasks running)</li>
+                                    <li><strong>Technical Report:</strong> PDF document explaining your implementation
+                                        (1000-1500 words)</li>
+                                    <li><strong>README.txt:</strong> Instructions for building and running your project
+                                    </li>
+                                </ul>
+
+                                <h3>Technical Report Contents:</h3>
+                                <div class="info-box">
+                                    <ol>
+                                        <li><strong>Introduction</strong> - What is FreeRTOS and RISC-V?</li>
+                                        <li><strong>Architecture Overview</strong> - How RISC-V differs from other ISAs
+                                        </li>
+                                        <li><strong>Implementation Details</strong> - What you did in your code</li>
+                                        <li><strong>Task Design</strong> - Description of your FreeRTOS tasks</li>
+                                        <li><strong>Challenges & Solutions</strong> - Problems you faced and how you
+                                            solved them</li>
+                                        <li><strong>Testing & Results</strong> - How you tested your implementation</li>
+                                        <li><strong>Conclusion</strong> - What you learned</li>
+                                        <li><strong>References</strong> - FreeRTOS docs, RISC-V specifications, etc.
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <h3>Submission Checklist:</h3>
+                                <div class="code-block multiline">📋 Pre-Submission Checklist:
+                                    ☐ Code compiles without errors
+                                    ☐ Code compiles without warnings (or documented warnings)
+                                    ☐ Runs successfully on QEMU
+                                    ☐ All source files are included
+                                    ☐ Makefile is present and functional
+                                    ☐ run.sh script works
+                                    ☐ Screenshot of successful execution saved
+                                    ☐ Technical report written and proofread
+                                    ☐ README.txt explains how to build and run
+                                    ☐ All files organized in proper directory structure
+                                    ☐ Submitted before deadline</div>
+
+                                <h3>Submission Format:</h3>
+                                <div class="info-box warning">
+                                    <h4>📁 Directory Structure for Submission</h4>
+                                    <pre>STUDENT_ID_CENG507_Part2/
+├── Source Code/
+│   ├── main.c
+│   ├── FreeRTOSConfig.h
+│   ├── start.S
+│   ├── riscv.ld
+│   ├── Makefile
+│   ├── run.sh
+│   └── README.txt
+├── Binary/
+│   ├── firmware.elf
+│   └── firmware.bin
+├── Screenshots/
+│   ├── execution_output.png
+│   └── qemu_running.png
+└── Report/
+    └── CENG507_Part2_Report.pdf</pre>
+                                </div>
+
+                                <h3>Report Formatting:</h3>
+                                <ul>
+                                    <li>Format: PDF (preferably created from Word or LaTeX)</li>
+                                    <li>Font: 12pt, Arial or Times New Roman</li>
+                                    <li>Spacing: 1.5 line spacing</li>
+                                    <li>Margins: 1 inch on all sides</li>
+                                    <li>Length: 1000-1500 words minimum (excluding code listings)</li>
+                                    <li>Include code snippets where relevant</li>
+                                    <li>Include screenshots of QEMU execution</li>
+                                </ul>
+                            </div>
+
+                            <!-- TROUBLESHOOTING TAB -->
+                            <div id="troubleshooting" class="tab-content">
+                                <h2>🔧 Troubleshooting Guide</h2>
+
+                                <div class="info-box warning">
+                                    <h3>⚠️ Common Issues and Solutions</h3>
+                                    <p>If something isn't working, check this section for solutions.</p>
+                                </div>
+
+                                <h3>Compilation Errors:</h3>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ Error: "riscv64-unknown-elf-gcc: not found"</h4>
+                                    <p><strong>Cause:</strong> RISC-V toolchain not installed or not in PATH</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Check installation: <code>which riscv64-unknown-elf-gcc</code></li>
+                                        <li>If not found, reinstall:
+                                            <code>apt-get install gcc-riscv64-unknown-elf</code></li>
+                                        <li>Verify PATH includes toolchain: <code>echo $PATH</code></li>
+                                    </ul>
+                                </div>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ Error: "undefined reference to `malloc'"</h4>
+                                    <p><strong>Cause:</strong> FreeRTOS needs custom malloc (heap_4.c)</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Ensure heap_4.c is in your Makefile SOURCES</li>
+                                        <li>Check that portable/MemMang directory is present</li>
+                                        <li>Verify heap_4.c was copied correctly from FreeRTOS</li>
+                                    </ul>
+                                </div>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ Error: "undefined reference to `port.c functions'"</h4>
+                                    <p><strong>Cause:</strong> RISC-V port files not found or not compiled</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Check portable directory exists</li>
+                                        <li>Verify port.c and portASM.S are in Makefile</li>
+                                        <li>Check include paths in Makefile: <code>-ISource/include</code></li>
+                                    </ul>
+                                </div>
+
+                                <h3>Runtime Errors:</h3>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ QEMU: "Could not load firmware"</h4>
+                                    <p><strong>Cause:</strong> firmware.bin is corrupted or not a valid RISC-V binary
+                                    </p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Verify binary was created: <code>ls -la firmware.bin</code></li>
+                                        <li>Check file size is reasonable (should be > 1KB)</li>
+                                        <li>Rebuild from scratch: <code>make clean && make</code></li>
+                                        <li>Verify linker script (riscv.ld) is correct</li>
+                                    </ul>
+                                </div>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ QEMU: "Illegal instruction exception"</h4>
+                                    <p><strong>Cause:</strong> Code compiled for wrong architecture</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Verify -march=rv32i flag in Makefile (for 32-bit RISC-V)</li>
+                                        <li>Check that assembly code matches architecture</li>
+                                        <li>For 64-bit, use -march=rv64i and -mabi=lp64</li>
+                                    </ul>
+                                </div>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ QEMU: "Stack overflow"</h4>
+                                    <p><strong>Cause:</strong> Stack size too small in linker script</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Increase stack size in start.S: <code>.space 8192</code> (instead of 4096)
+                                        </li>
+                                        <li>Check FreeRTOSConfig.h: increase configMINIMAL_STACK_SIZE</li>
+                                        <li>Reduce number of tasks if needed</li>
+                                    </ul>
+                                </div>
+
+                                <h3>QEMU Issues:</h3>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ QEMU: "qemu-system-riscv32: not found"</h4>
+                                    <p><strong>Cause:</strong> QEMU not installed</p>
+                                    <p><strong>Solution:</strong> <code>apt-get install qemu-system-riscv32</code></p>
+                                </div>
+
+                                <div class="troubleshooting">
+                                    <h4>❌ QEMU: Hangs or doesn't produce output</h4>
+                                    <p><strong>Cause:</strong> Application might be stuck in infinite loop or no output
+                                        configured</p>
+                                    <p><strong>Solution:</strong></p>
+                                    <ul>
+                                        <li>Check that main() completes successfully</li>
+                                        <li>Verify vTaskStartScheduler() is called</li>
+                                        <li>Add debug output to verify code is running</li>
+                                        <li>Try with simpler test program first</li>
+                                    </ul>
+                                </div>
+
+                                <h3>Getting Help:</h3>
+                                <div class="info-box success">
+                                    <h4>📚 Useful Resources</h4>
+                                    <ul>
+                                        <li><strong>FreeRTOS Docs:</strong> https://www.freertos.org/</li>
+                                        <li><strong>RISC-V Specs:</strong> https://riscv.org/</li>
+                                        <li><strong>GCC Help:</strong> <code>riscv64-unknown-elf-gcc --help</code></li>
+                                        <li><strong>QEMU Help:</strong> <code>qemu-system-riscv32 -h</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- DOWNLOADS TAB -->
+                            <div id="downloads" class="tab-content">
+                                <h2>⬇️ Downloads & Resources</h2>
+
+                                <div class="info-box success">
+                                    <h3>📥 All You Need to Get Started</h3>
+                                    <p>This section contains links to download required software and documentation.</p>
+                                </div>
+
+                                <h3>1. FreeRTOS Kernel</h3>
+                                <div class="info-box">
+                                    <h4>📦 FreeRTOS Source Code</h4>
+                                    <p><strong>Website:</strong> <a href="https://www.freertos.org/"
+                                            target="_blank">https://www.freertos.org/</a></p>
+                                    <p><strong>Download:</strong> GitHub - <a
+                                            href="https://github.com/FreeRTOS/FreeRTOS-Kernel" target="_blank">FreeRTOS
+                                            Kernel</a></p>
+                                    <p><strong>Version:</strong> Latest stable (FreeRTOS v10.4.x or newer recommended)
+                                    </p>
+                                    <p><strong>Size:</strong> ~5MB</p>
+                                    <p><strong>Quick Install:</strong></p>
+                                    <div class="code-block multiline">cd ~
+                                        git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git FreeRTOS
+                                        cd FreeRTOS
+                                        # Already contains RISC-V port in FreeRTOS/Source/portable/GCC/RISC-V/</div>
+                                </div>
+
+                                <h3>2. RISC-V GNU Toolchain</h3>
+                                <div class="info-box">
+                                    <h4>🔨 Compiler & Tools</h4>
+                                    <p><strong>Website:</strong> <a
+                                            href="https://github.com/riscv-collab/riscv-gnu-toolchain"
+                                            target="_blank">RISC-V GNU Toolchain</a></p>
+                                    <p><strong>Package (Ubuntu):</strong> <code>gcc-riscv64-unknown-elf</code></p>
+                                    <p><strong>Install:</strong></p>
+                                    <div class="code-block multiline">sudo apt-get update
+                                        sudo apt-get install gcc-riscv64-unknown-elf binutils-riscv64-unknown-elf
+                                        gdb-riscv64-unknown-elf</div>
+                                    <p><strong>Verify Installation:</strong></p>
+                                    <div class="code-block multiline">riscv64-unknown-elf-gcc --version
+                                        riscv64-unknown-elf-objcopy --version</div>
+                                </div>
+
+                                <h3>3. QEMU Emulator</h3>
+                                <div class="info-box">
+                                    <h4>🖥️ Hardware Emulator</h4>
+                                    <p><strong>Website:</strong> <a href="https://www.qemu.org/"
+                                            target="_blank">https://www.qemu.org/</a></p>
+                                    <p><strong>Package (Ubuntu):</strong> <code>qemu-system-riscv32</code> or
+                                        <code>qemu-system-riscv64</code></p>
+                                    <p><strong>Install:</strong></p>
+                                    <div class="code-block multiline">sudo apt-get install qemu-system-riscv32
+                                        # or for 64-bit
+                                        sudo apt-get install qemu-system-riscv64</div>
+                                    <p><strong>Verify Installation:</strong></p>
+                                    <div class="code-block multiline">qemu-system-riscv32 --version</div>
+                                </div>
+
+                                <h3>4. Development Tools</h3>
+                                <div class="info-box">
+                                    <h4>🛠️ Essential Build Tools</h4>
+                                    <div class="code-block multiline">sudo apt-get install build-essential
+                                        sudo apt-get install gdb # Debugger
+                                        sudo apt-get install git # Version control
+                                        sudo apt-get install python3 # Python (for scripts)</div>
+                                </div>
+
+                                <h3>5. Documentation</h3>
+                                <div style="display: grid; gap: 15px; margin: 20px 0;">
+                                    <div class="file-card">
+                                        <div class="file-header">
+                                            <h4>📚 FreeRTOS Reference Manual</h4>
+                                        </div>
+                                        <div class="file-content">
+                                            <p><strong>Link:</strong> <a
+                                                    href="https://www.freertos.org/Documentation/RTOS_book.html"
+                                                    target="_blank">Official Documentation</a></p>
+                                            <p>Comprehensive guide to FreeRTOS API and usage.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="file-card">
+                                        <div class="file-header">
+                                            <h4>📖 RISC-V ISA Specification</h4>
+                                        </div>
+                                        <div class="file-content">
+                                            <p><strong>Link:</strong> <a href="https://riscv.org/specifications/"
+                                                    target="_blank">Official RISC-V Specifications</a></p>
+                                            <p>Complete instruction set architecture documentation.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="file-card">
+                                        <div class="file-header">
+                                            <h4>🔧 GCC Manual</h4>
+                                        </div>
+                                        <div class="file-content">
+                                            <p><strong>Link:</strong> <a href="https://gcc.gnu.org/onlinedocs/"
+                                                    target="_blank">GCC Online Documentation</a></p>
+                                            <p>Compiler flags, optimization levels, and features.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="file-card">
+                                        <div class="file-header">
+                                            <h4>🎯 QEMU User Guide</h4>
+                                        </div>
+                                        <div class="file-content">
+                                            <p><strong>Link:</strong> <a
+                                                    href="https://qemu.weilnetz.de/doc/qemu-doc.html"
+                                                    target="_blank">QEMU Documentation</a></p>
+                                            <p>How to use QEMU for system emulation.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3>6. Quick Start Script</h3>
+                                <p>Save this as <code>setup.sh</code> to install everything automatically:</p>
+                                <div class="file-card">
+                                    <div class="file-header">
+                                        <h3>setup.sh</h3>
+                                    </div>
+                                    <div class="file-content">
+                                        <pre">#!/bin/bash
+                                            echo "Installing CENG507 dependencies..."
+
+                                            # Update package lists
+                                            sudo apt-get update
+
+                                            # Install build tools
+                                            sudo apt-get install -y build-essential git
+
+                                            # Install RISC-V toolchain
+                                            sudo apt-get install -y gcc-riscv64-unknown-elf \
+                                            binutils-riscv64-unknown-elf \
+                                            gdb-riscv64-unknown-elf
+
+                                            # Install QEMU
+                                            sudo apt-get install -y qemu-system-riscv32 qemu-system-riscv64
+
+                                            # Install Python
+                                            sudo apt-get install -y python3
+
+                                            # Download FreeRTOS
+                                            mkdir -p ~/FreeRTOS
+                                            cd ~/FreeRTOS
+                                            git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git .
+
+                                            echo "✅ Installation complete!"
+                                            echo "Verify toolchain:"
+                                            riscv64-unknown-elf-gcc --version
+                                            qemu-system-riscv32 --version</pre>
+                                    </div>
+                                </div>
+
+                                <h3>7. Useful Command Reference</h3>
+                                <div class="code-block multiline"># Compile your project
+                                    make
+
+                                    # Clean build artifacts
+                                    make clean
+
+                                    # Run on QEMU (32-bit)
+                                    qemu-system-riscv32 -bios firmware.bin
+
+                                    # Run on QEMU (64-bit)
+                                    qemu-system-riscv64 -bios firmware.bin
+
+                                    # Debug with GDB
+                                    qemu-system-riscv32 -bios firmware.bin -gdb tcp::1234 -S
+                                    riscv64-unknown-elf-gdb firmware.elf
+
+                                    # Extract binary from ELF
+                                    riscv64-unknown-elf-objcopy -O binary firmware.elf firmware.bin
+
+                                    # Inspect binary
+                                    riscv64-unknown-elf-objdump -d firmware.elf | head -50</div>
+                            </div>
+                    </div>
+                </div>
+
+                <script>
+                    function switchTab(tabName) {
+                        // Hide all tab contents
+                        const tabContents = document.querySelectorAll('.tab-content');
+                        tabContents.forEach(content => {
+                            content.classList.remove('active');
+                        });
+
+                        // Remove active class from all tabs
+                        const tabs = document.querySelectorAll('.tab');
+                        tabs.forEach(tab => {
+                            tab.classList.remove('active');
+                        });
+
+                        // Show the selected tab content
+                        const selectedContent = document.getElementById(tabName);
+                        if (selectedContent) {
+                            selectedContent.classList.add('active');
+                        }
+
+                        // Add active class to the clicked tab
+                        event.target.classList.add('active');
+                    }
+                </script>
 </body>
 
 </html>
