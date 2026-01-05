@@ -240,7 +240,7 @@
         };
 
         // DMA Introduction Section
-        const DMAIntroSection = () => {
+        const DMAIntroPart1 = () => {
             return (
                 <div className="section">
                     <div className="max-w-6xl mx-auto">
@@ -278,7 +278,15 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            );
+        };
 
+        const DMAIntroPart2 = () => {
+            return (
+                <div className="section">
+                    <div className="max-w-6xl mx-auto">
                         <div className="card mb-8">
                             <h3 className="text-2xl font-semibold text-white mb-6">How Traditional DMA Works</h3>
                             <div className="bg-slate-900/50 p-6 rounded-lg mb-6">
@@ -371,7 +379,15 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            );
+        };
 
+        const DMAIntroPart3 = () => {
+            return (
+                <div className="section">
+                    <div className="max-w-6xl mx-auto">
                         <div className="card">
                             <h3 className="text-2xl font-semibold text-white mb-6">Critical Problems with Traditional DMA</h3>
                             <div className="grid grid-cols-2 gap-6">
@@ -1914,7 +1930,9 @@
 
             const sections = [
                 <TitleSlide key="title" />,
-                <DMAIntroSection key="dma-intro" />,
+                <DMAIntroPart1 key="dma-intro-1" />,
+                <DMAIntroPart2 key="dma-intro-2" />,
+                <DMAIntroPart3 key="dma-intro-3" />,
                 <SystemOverviewSection key="overview" />,
                 <FSMSection key="fsm" />,
                 <DataflowSection key="dataflow" />,
