@@ -127,9 +127,13 @@
             }
             .card {
                 page-break-inside: avoid;
-                margin-bottom: 40px;
+                page-break-after: always;
+                margin-bottom: 0;
                 box-shadow: none;
                 border: 2px solid #e2e8f0;
+            }
+            .card:last-of-type {
+                page-break-after: auto;
             }
             h1 {
                 color: #1e293b;
@@ -160,15 +164,15 @@
         <p class="subtitle">QR Code Generator</p>
         
         <div class="grid">
-            <!-- Website QR Code -->
+            <!-- Menu QR Code -->
             <div class="card">
-                <h2>Website QR Code</h2>
+                <h2>Menu QR Code</h2>
                 <div class="qr-container">
                     <div id="qr-website"></div>
                 </div>
                 <p class="info">https://usuba-sushibar.pages.dev</p>
-                <button class="btn btn-blue" onclick="downloadQR('qr-website', 'usuba_website_qr.png')">
-                    ⬇ Download Website QR
+                <button class="btn btn-blue" onclick="downloadQR('qr-website', 'usuba_menu_qr.png')">
+                    ⬇ Download Menu QR
                 </button>
             </div>
 
@@ -191,7 +195,7 @@
         <div class="instructions">
             <h3>📱 How to use:</h3>
             <ul>
-                <li>• <strong>Website QR:</strong> Customers scan to visit your website</li>
+                <li>• <strong>Menu QR:</strong> Customers scan to view your menu online</li>
                 <li>• <strong>WiFi QR:</strong> Customers scan to auto-connect to WiFi</li>
                 <li>• Click download buttons to save as PNG files</li>
                 <li>• Print and display at your restaurant!</li>
