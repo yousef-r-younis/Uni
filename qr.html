@@ -110,33 +110,46 @@
         .btn-print:hover {
             background: #6d28d9;
         }
+        .print-page {
+            display: none;
+        }
         @media print {
             body {
                 background: white;
-                padding: 20px;
+                padding: 0;
+                margin: 0;
             }
-            .btn, .instructions, .subtitle {
-                display: none;
+            .container, .btn, .instructions, .subtitle {
+                display: none !important;
             }
-            .container {
-                max-width: 100%;
-            }
-            .grid {
-                display: block;
-                page-break-inside: avoid;
-            }
-            .card {
-                page-break-inside: avoid;
+            .print-page {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 40px;
                 page-break-after: always;
-                margin-bottom: 0;
-                box-shadow: none;
-                border: 2px solid #e2e8f0;
             }
-            .card:last-of-type {
-                page-break-after: auto;
-            }
-            h1 {
+            .print-page h1 {
                 color: #1e293b;
+                font-size: 3em;
+                margin-bottom: 40px;
+                text-align: center;
+            }
+            .print-page .qr-print {
+                width: 80%;
+                max-width: 600px;
+            }
+            .print-page .qr-print canvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+            .print-page .info {
+                color: #475569;
+                font-size: 1.5em;
+                margin-top: 40px;
+                text-align: center;
             }
         }
         .instructions {
@@ -172,7 +185,10 @@
                 </div>
                 <p class="info">https://usuba-sushibar.pages.dev</p>
                 <button class="btn btn-blue" onclick="downloadQR('qr-website', 'usuba_menu_qr.png')">
-                    ⬇ Download Menu QR
+                    ⬇ Download PNG
+                </button>
+                <button class="btn btn-blue" onclick="printSingleQR('menu')" style="margin-top: 10px;">
+                    🖨️ Print Menu QR as PDF
                 </button>
             </div>
 
@@ -187,7 +203,10 @@
                     <p><strong>Password:</strong> Usubakyoto2535</p>
                 </div>
                 <button class="btn btn-green" onclick="downloadQR('qr-wifi', 'usuba_wifi_qr.png')">
-                    ⬇ Download WiFi QR
+                    ⬇ Download PNG
+                </button>
+                <button class="btn btn-green" onclick="printSingleQR('wifi')" style="margin-top: 10px;">
+                    🖨️ Print WiFi QR as PDF
                 </button>
             </div>
         </div>
@@ -200,9 +219,22 @@
                 <li>• Click download buttons to save as PNG files</li>
                 <li>• Print and display at your restaurant!</li>
             </ul>
-            <button class="btn btn-print" onclick="printPDF()">
-                🖨️ Print Both QR Codes as PDF
-            </button>
+        </div>
+    </div>
+
+    <!-- Hidden print pages -->
+    <div class="print-page" id="print-menu">
+        <h1>🍣 Usuba Sushi Bar<br>Menu</h1>
+        <div class="qr-print" id="qr-menu-print"></div>
+        <p class="info">Scan to view our menu</p>
+    </div>
+
+    <div class="print-page" id="print-wifi">
+        <h1>🍣 Usuba Sushi Bar<br>Free WiFi</h1>
+        <div class="qr-print" id="qr-wifi-print"></div>
+        <div class="info">
+            <p>Network: Usuba Sushi Bar</p>
+            <p>Scan to connect automatically</p>
         </div>
     </div>
 
@@ -217,12 +249,32 @@
             correctLevel: QRCode.CorrectLevel.H
         });
 
+        // Generate Menu QR for printing (large)
+        new QRCode(document.getElementById("qr-menu-print"), {
+            text: "https://usuba-sushibar.pages.dev",
+            width: 512,
+            height: 512,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
         // Generate WiFi QR Code
         const wifiString = "WIFI:T:WPA;S:Usuba Sushi Bar;P:Usubakyoto2535;;";
         new QRCode(document.getElementById("qr-wifi"), {
             text: wifiString,
             width: 256,
             height: 256,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Generate WiFi QR for printing (large)
+        new QRCode(document.getElementById("qr-wifi-print"), {
+            text: wifiString,
+            width: 512,
+            height: 512,
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
@@ -244,9 +296,23 @@
             }
         }
 
-        // Print as PDF function
-        function printPDF() {
-            window.print();
+        // Print single QR as PDF
+        function printSingleQR(type) {
+            // Hide all print pages first
+            document.getElementById('print-menu').style.display = 'none';
+            document.getElementById('print-wifi').style.display = 'none';
+            
+            // Show only the requested one
+            if (type === 'menu') {
+                document.getElementById('print-menu').style.display = 'flex';
+            } else if (type === 'wifi') {
+                document.getElementById('print-wifi').style.display = 'flex';
+            }
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
     </script>
 </body>
