@@ -8,9 +8,9 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #080b14;
+    background: #f5f5f5;
     font-family: 'Orbitron', monospace;
-    color: #fff;
+    color: #222;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
@@ -34,7 +34,7 @@
     width: 220px;
     height: 165px;
     border-radius: 12px;
-    border: 2px solid rgba(80, 180, 255, 0.5);
+    border: 2px solid rgba(50, 120, 200, 0.7);
     object-fit: cover;
     transform: scaleX(-1);
     z-index: 10;
@@ -46,7 +46,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 13px;
-    color: rgba(150, 200, 255, 0.7);
+    color: rgba(30, 100, 180, 0.9);
     letter-spacing: 2px;
     text-transform: uppercase;
     z-index: 10;
@@ -81,12 +81,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(50, 120, 180, 0.3);
     border-radius: 8px;
     padding: 8px 14px;
     font-size: 12px;
     letter-spacing: 1px;
+    color: #333;
   }
 
   .hint .emoji { font-size: 20px; font-family: sans-serif; }
@@ -97,14 +98,14 @@
     left: 24px;
     font-size: 15px;
     letter-spacing: 3px;
-    color: rgba(100, 180, 255, 0.9);
+    color: rgba(30, 100, 180, 0.9);
     z-index: 10;
   }
 
   #loading {
     position: absolute;
     inset: 0;
-    background: #080b14;
+    background: #f5f5f5;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -116,12 +117,12 @@
   #loading h2 {
     font-size: 18px;
     letter-spacing: 4px;
-    color: rgba(100, 180, 255, 0.9);
+    color: rgba(30, 100, 180, 0.9);
   }
 
   #loading p {
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
+    color: rgba(50, 50, 50, 0.6);
     letter-spacing: 2px;
     font-family: monospace;
   }
@@ -129,8 +130,8 @@
   .spinner {
     width: 48px;
     height: 48px;
-    border: 2px solid rgba(100,180,255,0.2);
-    border-top-color: rgba(100,180,255,0.9);
+    border: 2px solid rgba(50, 120, 180, 0.2);
+    border-top-color: rgba(30, 100, 180, 0.9);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -306,11 +307,11 @@ function draw() {
   ctx.translate(sx, sy);
 
   // Background — fade trail
-  ctx.fillStyle = 'rgba(8, 11, 20, 0.18)';
+  ctx.fillStyle = 'rgba(245, 245, 245, 0.18)';
   ctx.fillRect(-20, -20, W+40, H+40);
 
   // Grid lines (subtle)
-  ctx.strokeStyle = 'rgba(50, 100, 180, 0.06)';
+  ctx.strokeStyle = 'rgba(150, 180, 220, 0.15)';
   ctx.lineWidth = 1;
   for (let x = 0; x < W; x += 60) {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
