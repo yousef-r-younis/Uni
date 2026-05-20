@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LNS Network Visualizer — Live Scan</title>
+<title>Network Visualizer — Live Scan</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -445,7 +445,7 @@
 
 <!-- Bottom log bar -->
 <div id="bottom-bar">
-  <span>LNS COMMS ENG DEMO // BUILD 2026.05</span>
+  <span>NETWORK VISUALIZATION DEMO // BUILD 2026.05</span>
   <div id="log-ticker"><div id="log-inner"></div></div>
   <span id="footer-time">——</span>
 </div>
@@ -455,7 +455,7 @@
 
 const DEVICE_TEMPLATES = [
   { type:'router', names:['Gateway-Router','Core-SW-01','Edge-Router','ISP-Modem','Firewall-01'], color:'#00e5ff', glow:'rgba(0,229,255,0.6)', r:22 },
-  { type:'server', names:['LNS-Server-01','FileServer','WebProxy','DNS-Server','DB-Server','Auth-Server'], color:'#ff2d78', glow:'rgba(255,45,120,0.6)', r:18 },
+  { type:'server', names:['FileServer','WebProxy','DNS-Server','DB-Server','Auth-Server','API-Server'], color:'#ff2d78', glow:'rgba(255,45,120,0.6)', r:18 },
   { type:'laptop', names:['MBP-Yousef','Dell-Lab-01','HP-Admin','Lenovo-T14','Surface-03','MacBook-Desk'], color:'#00ff88', glow:'rgba(0,255,136,0.5)', r:13 },
   { type:'phone',  names:['iPhone-14-S1','Galaxy-S24','Pixel-8','iPhone-SE','OnePlus-11','Redmi-Note'], color:'#ffe600', glow:'rgba(255,230,0,0.5)', r:11 },
   { type:'iot',    names:['IP-Cam-Hall','SmartTV-Lab','IP-Cam-Entry','Printer-HP','Smart-AC-01','Projector-B2'], color:'#ff6b2b', glow:'rgba(255,107,43,0.55)', r:12 },
@@ -894,7 +894,7 @@ const LOG_MSGS = [
   ['IoT device heartbeat: IP-Cam-Hall ✓', 'ok'],
   ['Routing table updated — OSPF hello received', 'info'],
   ['Port scan detected on 192.168.1.10 — logged', 'warn'],
-  ['QoS: prioritizing video traffic on SSID LNS-5GHz', 'info'],
+  ['QoS: prioritizing video traffic on SSID Network-5GHz', 'info'],
 ];
 
 let logQueue = [...LOG_MSGS];
