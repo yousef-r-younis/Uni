@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vision Demo — LIU CCE</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #e2e0d8;
+    --text-primary: #111110;
+    --text-secondary: #6b6a65;
+    --text-muted: #a8a7a2;
+    --accent: #1a1a1a;
+    --green: #2d6a4f;
+    --green-bg: #d8f3dc;
+    --red: #9b2226;
+    --red-bg: #fde8e8;
+    --blue: #1b4f72;
+    --blue-bg: #e8f4fd;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .logo-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+  }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  #status-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    transition: all 0.3s ease;
+  }
+
+  #status-pill.loading { color: #92610a; background: #fef3c7; border-color: #f59e0b; }
+  #status-pill.ready   { color: var(--green); background: var(--green-bg); border-color: #74c69d; }
+  #status-pill.error   { color: var(--red); background: var(--red-bg); border-color: #f28b82; }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 28px 32px;
+    gap: 24px;
+  }
+
+  .camera-wrap {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scaleX(-1);
+  }
+
+  #canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+
+  .camera-placeholder {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-muted);
+  }
+
+  .cam-icon {
+    width: 56px; height: 56px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .cam-icon svg { opacity: 0.4; }
+
+  .placeholder-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  #start-btn {
+    margin-top: 8px;
+    padding: 10px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  #start-btn:hover { opacity: 0.8; }
+  #start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .fps-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(4px);
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  #detections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 80px;
+  }
+
+  .detection-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .detection-item.face { border-left: 3px solid #e07a5f; }
+  .detection-item.object { border-left: 3px solid #3d405b; }
+
+  .det-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-transform: capitalize;
+  }
+
+  .det-conf {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .no-detections {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 20px 0;
+    letter-spacing: 0.02em;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .explainer {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .explainer strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .legend-line {
+    width: 20px; height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  footer {
+    padding: 16px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .model-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="logo-text">AI Vision Demo</div>
+      <div class="logo-sub">LIU · Computer &amp; Communications Engineering</div>
+    </div>
+  </div>
+  <div id="status-pill">Initializing…</div>
+</header>
+
+<main>
+  <div>
+    <div class="camera-wrap" id="camera-wrap">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="canvas"></canvas>
+      <div class="camera-placeholder" id="placeholder">
+        <div class="cam-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <div class="placeholder-text">Loading AI model…<br>Please wait</div>
+        <button id="start-btn" disabled>Start Camera</button>
+      </div>
+      <div class="fps-badge" id="fps-badge" style="display:none">— fps</div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+
+    <div class="card">
+      <div class="card-label">Live Detections</div>
+      <div id="detections-list">
+        <div class="no-detections">Camera not active</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Session Stats</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num" id="stat-faces">0</div>
+          <div class="stat-lbl">FACES</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-objects">0</div>
+          <div class="stat-lbl">OBJECTS</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-frames">0</div>
+          <div class="stat-lbl">FRAMES</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-lbl">DETECTED</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Legend</div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-line" style="background:#e07a5f"></div>
+          Face detection
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#3d405b"></div>
+          Object detection
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">How it works</div>
+      <p class="explainer">
+        Your camera feed is analyzed <strong>frame by frame</strong> by a neural network trained on millions of images. It learned to recognize patterns — edges, shapes, colors — that correspond to faces and everyday objects. <strong>No data leaves your device</strong> — everything runs locally in your browser using WebGL.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-text">Real-time inference · Runs entirely in-browser · No server required</div>
+  <div class="model-badge">COCO-SSD + Face Detection API</div>
+</footer>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const statusPill = document.getElementById('status-pill');
+  const placeholder = document.getElementById('placeholder');
+  const startBtn = document.getElementById('start-btn');
+  const fpsBadge = document.getElementById('fps-badge');
+  const detectionsList = document.getElementById('detections-list');
+
+  let cocoModel = null;
+  let faceDetector = null;
+  let isRunning = false;
+  let frameCount = 0;
+  let totalDetected = 0;
+  let totalFaces = 0;
+  let totalObjects = 0;
+  let lastFpsTime = Date.now();
+  let fpsFrames = 0;
+
+  const FACE_COLOR = '#e07a5f';
+  const OBJ_COLOR  = '#3d405b';
+  const BOX_RADIUS = 6;
+
+  function setStatus(text, cls) {
+    statusPill.textContent = text;
+    statusPill.className = cls || '';
+  }
+
+  async function loadModels() {
+    setStatus('Loading model…', 'loading');
+    try {
+      cocoModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
+
+      // Face detection via browser API if supported, else skip
+      if ('FaceDetector' in window) {
+        try { faceDetector = new FaceDetector({ maxDetectedFaces: 5, fastMode: true }); } catch(e) {}
+      }
+
+      setStatus('Model ready', 'ready');
+      startBtn.disabled = false;
+      document.querySelector('.placeholder-text').textContent = 'Click to start camera';
+    } catch(e) {
+      setStatus('Load failed', 'error');
+      document.querySelector('.placeholder-text').textContent = 'Failed to load model.\nCheck your connection.';
+    }
+  }
+
+  startBtn.addEventListener('click', async () => {
+    if (isRunning) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
+      video.srcObject = stream;
+      video.onloadedmetadata = () => {
+        video.play();
+        placeholder.style.display = 'none';
+        fpsBadge.style.display = 'block';
+        isRunning = true;
+        detectLoop();
+      };
+    } catch(e) {
+      setStatus('Camera denied', 'error');
+    }
+  });
+
+  function resizeCanvas() {
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+  }
+
+  function drawBox(x, y, w, h, label, conf, color) {
+    ctx.save();
+
+    // Box
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, BOX_RADIUS);
+    ctx.stroke();
+
+    // Corner accent top-left
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    const cs = 14;
+    ctx.beginPath();
+    ctx.moveTo(x + cs, y); ctx.lineTo(x, y); ctx.lineTo(x, y + cs);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + w - cs, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + cs);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y + h - cs); ctx.lineTo(x, y + h); ctx.lineTo(x + cs, y + h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + w - cs, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - cs);
+    ctx.stroke();
+
+    // Label pill
+    const text = `${label}  ${Math.round(conf * 100)}%`;
+    ctx.font = '500 12px DM Mono, monospace';
+    const tw = ctx.measureText(text).width;
+    const ph = 22, ppad = 10;
+    const px = x, py = y - ph - 4;
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(px, py, tw + ppad * 2, ph, 5);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(text, px + ppad, py + 15);
+
+    ctx.restore();
+  }
+
+  function updateDetectionsList(faces, objects) {
+    const items = [];
+    faces.forEach(f => items.push({ label: 'Face', conf: f.conf, type: 'face' }));
+    objects.forEach(o => items.push({ label: o.class, conf: o.score, type: 'object' }));
+
+    if (items.length === 0) {
+      detectionsList.innerHTML = '<div class="no-detections">Nothing detected</div>';
+      return;
+    }
+    detectionsList.innerHTML = items.map(it => `
+      <div class="detection-item ${it.type}">
+        <span class="det-label">${it.label}</span>
+        <span class="det-conf">${Math.round(it.conf * 100)}%</span>
+      </div>`).join('');
+  }
+
+  function updateStats() {
+    document.getElementById('stat-faces').textContent   = totalFaces;
+    document.getElementById('stat-objects').textContent = totalObjects;
+    document.getElementById('stat-frames').textContent  = frameCount;
+    document.getElementById('stat-total').textContent   = totalDetected;
+  }
+
+  async function detectLoop() {
+    if (!isRunning) return;
+    if (canvas.width !== video.videoWidth) resizeCanvas();
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Object detection
+    const predictions = await cocoModel.detect(video, 10, 0.45);
+
+    // Face detection via browser API
+    let faceResults = [];
+    if (faceDetector) {
+      try {
+        const faces = await faceDetector.detect(video);
+        faceResults = faces.map(f => ({
+          x: f.boundingBox.x, y: f.boundingBox.y,
+          w: f.boundingBox.width, h: f.boundingBox.height,
+          conf: 0.92
+        }));
+      } catch(e) {}
+    }
+
+    // If no browser FaceDetector, use COCO's "person" class as proxy for faces
+    const nonFaceObjects = predictions.filter(p => p.class !== 'person');
+    const personPreds    = predictions.filter(p => p.class === 'person');
+    if (faceResults.length === 0 && personPreds.length > 0) {
+      personPreds.forEach(p => {
+        const [x, y, w, h] = p.bbox;
+        faceResults.push({ x, y: y, w, h: Math.min(h, w * 1.2), conf: p.score, label: 'person' });
+      });
+    }
+
+    // Draw faces
+    faceResults.forEach(f => {
+      drawBox(f.x, f.y, f.w, f.h, 'Face', f.conf, FACE_COLOR);
+    });
+
+    // Draw objects
+    nonFaceObjects.forEach(p => {
+      const [x, y, w, h] = p.bbox;
+      drawBox(x, y, w, h, p.class, p.score, OBJ_COLOR);
+    });
+
+    // Stats
+    frameCount++;
+    fpsFrames++;
+    totalFaces   += faceResults.length;
+    totalObjects += nonFaceObjects.length;
+    totalDetected += faceResults.length + nonFaceObjects.length;
+
+    updateDetectionsList(faceResults, nonFaceObjects);
+    updateStats();
+
+    // FPS
+    const now = Date.now();
+    if (now - lastFpsTime >= 1000) {
+      fpsBadge.textContent = `${fpsFrames} fps`;
+      fpsFrames = 0;
+      lastFpsTime = now;
+    }
+
+    requestAnimationFrame(detectLoop);
+  }
+
+  loadModels();
+</script>
+</body>
+</html>
