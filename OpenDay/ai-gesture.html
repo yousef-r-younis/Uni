@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCE Gesture Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #080b14;
+    font-family: 'Orbitron', monospace;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #webcam {
+    display: none;
+  }
+
+  #camPreview {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 220px;
+    height: 165px;
+    border-radius: 12px;
+    border: 2px solid rgba(80, 180, 255, 0.5);
+    object-fit: cover;
+    transform: scaleX(-1);
+    z-index: 10;
+  }
+
+  #status {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: rgba(150, 200, 255, 0.7);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  #gestureName {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    text-shadow: 0 0 40px currentColor;
+  }
+
+  #hints {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    display: flex;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .hint .emoji { font-size: 20px; font-family: sans-serif; }
+
+  #title {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: rgba(100, 180, 255, 0.9);
+    z-index: 10;
+  }
+
+  #loading {
+    position: absolute;
+    inset: 0;
+    background: #080b14;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    gap: 20px;
+  }
+
+  #loading h2 {
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: rgba(100, 180, 255, 0.9);
+  }
+
+  #loading p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 2px;
+    font-family: monospace;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 2px solid rgba(100,180,255,0.2);
+    border-top-color: rgba(100,180,255,0.9);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <h2>LOADING GESTURE AI</h2>
+  <p id="loadMsg">initializing mediapipe...</p>
+</div>
+
+<canvas id="canvas"></canvas>
+<video id="webcam" autoplay playsinline></video>
+<video id="camPreview" autoplay playsinline></video>
+
+<div id="title">CCE · GESTURE DEMO</div>
+<div id="status" id="status">SHOW YOUR HAND TO THE CAMERA</div>
+<div id="gestureName"></div>
+
+<div id="hints">
+  <div class="hint"><span class="emoji">👆</span><span>POINT → LASER</span></div>
+  <div class="hint"><span class="emoji">✌️</span><span>PEACE → CONFETTI</span></div>
+  <div class="hint"><span class="emoji">🤙</span><span>CALL ME → AIRHORN</span></div>
+  <div class="hint"><span class="emoji">✊</span><span>FIST → SHOCKWAVE</span></div>
+</div>
+
+<script type="module">
+import { GestureRecognizer, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const video = document.getElementById('webcam');
+const preview = document.getElementById('camPreview');
+const gestureNameEl = document.getElementById('gestureName');
+const statusEl = document.getElementById('status');
+const loadMsg = document.getElementById('loadMsg');
+const loadingEl = document.getElementById('loading');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// ── PARTICLES ─────────────────────────────────────────────
+const particles = [];
+const lasers = [];
+const shockwaves = [];
+let shakeTimer = 0;
+let flashTimer = 0;
+let flashColor = [0,0,0];
+let lastGesture = '';
+let cooldown = 0;
+let gestureDisplayTimer = 0;
+
+const COLORS = ['#ff5555','#55ff88','#55ccff','#ffdd55','#ff55cc','#55ffee'];
+
+function spawnConfetti(x, y) {
+  for (let i = 0; i < 140; i++) {
+    particles.push({
+      x: x + (Math.random()-0.5)*300,
+      y: y + (Math.random()-0.5)*100,
+      vx: (Math.random()-0.5)*16,
+      vy: Math.random()*-18 - 4,
+      color: COLORS[Math.floor(Math.random()*COLORS.length)],
+      size: Math.random()*10 + 5,
+      life: Math.random()*60 + 40,
+      maxLife: 100,
+      angle: Math.random()*360,
+      spin: (Math.random()-0.5)*12,
+      type: Math.random() > 0.5 ? 'rect' : 'circle'
+    });
+  }
+}
+
+function spawnLaser(y) {
+  lasers.push({ y, x: 0, life: 35, color: COLORS[Math.floor(Math.random()*COLORS.length)] });
+}
+
+function spawnShockwave() {
+  shockwaves.push({ r: 10, life: 45, maxLife: 45 });
+}
+
+function playSound(type) {
+  const ac = new AudioContext();
+  const g = ac.createGain();
+  g.connect(ac.destination);
+
+  if (type === 'laser') {
+    const o = ac.createOscillator();
+    o.connect(g);
+    o.frequency.setValueAtTime(880, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, ac.currentTime + 0.3);
+    g.gain.setValueAtTime(0.4, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.3);
+    o.start(); o.stop(ac.currentTime + 0.3);
+  } else if (type === 'confetti') {
+    [523, 659, 784, 1047].forEach((freq, i) => {
+      const o = ac.createOscillator();
+      o.connect(g);
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.15, ac.currentTime + i*0.07);
+      g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i*0.07 + 0.25);
+      o.start(ac.currentTime + i*0.07);
+      o.stop(ac.currentTime + i*0.07 + 0.25);
+    });
+  } else if (type === 'airhorn') {
+    const o = ac.createOscillator();
+    o.type = 'sawtooth';
+    o.connect(g);
+    o.frequency.setValueAtTime(120, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(100, ac.currentTime + 0.5);
+    g.gain.setValueAtTime(0.5, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+    o.start(); o.stop(ac.currentTime + 0.5);
+  } else if (type === 'shockwave') {
+    const o = ac.createOscillator();
+    o.type = 'square';
+    o.connect(g);
+    o.frequency.setValueAtTime(80, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.4);
+    g.gain.setValueAtTime(0.6, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4);
+    o.start(); o.stop(ac.currentTime + 0.4);
+  }
+}
+
+function triggerGesture(name, handY) {
+  const W = canvas.width, H = canvas.height;
+  if (name === 'Pointing_Up') {
+    spawnLaser(handY * H);
+    playSound('laser');
+    gestureNameEl.textContent = '⚡ LASER';
+    gestureNameEl.style.color = '#55ccff';
+  } else if (name === 'Victory') {
+    spawnConfetti(W/2, H/3);
+    playSound('confetti');
+    gestureNameEl.textContent = '🎉 CONFETTI';
+    gestureNameEl.style.color = '#ffdd55';
+  } else if (name === 'ILoveYou') {
+    flashTimer = 22;
+    flashColor = [200, 30, 30];
+    playSound('airhorn');
+    gestureNameEl.textContent = '📢 AIRHORN';
+    gestureNameEl.style.color = '#ff5555';
+  } else if (name === 'Closed_Fist') {
+    spawnShockwave();
+    shakeTimer = 20;
+    playSound('shockwave');
+    gestureNameEl.textContent = '💥 SHOCKWAVE';
+    gestureNameEl.style.color = '#ff88aa';
+  }
+  gestureNameEl.style.opacity = '1';
+  gestureDisplayTimer = 45;
+}
+
+// ── DRAW LOOP ──────────────────────────────────────────────
+function draw() {
+  const W = canvas.width, H = canvas.height;
+
+  // Shake offset
+  const sx = shakeTimer > 0 ? (Math.random()-0.5)*16 : 0;
+  const sy = shakeTimer > 0 ? (Math.random()-0.5)*16 : 0;
+  if (shakeTimer > 0) shakeTimer--;
+
+  ctx.save();
+  ctx.translate(sx, sy);
+
+  // Background — fade trail
+  ctx.fillStyle = 'rgba(8, 11, 20, 0.18)';
+  ctx.fillRect(-20, -20, W+40, H+40);
+
+  // Grid lines (subtle)
+  ctx.strokeStyle = 'rgba(50, 100, 180, 0.06)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 60) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 60) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Flash overlay
+  if (flashTimer > 0) {
+    const a = (flashTimer / 22) * 0.55;
+    ctx.fillStyle = `rgba(${flashColor[0]},${flashColor[1]},${flashColor[2]},${a})`;
+    ctx.fillRect(0, 0, W, H);
+    flashTimer--;
+  }
+
+  // Lasers
+  for (let i = lasers.length-1; i >= 0; i--) {
+    const l = lasers[i];
+    l.x += W / 12;
+    l.life--;
+    const a = l.life / 35;
+    // glow layers
+    for (let w = 12; w >= 1; w -= 3) {
+      ctx.beginPath();
+      ctx.moveTo(0, l.y);
+      ctx.lineTo(l.x, l.y);
+      ctx.strokeStyle = l.color + Math.floor(a * (w === 1 ? 255 : 80)).toString(16).padStart(2,'0');
+      ctx.lineWidth = w;
+      ctx.stroke();
+    }
+    if (l.life <= 0 || l.x > W) lasers.splice(i, 1);
+  }
+
+  // Shockwaves
+  for (let i = shockwaves.length-1; i >= 0; i--) {
+    const s = shockwaves[i];
+    s.r += 28;
+    s.life--;
+    const a = s.life / s.maxLife;
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, s.r, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(255, 120, 60, ${a * 0.8})`;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, s.r * 0.65, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(255, 200, 80, ${a * 0.4})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    if (s.life <= 0) shockwaves.splice(i, 1);
+  }
+
+  // Particles
+  for (let i = particles.length-1; i >= 0; i--) {
+    const p = particles[i];
+    p.vy += 0.55;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    p.angle += p.spin;
+    const a = Math.max(0, p.life / p.maxLife);
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle * Math.PI/180);
+    ctx.fillStyle = p.color;
+    if (p.type === 'rect') {
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.5);
+    } else {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size/2, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+
+  ctx.restore();
+
+  // Gesture label fade out
+  if (gestureDisplayTimer > 0) {
+    gestureDisplayTimer--;
+    if (gestureDisplayTimer <= 15) {
+      gestureNameEl.style.opacity = (gestureDisplayTimer / 15).toFixed(2);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+// ── MEDIAPIPE ──────────────────────────────────────────────
+async function init() {
+  loadMsg.textContent = 'loading mediapipe vision...';
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+  );
+  loadMsg.textContent = 'loading gesture model...';
+  const recognizer = await GestureRecognizer.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+      delegate: "GPU"
+    },
+    runningMode: "VIDEO",
+    numHands: 1
+  });
+
+  loadMsg.textContent = 'requesting camera...';
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 } });
+  video.srcObject = stream;
+  preview.srcObject = stream;
+  await new Promise(r => video.onloadeddata = r);
+  video.play();
+
+  loadingEl.style.display = 'none';
+  statusEl.textContent = 'SHOW YOUR HAND TO THE CAMERA';
+  draw();
+
+  const VALID = new Set(['Pointing_Up','Victory','ILoveYou','Closed_Fist']);
+  let lastTime = 0;
+
+  function loop(now) {
+    if (now - lastTime > 66) { // ~15fps for recognition
+      lastTime = now;
+      const result = recognizer.recognizeForVideo(video, now);
+      if (result.gestures && result.gestures.length > 0) {
+        const g = result.gestures[0][0].categoryName;
+        const handY = result.landmarks?.[0]?.[9]?.y ?? 0.5;
+        statusEl.textContent = VALID.has(g) ? g.replace('_',' ').toUpperCase() : 'HAND DETECTED';
+        if (VALID.has(g) && g !== lastGesture && cooldown === 0) {
+          triggerGesture(g, handY);
+          lastGesture = g;
+          cooldown = 30;
+        }
+      } else {
+        statusEl.textContent = 'SHOW YOUR HAND TO THE CAMERA';
+        lastGesture = '';
+      }
+      if (cooldown > 0) cooldown--;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+init().catch(err => {
+  loadMsg.textContent = 'error: ' + err.message;
+  console.error(err);
+});
+</script>
+</body>
+</html>
