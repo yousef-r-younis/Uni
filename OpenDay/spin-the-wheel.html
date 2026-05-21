@@ -1,0 +1,563 @@
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0c29; font-family: 'Poppins', sans-serif; }
+
+  #app {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0533 0%, #0d1b4b 50%, #001a33 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; color: white; position: relative; overflow: hidden;
+  }
+  #app::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(0,100,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  h1 {
+    font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; text-align: center;
+    background: linear-gradient(90deg, #ff6fd8, #3813c2, #00c6ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px; letter-spacing: -0.5px;
+  }
+  .subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 20px; text-align: center; }
+
+  .main-area {
+    display: flex; align-items: center; justify-content: center;
+    gap: 32px; flex-wrap: wrap; width: 100%; max-width: 900px;
+  }
+
+  .wheel-container {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .wheel-wrapper {
+    position: relative; width: min(420px, 90vw); height: min(420px, 90vw);
+  }
+  #wheel {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 30px rgba(120,80,255,0.5));
+    transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 1.0);
+  }
+  .pointer {
+    position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 32px solid #FFD700;
+    filter: drop-shadow(0 2px 6px rgba(255,215,0,0.7));
+    z-index: 10;
+  }
+  .center-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #FFD700; border: 4px solid white;
+    cursor: pointer; font-size: 0.65rem; font-weight: 800; color: #1a0533;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    line-height: 1.1;
+    box-shadow: 0 0 20px rgba(255,215,0,0.6);
+    transition: transform 0.1s, box-shadow 0.1s;
+    z-index: 10; letter-spacing: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  .center-btn:hover { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 30px rgba(255,215,0,0.9); }
+  .center-btn:active { transform: translate(-50%, -50%) scale(0.96); }
+  .center-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: translate(-50%, -50%); }
+
+  .panel {
+    flex: 1; min-width: 260px; max-width: 340px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 24px;
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column; gap: 12px;
+    text-align: center;
+  }
+  .panel-idle { color: rgba(255,255,255,0.4); font-size: 0.9rem; line-height: 1.6; }
+  .segment-label {
+    font-size: 1.1rem; font-weight: 800;
+    padding: 10px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: none;
+  }
+  .question-text {
+    font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.4;
+    display: none;
+  }
+  .options-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    display: none;
+  }
+  .opt-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px; padding: 10px 6px;
+    color: white; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'Poppins', sans-serif;
+  }
+  .opt-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); }
+  .opt-btn.correct { background: rgba(0,220,100,0.25); border-color: #00dc64; color: #00ff75; }
+  .opt-btn.wrong { background: rgba(255,60,60,0.2); border-color: #ff3c3c; color: #ff8080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .input-answer {
+    width: 100%; padding: 10px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px; color: white; font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif; font-weight: 600;
+    display: none;
+    outline: none;
+  }
+  .input-answer:focus { border-color: rgba(100,150,255,0.7); }
+  .submit-btn {
+    background: linear-gradient(135deg, #6c3fd4, #3b6ee8);
+    border: none; border-radius: 10px; padding: 10px;
+    color: white; font-size: 0.9rem; font-weight: 800;
+    cursor: pointer; display: none; width: 100%;
+    font-family: 'Poppins', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover { opacity: 0.85; }
+
+  .result-banner {
+    padding: 14px; border-radius: 14px;
+    font-size: 1rem; font-weight: 800;
+    display: none; line-height: 1.4;
+  }
+  .result-banner.win { background: rgba(0,220,100,0.2); border: 1px solid #00dc64; color: #00ff75; }
+  .result-banner.lose { background: rgba(255,60,60,0.15); border: 1px solid #ff3c3c; color: #ff8080; }
+
+  .again-btn {
+    background: rgba(255,215,0,0.15);
+    border: 1px solid #FFD700;
+    border-radius: 10px; padding: 10px;
+    color: #FFD700; font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; width: 100%; display: none;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.15s;
+  }
+  .again-btn:hover { background: rgba(255,215,0,0.28); }
+
+  .score-bar {
+    display: flex; gap: 12px; justify-content: center;
+    font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 4px;
+  }
+  .score-bar span { color: white; font-weight: 800; }
+
+  .confetti-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+  }
+</style>
+
+<div id="app">
+  <h1>Spin the Wheel!</h1>
+  <p class="subtitle">LIU Open Day · CCE Department</p>
+
+  <div class="main-area">
+    <div class="wheel-container">
+      <div class="wheel-wrapper">
+        <div class="pointer"></div>
+        <canvas id="wheel" width="420" height="420"></canvas>
+        <button class="center-btn" id="spinBtn">SPIN!</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel">
+      <div class="panel-idle" id="idleMsg">
+        Spin the wheel to get a challenge!<br>Answer correctly to win a prize 🎁
+      </div>
+      <div class="segment-label" id="segLabel"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="options-grid" id="optGrid"></div>
+      <input class="input-answer" id="inputAnswer" placeholder="Type your answer..." />
+      <button class="submit-btn" id="submitBtn">Submit Answer</button>
+      <div class="result-banner" id="resultBanner"></div>
+      <button class="again-btn" id="againBtn">Spin again!</button>
+      <div class="score-bar">Correct: <span id="scoreW">0</span> · Total: <span id="scoreT">0</span></div>
+    </div>
+  </div>
+</div>
+
+<canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────
+// EDIT YOUR QUESTIONS HERE
+// type: "mc" = multiple choice, "tf" = true/false, "open" = typed answer
+// For "mc": provide options[] and correct (0-indexed)
+// For "tf": correct is "true" or "false"
+// For "open": correct is a string (case-insensitive match)
+// ─────────────────────────────────────────────────────────────────────
+const SEGMENTS = [
+  {
+    label: "What does CCE stand for?",
+    emoji: "🎓",
+    type: "mc",
+    question: "What does CCE stand for?",
+    options: ["Computer & Communications Eng.", "Coding & Circuit Engineering", "Creative Computing & Electronics", "Control & Communications Eng."],
+    correct: 0
+  },
+  {
+    label: "True or False?",
+    emoji: "📱",
+    type: "tf",
+    question: "True or False: Your smartphone has a CPU inside it.",
+    correct: "true"
+  },
+  {
+    label: "Name an AI device!",
+    emoji: "🤖",
+    type: "open",
+    question: "Name ONE device in real life that uses Artificial Intelligence.",
+    correct: null,
+    openHint: "Any valid AI device accepted! (e.g. Alexa, Siri, Tesla, ChatGPT, camera)"
+  },
+  {
+    label: "What's Wi-Fi?",
+    emoji: "📡",
+    type: "mc",
+    question: "What technology allows devices to connect to the internet wirelessly?",
+    options: ["Bluetooth", "Wi-Fi", "USB", "Ethernet"],
+    correct: 1
+  },
+  {
+    label: "True or False?",
+    emoji: "💻",
+    type: "tf",
+    question: "True or False: A router connects devices on a local network to the internet.",
+    correct: "true"
+  },
+  {
+    label: "Speed of light?",
+    emoji: "⚡",
+    type: "mc",
+    question: "At what speed does light (and radio waves) travel in free space?",
+    options: ["300,000 km/s", "3,000 km/s", "150,000 km/s", "1,000,000 km/s"],
+    correct: 0
+  },
+  {
+    label: "Binary fun!",
+    emoji: "🔢",
+    type: "mc",
+    question: "What is the binary number 1010 in decimal?",
+    options: ["8", "10", "12", "6"],
+    correct: 1
+  },
+  {
+    label: "True or False?",
+    emoji: "🧠",
+    type: "tf",
+    question: "True or False: Machine learning is a type of Artificial Intelligence.",
+    correct: "true"
+  },
+  {
+    label: "5G vs 4G?",
+    emoji: "📶",
+    type: "mc",
+    question: "Which generation of mobile networks is the fastest?",
+    options: ["3G", "4G LTE", "5G", "2G"],
+    correct: 2
+  },
+  {
+    label: "Guess the unit!",
+    emoji: "🔊",
+    type: "mc",
+    question: "What unit is used to measure data transfer speed?",
+    options: ["Hertz (Hz)", "Watts (W)", "Bytes per second (bps)", "Volts (V)"],
+    correct: 2
+  }
+];
+// ─────────────────────────────────────────────────────────────────────
+
+const COLORS = [
+  "#e63946","#f4a261","#2a9d8f","#457b9d","#9b5de5",
+  "#f77f00","#06d6a0","#ef233c","#4361ee","#38b000"
+];
+
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const N = SEGMENTS.length;
+const ARC = (2 * Math.PI) / N;
+let rotation = 0;
+let spinning = false;
+let scoreW = 0, scoreT = 0;
+let currentSeg = null;
+let answered = false;
+
+function drawWheel(rot) {
+  const cx = canvas.width / 2, cy = canvas.height / 2, r = cx - 4;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < N; i++) {
+    const start = rot + i * ARC - Math.PI / 2;
+    const end = start + ARC;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.fillStyle = COLORS[i % COLORS.length];
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + ARC / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 13px Poppins, sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 4;
+
+    const txt = SEGMENTS[i].emoji + ' ' + SEGMENTS[i].label;
+    if (txt.length > 18) {
+      const words = txt.split(' ');
+      let line1 = '', line2 = '';
+      for (let w of words) {
+        if ((line1 + w).length <= 12) line1 += (line1 ? ' ' : '') + w;
+        else line2 += (line2 ? ' ' : '') + w;
+      }
+      ctx.fillText(line1, r - 14, -6);
+      ctx.font = 'bold 11px Poppins, sans-serif';
+      ctx.fillText(line2, r - 14, 10);
+    } else {
+      ctx.fillText(txt, r - 14, 4);
+    }
+    ctx.restore();
+  }
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 34, 0, 2 * Math.PI);
+  ctx.fillStyle = '#1a0533';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+drawWheel(rotation);
+
+function getSegmentAtPointer(rot) {
+  const normalized = (((-rot) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const index = Math.floor(normalized / ARC) % N;
+  return index;
+}
+
+document.getElementById('spinBtn').addEventListener('click', spin);
+
+function spin() {
+  if (spinning) return;
+  resetPanel();
+  spinning = true;
+  answered = false;
+  document.getElementById('spinBtn').disabled = true;
+
+  const extraSpins = (5 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
+  const segOffset = (Math.random() * ARC * 0.8 + ARC * 0.1);
+  const targetRot = rotation + extraSpins + segOffset;
+
+  const start = performance.now();
+  const duration = 4000;
+  const startRot = rotation;
+
+  function animate(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 4);
+    const cur = startRot + (targetRot - startRot) * ease;
+    rotation = cur;
+    drawWheel(rotation);
+    if (t < 1) { requestAnimationFrame(animate); }
+    else {
+      rotation = targetRot;
+      drawWheel(rotation);
+      spinning = false;
+      const idx = getSegmentAtPointer(rotation);
+      currentSeg = SEGMENTS[idx];
+      showQuestion(currentSeg, idx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showQuestion(seg, idx) {
+  const color = COLORS[idx % COLORS.length];
+  document.getElementById('idleMsg').style.display = 'none';
+  const sl = document.getElementById('segLabel');
+  sl.style.display = 'block';
+  sl.textContent = seg.emoji + ' ' + seg.label;
+  sl.style.color = color;
+  sl.style.borderColor = color + '44';
+
+  const qt = document.getElementById('qText');
+  qt.style.display = 'block';
+  qt.textContent = seg.question;
+
+  if (seg.type === 'mc') {
+    const og = document.getElementById('optGrid');
+    og.style.display = 'grid';
+    og.innerHTML = '';
+    seg.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => checkMC(i, seg.correct));
+      og.appendChild(btn);
+    });
+  } else if (seg.type === 'tf') {
+    const og = document.getElementById('optGrid');
+    og.style.display = 'grid';
+    og.innerHTML = '';
+    ['True', 'False'].forEach(val => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = val;
+      btn.addEventListener('click', () => checkTF(val.toLowerCase(), seg.correct));
+      og.appendChild(btn);
+    });
+  } else if (seg.type === 'open') {
+    document.getElementById('inputAnswer').style.display = 'block';
+    document.getElementById('submitBtn').style.display = 'block';
+    document.getElementById('inputAnswer').focus();
+    document.getElementById('submitBtn').addEventListener('click', checkOpen, { once: true });
+    document.getElementById('inputAnswer').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !answered) { document.getElementById('submitBtn').click(); }
+    });
+  }
+}
+
+function checkMC(chosen, correct) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+  if (chosen === correct) win(); else lose(currentSeg.options[correct]);
+}
+
+function checkTF(chosen, correct) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent.toLowerCase() === correct) b.classList.add('correct');
+    else if (b.textContent.toLowerCase() === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  if (chosen === correct) win(); else lose(correct.charAt(0).toUpperCase() + correct.slice(1));
+}
+
+function checkOpen() {
+  if (answered) return;
+  answered = true;
+  document.getElementById('inputAnswer').disabled = true;
+  document.getElementById('submitBtn').disabled = true;
+  const val = document.getElementById('inputAnswer').value.trim();
+  if (val.length > 1) {
+    const hint = currentSeg.openHint || '';
+    winOpen(val, hint);
+  } else {
+    lose('You need to name a device!');
+  }
+}
+
+function win() {
+  scoreW++; scoreT++;
+  document.getElementById('scoreW').textContent = scoreW;
+  document.getElementById('scoreT').textContent = scoreT;
+  const b = document.getElementById('resultBanner');
+  b.style.display = 'block';
+  b.className = 'result-banner win';
+  b.textContent = '🎉 Correct! You win a prize!';
+  document.getElementById('againBtn').style.display = 'block';
+  launchConfetti();
+}
+
+function winOpen(answer, hint) {
+  scoreT++;
+  const b = document.getElementById('resultBanner');
+  b.style.display = 'block';
+  b.className = 'result-banner win';
+  b.innerHTML = '🤖 "<strong>' + answer + '</strong>"<br><span style="font-size:0.78rem;font-weight:500;opacity:0.8">' + hint + '</span><br>Show the organizer to claim your prize!';
+  document.getElementById('scoreT').textContent = scoreT;
+  document.getElementById('againBtn').style.display = 'block';
+  launchConfetti();
+}
+
+function lose(correctAnswer) {
+  scoreT++;
+  document.getElementById('scoreT').textContent = scoreT;
+  const b = document.getElementById('resultBanner');
+  b.style.display = 'block';
+  b.className = 'result-banner lose';
+  b.innerHTML = '❌ Not quite!<br><span style="font-size:0.82rem;">Answer: <strong>' + correctAnswer + '</strong></span>';
+  document.getElementById('againBtn').style.display = 'block';
+}
+
+function resetPanel() {
+  document.getElementById('idleMsg').style.display = 'block';
+  document.getElementById('segLabel').style.display = 'none';
+  document.getElementById('qText').style.display = 'none';
+  document.getElementById('optGrid').style.display = 'none';
+  document.getElementById('optGrid').innerHTML = '';
+  const ia = document.getElementById('inputAnswer');
+  ia.style.display = 'none'; ia.value = ''; ia.disabled = false;
+  const sb = document.getElementById('submitBtn');
+  sb.style.display = 'none'; sb.disabled = false;
+  document.getElementById('resultBanner').style.display = 'none';
+  document.getElementById('againBtn').style.display = 'none';
+  document.getElementById('spinBtn').disabled = false;
+}
+
+document.getElementById('againBtn').addEventListener('click', () => {
+  resetPanel();
+});
+
+// Confetti
+const cc = document.getElementById('confettiCanvas');
+const cctx = cc.getContext('2d');
+let particles = [];
+function launchConfetti() {
+  cc.width = window.innerWidth; cc.height = window.innerHeight;
+  particles = [];
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * cc.width, y: Math.random() * -200,
+      r: 4 + Math.random() * 6,
+      d: 2 + Math.random() * 4,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      tilt: Math.random() * 10 - 5,
+      tiltAngle: 0, tiltInc: Math.random() * 0.1 + 0.04
+    });
+  }
+  animateConfetti(120);
+}
+function animateConfetti(frames) {
+  if (frames <= 0) { cctx.clearRect(0, 0, cc.width, cc.height); return; }
+  cctx.clearRect(0, 0, cc.width, cc.height);
+  particles.forEach(p => {
+    p.tiltAngle += p.tiltInc;
+    p.y += p.d;
+    p.tilt = Math.sin(p.tiltAngle) * 12;
+    cctx.beginPath();
+    cctx.lineWidth = p.r;
+    cctx.strokeStyle = p.color;
+    cctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+    cctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+    cctx.stroke();
+  });
+  requestAnimationFrame(() => animateConfetti(frames - 1));
+}
+</script>
